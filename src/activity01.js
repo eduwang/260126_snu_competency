@@ -18,7 +18,7 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   // 관리자는 항상 접근 가능
-  const userIsAdmin = await isAdmin(user.uid);
+  const userIsAdmin = await isAdmin(user);
   if (userIsAdmin) {
     return;
   }

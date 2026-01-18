@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 // 환경변수에서 Firebase 설정 가져오기
@@ -34,29 +34,26 @@ try {
 // Auth 및 Firestore 인스턴스 생성
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const googleProvider = new GoogleAuthProvider();
 
 // 관리자 UID 목록 (환경변수에서 가져오거나 하드코딩)
 export const ADMIN_UIDS = import.meta.env.VITE_ADMIN_UIDS 
   ? import.meta.env.VITE_ADMIN_UIDS.split(',').map(uid => uid.trim())
   : [];
 
-// 관리자 여부 확인 함수 (Firestore에서도 확인)
-export async function isAdmin(uid) {
-  // 환경변수에서 관리자 UID 확인
-  if (ADMIN_UIDS.includes(uid)) {
+// 관리자 여부 확인 함수 (이메일 기반)
+export async function isAdmin(user) {
+  if (!user || !user.email) {
+    return false;
+  }
+  
+  // 관리자 계정: admin 이메일로 로그인한 경우
+  // 이메일 형식이 admin@... 형태이거나 단순히 admin인 경우
+  const email = user.email.toLowerCase();
+  if (email === 'admin' || email.startsWith('admin@')) {
     return true;
   }
   
-  // Firestore에서 관리자 목록 확인
-  try {
-    const { doc, getDoc } = await import('firebase/firestore');
-    const adminDoc = await getDoc(doc(db, 'adminUsers', uid));
-    return adminDoc.exists();
-  } catch (error) {
-    console.error('관리자 확인 오류:', error);
-    return false;
-  }
+  return false;
 }
 
 // 관리자 추가 함수

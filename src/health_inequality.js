@@ -186,7 +186,7 @@ function initTablesB() {
 
 // 메뉴 설정 확인 함수
 async function checkMenuAccess(user) {
-  const userIsAdmin = await isAdmin(user.uid);
+  const userIsAdmin = await isAdmin(user);
   if (userIsAdmin) {
     return true;
   }
@@ -229,7 +229,7 @@ onAuthStateChanged(auth, async (user) => {
     
     // 사용자 정보 표시 (index.html과 동일한 로직)
     try {
-      const userQuery = query(collection(db, 'users'), where('uid', '==', user.uid));
+      const userQuery = query(collection(db, 'users_new'), where('uid', '==', user.uid));
       const userSnapshot = await getDocs(userQuery);
       
       let displayName = user.displayName || user.email;
@@ -1032,7 +1032,7 @@ async function submitData(studentType, conversationTable, probingQuestionsTable,
   });
 
   try {
-    const docRef = await addDoc(collection(db, 'probingQuestions'), {
+    const docRef = await addDoc(collection(db, 'probingQuestions_new'), {
       uid: currentUser.uid,
       displayName: currentUser.displayName || '',
       email: currentUser.email || '',
@@ -1098,7 +1098,7 @@ async function loadSavedData(studentType, conversationTable, probingQuestionsTab
     });
 
     const q = query(
-      collection(db, 'probingQuestions'),
+      collection(db, 'probingQuestions_new'),
       where('uid', '==', currentUser.uid),
       where('studentType', '==', studentType),
       where('questionType', '==', 'health_inequality')
@@ -1416,7 +1416,7 @@ async function startProbingA() {
       updatedAt: serverTimestamp()
     };
 
-    const docRef = await addDoc(collection(db, 'probingQuestions'), docData);
+    const docRef = await addDoc(collection(db, 'probingQuestions_new'), docData);
     probingDocIdA = docRef.id;
 
     // 저장 상태 초기화
@@ -1526,7 +1526,7 @@ async function startProbingB() {
       createdAt: serverTimestamp()
     };
 
-    const docRef = await addDoc(collection(db, 'probingQuestions'), docData);
+    const docRef = await addDoc(collection(db, 'probingQuestions_new'), docData);
     probingDocIdB = docRef.id;
 
     // 저장 상태 초기화
@@ -1724,7 +1724,7 @@ async function loadProbingDataFromFirestoreB() {
   if (!probingDocIdB) return;
 
   try {
-    const docRef = doc(db, 'probingQuestions', probingDocIdB);
+    const docRef = doc(db, 'probingQuestions_new', probingDocIdB);
     const docSnap = await getDoc(docRef);
     
     if (docSnap.exists()) {
@@ -1941,7 +1941,7 @@ async function loadProbingDataFromFirestore() {
   if (!probingDocIdA) return;
 
   try {
-    const docRef = doc(db, 'probingQuestions', probingDocIdA);
+    const docRef = doc(db, 'probingQuestions_new', probingDocIdA);
     const docSnap = await getDoc(docRef);
     
     if (docSnap.exists()) {
@@ -2049,7 +2049,7 @@ async function saveProbingQuestion(questionNum, studentType) {
     
     // 학생 답변은 읽기 전용이므로 저장하지 않음 (이미 Firestore에 저장되어 있음)
 
-    const docRef = doc(db, 'probingQuestions', probingDocId);
+    const docRef = doc(db, 'probingQuestions_new', probingDocId);
     await updateDoc(docRef, {
       [`questions.${questionNum}.probingQuestions`]: probingData,
       updatedAt: serverTimestamp()
@@ -2140,7 +2140,7 @@ async function submitProbingA() {
         time: now.toTimeString().split(' ')[0].substring(0, 5)
       };
 
-      const docRef = doc(db, 'probingQuestions', probingDocIdA);
+      const docRef = doc(db, 'probingQuestions_new', probingDocIdA);
       await updateDoc(docRef, {
         endTime: endTime,
         updatedAt: serverTimestamp()
@@ -2196,7 +2196,7 @@ async function submitProbingB() {
         time: now.toTimeString().split(' ')[0].substring(0, 5)
       };
 
-      const docRef = doc(db, 'probingQuestions', probingDocIdB);
+      const docRef = doc(db, 'probingQuestions_new', probingDocIdB);
       await updateDoc(docRef, {
         endTime: endTime,
         updatedAt: serverTimestamp()
@@ -2325,7 +2325,7 @@ async function showMyProbingQuestions() {
   try {
     // 현재 사용자가 제출한 데이터 조회 (uid로만 필터링)
     const q = query(
-      collection(db, 'probingQuestions'),
+      collection(db, 'probingQuestions_new'),
       where('uid', '==', currentUser.uid)
     );
 

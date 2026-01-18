@@ -465,7 +465,7 @@ onAuthStateChanged(auth, async (user) => {
     
     // 사용자 정보 표시 (index.html과 동일한 로직)
     try {
-      const userQuery = query(collection(db, 'users'), where('uid', '==', user.uid));
+      const userQuery = query(collection(db, 'users_new'), where('uid', '==', user.uid));
       const userSnapshot = await getDocs(userQuery);
       
       let displayName = user.displayName || user.email;

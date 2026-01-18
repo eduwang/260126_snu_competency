@@ -95,7 +95,7 @@ function initTables() {
 // 메뉴 설정 확인 함수
 async function checkMenuAccess(user) {
   // 관리자는 항상 접근 가능
-  const userIsAdmin = await isAdmin(user.uid);
+  const userIsAdmin = await isAdmin(user);
   if (userIsAdmin) {
     return true;
   }
@@ -264,7 +264,7 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
 
   try {
     // Firestore에 저장
-    const docRef = await addDoc(collection(db, 'probingQuestions'), {
+    const docRef = await addDoc(collection(db, 'probingQuestions_new'), {
       uid: currentUser.uid,
       displayName: currentUser.displayName || '',
       email: currentUser.email || '',
@@ -575,7 +575,7 @@ async function loadSavedData() {
 
     // Firestore에서 현재 사용자의 데이터 가져오기 (인덱스 없이 사용)
     const q = query(
-      collection(db, 'probingQuestions'),
+      collection(db, 'probingQuestions_new'),
       where('uid', '==', currentUser.uid)
     );
     const querySnapshot = await getDocs(q);

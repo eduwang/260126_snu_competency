@@ -1,5 +1,5 @@
 import { auth, db, isAdmin } from './firebaseConfig.js';
-import { signOut, onAuthStateChanged } from 'firebase/auth';
+import { signOut, onAuthStateChanged, createUserWithEmailAndPassword } from 'firebase/auth';
 import { 
   collection, 
   getDocs, 
@@ -26,7 +26,7 @@ onAuthStateChanged(auth, async (user) => {
     currentUser = user;
     
     // 관리자 권한 확인
-    const userIsAdmin = await isAdmin(user.uid);
+    const userIsAdmin = await isAdmin(user);
     if (!userIsAdmin) {
       Swal.fire({
         icon: 'error',
@@ -41,7 +41,7 @@ onAuthStateChanged(auth, async (user) => {
     
     // 사용자 정보 표시 (index.html과 동일한 로직)
     try {
-      const userQuery = query(collection(db, 'users'), where('uid', '==', user.uid));
+      const userQuery = query(collection(db, 'users_new'), where('uid', '==', user.uid));
       const userSnapshot = await getDocs(userQuery);
       
       let displayName = user.displayName || user.email;
@@ -135,7 +135,7 @@ async function loadUsers() {
     const usersContainer = document.getElementById('usersList');
     usersContainer.innerHTML = '<p class="empty-message">사용자 목록을 불러오는 중...</p>';
 
-    const querySnapshot = await getDocs(collection(db, 'users'));
+    const querySnapshot = await getDocs(collection(db, 'users_new'));
 
     if (querySnapshot.empty) {
       usersContainer.innerHTML = '<p class="empty-message">등록된 사용자가 없습니다.</p>';
@@ -191,8 +191,8 @@ function renderUsersList() {
           <div class="user-name">${user.name || '이름 없음'}</div>
           <div class="user-details">
             소속: ${user.affiliation || '소속 없음'}<br>
-            코드: <span class="user-code">${user.code}</span><br>
             ${user.email ? `이메일: ${user.email}<br>` : ''}
+            ${user.password ? `비밀번호: <span class="user-code" style="font-family: monospace; font-weight: 600; color: #2563eb;">${user.password}</span><br>` : ''}
             생성일: ${createdAt.toLocaleString('ko-KR')}
             ${linkedAt ? `<br>연결일: ${linkedAt.toLocaleString('ko-KR')}` : ''}
           </div>
@@ -239,7 +239,7 @@ window.editUser = async function(userId, currentName, currentAffiliation) {
 
   if (result.isConfirmed) {
     try {
-      await setDoc(doc(db, 'users', userId), {
+      await setDoc(doc(db, 'users_new', userId), {
         name: result.value.name,
         affiliation: result.value.affiliation
       }, { merge: true });
@@ -280,7 +280,7 @@ window.deleteUser = async function(userId, userName) {
 
   if (result.isConfirmed) {
     try {
-      await deleteDoc(doc(db, 'users', userId));
+      await deleteDoc(doc(db, 'users_new', userId));
       
       Swal.fire({
         icon: 'success',
@@ -311,6 +311,7 @@ document.getElementById('addUserBtn').addEventListener('click', async () => {
     html: `
       <input id="swal-name" class="swal2-input" placeholder="이름" required>
       <input id="swal-affiliation" class="swal2-input" placeholder="소속" required>
+      <input id="swal-email" class="swal2-input" placeholder="이메일 (아이디)" type="email" required>
     `,
     showCancelButton: true,
     confirmButtonText: '추가',
@@ -318,44 +319,63 @@ document.getElementById('addUserBtn').addEventListener('click', async () => {
     preConfirm: () => {
       const name = document.getElementById('swal-name').value.trim();
       const affiliation = document.getElementById('swal-affiliation').value.trim();
+      const email = document.getElementById('swal-email').value.trim();
       
-      if (!name || !affiliation) {
-        Swal.showValidationMessage('이름과 소속을 모두 입력해주세요.');
+      if (!name || !affiliation || !email) {
+        Swal.showValidationMessage('이름, 소속, 이메일을 모두 입력해주세요.');
         return false;
       }
       
-      return { name, affiliation };
+      // 이메일 형식 검증
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        Swal.showValidationMessage('올바른 이메일 형식을 입력해주세요.');
+        return false;
+      }
+      
+      return { name, affiliation, email };
     }
   });
 
   if (result.isConfirmed) {
     try {
-      // 5자리 랜덤 코드 생성
-      const code = generateRandomCode();
+      // 5자리 랜덤 비밀번호 생성
+      const password = generateRandomPassword();
+      const { name, affiliation, email } = result.value;
       
-      // Firestore에 사용자 추가
-      await addDoc(collection(db, 'users'), {
-        name: result.value.name,
-        affiliation: result.value.affiliation,
-        code: code,
-        uid: null,
-        createdAt: serverTimestamp(),
-        linkedAt: null
+      // Firebase Authentication에 사용자 생성
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const uid = userCredential.user.uid;
+      
+      // Firestore에 사용자 정보 저장 (비밀번호도 함께 저장)
+      await setDoc(doc(db, 'users_new', uid), {
+        name: name,
+        affiliation: affiliation,
+        email: email,
+        password: password, // 비밀번호 저장 (사용자 목록에서 보여주기 위해)
+        uid: uid,
+        createdAt: serverTimestamp()
       });
 
       Swal.fire({
         icon: 'success',
         title: '사용자 추가 완료',
         html: `
-          <p>사용자가 추가되었습니다.</p>
-          <p style="margin-top: 1rem; font-weight: 600; font-size: 1.25rem; color: #2563eb;">
-            생성된 코드: <span style="font-family: monospace;">${code}</span>
-          </p>
-          <p style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;">
-            이 코드를 사용자에게 전달하세요.
+          <p style="margin-bottom: 1.5rem;">사용자가 추가되었습니다.</p>
+          <div style="background: #f3f4f6; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: left;">
+            <p style="margin: 0 0 0.5rem 0; font-weight: 600; font-size: 0.875rem; color: #6b7280;">이메일 (아이디)</p>
+            <p style="margin: 0; font-weight: 700; font-size: 1.25rem; color: #1f2937; font-family: monospace; letter-spacing: 0.05em; word-break: break-all;">${email}</p>
+          </div>
+          <div style="background: #eff6ff; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: left; border: 2px solid #2563eb;">
+            <p style="margin: 0 0 0.5rem 0; font-weight: 600; font-size: 0.875rem; color: #2563eb;">비밀번호</p>
+            <p style="margin: 0; font-weight: 700; font-size: 1.5rem; color: #1e40af; font-family: monospace; letter-spacing: 0.1em;">${password}</p>
+          </div>
+          <p style="margin-top: 0.5rem; font-size: 0.875rem; color: #ef4444; font-weight: 600;">
+            ⚠️ 이 정보를 반드시 사용자에게 전달하세요. 비밀번호는 저장되지 않습니다.
           </p>
         `,
-        confirmButtonText: '확인'
+        confirmButtonText: '확인',
+        width: '500px'
       });
 
       // 사용자 목록 새로고침
@@ -363,23 +383,34 @@ document.getElementById('addUserBtn').addEventListener('click', async () => {
       
     } catch (error) {
       console.error('사용자 추가 오류:', error);
+      
+      let errorMessage = '사용자를 추가하는 중 오류가 발생했습니다.';
+      
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = '이미 사용 중인 이메일입니다.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = '올바른 이메일 형식이 아닙니다.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       Swal.fire({
         icon: 'error',
         title: '추가 실패',
-        text: error.message || '사용자를 추가하는 중 오류가 발생했습니다.'
+        text: errorMessage
       });
     }
   }
 });
 
-// 5자리 랜덤 코드 생성
-function generateRandomCode() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let code = '';
-  for (let i = 0; i < 5; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
+// 6자리 랜덤 비밀번호 생성 (영문 알파벳만)
+function generateRandomPassword() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  let password = '';
+  for (let i = 0; i < 6; i++) {
+    password += chars.charAt(Math.floor(Math.random() * chars.length));
   }
-  return code;
+  return password;
 }
 
 // ==================== 데이터 관리 ====================
@@ -390,7 +421,7 @@ async function loadAllData() {
     const listContainer = document.getElementById('dataList');
     listContainer.innerHTML = '<p class="empty-message">데이터를 불러오는 중...</p>';
 
-    const querySnapshot = await getDocs(collection(db, 'probingQuestions'));
+    const querySnapshot = await getDocs(collection(db, 'probingQuestions_new'));
 
     if (querySnapshot.empty) {
       listContainer.innerHTML = '<p class="empty-message">저장된 데이터가 없습니다.</p>';
@@ -398,7 +429,7 @@ async function loadAllData() {
     }
 
     // 사용자 정보 불러오기
-    const usersSnapshot = await getDocs(collection(db, 'users'));
+    const usersSnapshot = await getDocs(collection(db, 'users_new'));
     const usersMap = new Map();
     usersSnapshot.forEach((doc) => {
       const userData = doc.data();
@@ -734,7 +765,7 @@ window.deleteDataItem = async function(dataId) {
 
   if (result.isConfirmed) {
     try {
-      await deleteDoc(doc(db, 'probingQuestions', dataId));
+      await deleteDoc(doc(db, 'probingQuestions_new', dataId));
       
       Swal.fire({
         icon: 'success',

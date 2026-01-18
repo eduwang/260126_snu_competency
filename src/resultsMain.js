@@ -15,7 +15,7 @@ let selectedQuestion = 'all';
 // 메뉴 설정 확인 함수
 async function checkMenuAccess(user) {
   // 관리자는 항상 접근 가능
-  const userIsAdmin = await isAdmin(user.uid);
+  const userIsAdmin = await isAdmin(user);
   if (userIsAdmin) {
     return true;
   }
@@ -61,7 +61,7 @@ onAuthStateChanged(auth, async (user) => {
     
     // 사용자 정보 표시
     try {
-      const userQuery = query(collection(db, 'users'), where('uid', '==', user.uid));
+      const userQuery = query(collection(db, 'users_new'), where('uid', '==', user.uid));
       const userSnapshot = await getDocs(userQuery);
       
       let displayName = user.displayName || user.email;
@@ -124,7 +124,7 @@ if (logoutBtn) {
 async function loadAllData() {
   try {
     // 모든 데이터 가져오기
-    const querySnapshot = await getDocs(collection(db, 'probingQuestions'));
+    const querySnapshot = await getDocs(collection(db, 'probingQuestions_new'));
 
     if (querySnapshot.empty) {
       allData = [];
@@ -135,7 +135,7 @@ async function loadAllData() {
     }
 
     // 사용자 정보 불러오기
-    const usersSnapshot = await getDocs(collection(db, 'users'));
+    const usersSnapshot = await getDocs(collection(db, 'users_new'));
     const usersMap = new Map();
     usersSnapshot.forEach((doc) => {
       const userData = doc.data();
