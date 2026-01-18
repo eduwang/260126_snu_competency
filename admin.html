@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관리자 페이지</title>
+  <link rel="stylesheet" href="src/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="node_modules/sweetalert2/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="src/admin.css">
+</head>
+<body>
+  <div class="page-container">
+    <div class="header-section">
+      <h1 style="margin: 0; color: #1f2937;">관리자 페이지</h1>
+      <div class="user-info-section">
+        <button id="backToMainBtn" class="back-btn">← 메인으로</button>
+        <span id="userInfo">🔐 로그인 후 이용해 주세요.</span>
+        <button id="logoutBtn" style="display: none;">로그아웃</button>
+      </div>
+    </div>
+
+    <!-- 탭 메뉴 -->
+    <div class="tabs">
+      <button class="tab-button active" data-tab="users">👥 사용자 관리</button>
+      <button class="tab-button" data-tab="data">📊 데이터 관리</button>
+      <button class="tab-button" data-tab="menu">⚙️ 메뉴 관리</button>
+    </div>
+
+    <!-- 사용자 관리 탭 -->
+    <div id="users-tab" class="tab-content active">
+      <div class="tab-header">
+        <h2>사용자 관리</h2>
+        <button id="addUserBtn" class="btn btn-primary">+ 사용자 추가</button>
+      </div>
+      <div id="usersList" class="users-list">
+        <p class="empty-message">사용자 목록을 불러오는 중...</p>
+      </div>
+    </div>
+
+    <!-- 데이터 관리 탭 -->
+    <div id="data-tab" class="tab-content">
+      <div class="tab-header">
+        <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+          <h2 style="margin: 0;">데이터 관리</h2>
+          <div class="filter-section" style="display: flex; align-items: center; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <label style="font-size: 0.875rem; color: #6b7280;">시나리오:</label>
+              <select id="scenarioFilter" class="filter-select" style="min-width: 150px;">
+                <option value="">전체</option>
+                <option value="대피시뮬레이션">대피시뮬레이션</option>
+                <option value="건강불평등">건강불평등</option>
+              </select>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <label style="font-size: 0.875rem; color: #6b7280;">사용자:</label>
+              <select id="userFilter" class="filter-select" style="min-width: 150px;">
+                <option value="">전체 사용자</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="data-management-layout">
+        <div class="data-list-panel">
+          <div id="dataList" class="data-list">
+            <p class="empty-message">데이터를 불러오는 중...</p>
+          </div>
+        </div>
+        <div class="data-detail-panel">
+          <div id="dataDetail" class="data-detail">
+            <div class="empty-detail">
+              <p>좌측 목록에서 항목을 선택하세요</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 메뉴 관리 탭 -->
+    <div id="menu-tab" class="tab-content">
+      <div class="tab-header">
+        <h2>메뉴 관리</h2>
+      </div>
+      <div class="menu-settings">
+        <div class="menu-item-setting">
+          <div class="setting-header">
+            <h3>모의평가</h3>
+          </div>
+          <div class="sub-menu-settings">
+            <div class="sub-menu-item-setting">
+              <div class="setting-header">
+                <h4>유리병 균열 패턴</h4>
+                <label class="switch">
+                  <input type="checkbox" id="mockEval01Toggle">
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <p class="setting-description">모의평가 / 유리병 균열 패턴 버튼의 표시 여부를 제어합니다.</p>
+            </div>
+            <div class="sub-menu-item-setting">
+              <div class="setting-header">
+                <h4>대학입시알고리즘</h4>
+                <label class="switch">
+                  <input type="checkbox" id="mockEval02Toggle">
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <p class="setting-description">모의평가 / 대학입시알고리즘 버튼의 표시 여부를 제어합니다.</p>
+            </div>
+          </div>
+        </div>
+        <div class="menu-item-setting">
+          <div class="setting-header">
+            <h3>탐침 질문 만들기</h3>
+          </div>
+          <div class="sub-menu-settings">
+            <div class="sub-menu-item-setting">
+              <div class="setting-header">
+                <h4>대피시뮬레이션</h4>
+                <label class="switch">
+                  <input type="checkbox" id="probing01Toggle">
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <p class="setting-description">탐침 질문 만들기 / 대피시뮬레이션 버튼의 표시 여부를 제어합니다.</p>
+            </div>
+            <div class="sub-menu-item-setting">
+              <div class="setting-header">
+                <h4>건강불평등 연구 계획</h4>
+                <label class="switch">
+                  <input type="checkbox" id="probing02Toggle">
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <p class="setting-description">탐침 질문 만들기 / 건강불평등 연구 계획 버튼의 표시 여부를 제어합니다.</p>
+            </div>
+          </div>
+        </div>
+        <div class="menu-item-setting">
+          <div class="setting-header">
+            <h3>다른 사람 결과 보기</h3>
+            <label class="switch">
+              <input type="checkbox" id="activity2Toggle">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <p class="setting-description">다른 사람 결과 보기 버튼의 표시 여부를 제어합니다.</p>
+        </div>
+        <div class="menu-item-setting">
+          <div class="setting-header">
+            <h3>워크숍 만족도 조사</h3>
+            <label class="switch">
+              <input type="checkbox" id="qrCodeToggle">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <p class="setting-description">워크숍 만족도 조사 QR 코드 항목의 표시 여부를 제어합니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="src/admin.js"></script>
+</body>
+</html>

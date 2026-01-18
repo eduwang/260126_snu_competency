@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>대피시뮬레이션 - 탐침질문 만들기</title>
+  <link rel="stylesheet" href="src/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="node_modules/handsontable/dist/handsontable.full.min.css">
+  <link rel="stylesheet" href="node_modules/sweetalert2/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="src/escape_plan.css">
+</head>
+<body>
+  <div class="page-container">
+    <div class="header-section">
+      <h1 style="margin: 0; color: #1f2937;">대피시뮬레이션 - 탐침질문 만들기</h1>
+      <div class="user-info-section">
+        <button id="backToMainBtn" class="back-btn">← 메인으로</button>
+        <span id="userInfo">🔐 로그인 후 이용해 주세요.</span>
+        <button id="logoutBtn" style="display: none;">로그아웃</button>
+      </div>
+    </div>
+
+    <!-- 최상단 탭 메뉴 -->
+    <div class="main-tabs">
+      <button class="main-tab-button active" data-main-tab="materials">📄 면접 자료(제시문 및 예시 답안 확인)</button>
+      <button class="main-tab-button" data-main-tab="probing">✍️ 탐침 질문 만들기</button>
+    </div>
+
+    <!-- 면접 자료 확인 탭 -->
+    <div id="materials-tab" class="main-tab-content active">
+      <div class="materials-layout">
+        <!-- 좌측: 제시문 및 과제 -->
+        <div class="materials-left">
+          <div class="materials-section">
+            <h2 class="section-title">제시문 및 과제</h2>
+            <div class="document-content">
+              <!-- 제시문 내용은 여기에 직접 입력 -->
+              <div class="document-text">
+                <p>재난 상황에서 효율적인 대피가 가능한 건물을 설계하기 위해, 실제로 사람들이 대피하는 상황을 시뮬레이션(모의실험)하는 소프트웨어를 개발하려고 한다. 시뮬레이션 소프트웨어의 한 예시 영상을 시청한 후, 나는 어떻게 대피 시뮬레이션 소프트웨어를 설계하고자 하는지 계획을 세워보자. 다음의 세부과제를 해결하면서 최종적인 소프트웨어의 기능과 디자인 및 작동 원리 등을 설정해 보자. <a href="https://www.youtube.com/watch?v=BzZEe0AVIbI" target="_blank" class="youtube-link-inline" title="시뮬레이션 소프트웨어 예시 영상 보기">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                  </svg>
+                </a></p>
+                
+                <!-- 이미지 -->
+                <div class="document-image-container">
+                  <img src="public/probingQuestion/escape_plan_01.png" alt="대피 시뮬레이션 예시 이미지" class="document-image">
+                </div>
+              </div>
+              
+              <!-- 과제 1 -->
+              <div class="question-item">
+                <h3>과제 1</h3>
+                <div class="question-content">
+                  <p>내가 만들고자 하는 대피 시뮬레이션 소프트웨어는 어떤 재난 상황에서 어떤 종류의 건물이나 시설의 대피 상황을 재현해보기 위한 것인가? 이 소프트웨어의 목적과 필요성, 그리고 대략적으로 소프트웨어에 넣을 기능을 설명해 보자.</p>
+                </div>
+              </div>
+
+              <!-- 과제 2 -->
+              <div class="question-item">
+                <h3>과제 2</h3>
+                <div class="question-content">
+                  <p>내가 만들고자 하는 대피 시뮬레이션 소프트웨어에서 재난의 발생 상황은 어떻게 설정하고자 하는가? 재난 발생의 여러 상황에 따라 대피 상황을 살펴보기 위해 구체적으로 어떤 선택을 가능하게 할 것이고, 재난의 영향이 어떻게 나타나게 할 것인지 계획을 세워보자. </p>
+                </div>
+              </div>
+
+              <!-- 과제 3 -->
+              <div class="question-item">
+                <h3>과제 3</h3>
+                <div class="question-content">
+                  <p>내가 만들고자 하는 대피 시뮬레이션 소프트웨어에서 사람의 대피 상황을 어떻게 설정하고 작동원리를 정할 것인가? 사람이 대피할 때 움직임을 어떻게 설정하고, 어떤 조건이 각 사람의 대피 상황에 영향을 미치게 할 것인지 구체적으로 설정해 보자. 이를 위해 어떤 방식으로 알고리즘이나 수학/과학적 지식을 사용해야 할지도 제시해 보자. </p>
+                </div>
+              </div>
+
+              <!-- 과제 4 -->
+              <div class="question-item">
+                <h3>과제 4</h3>
+                <div class="question-content">
+                  <p>내가 만들고자 하는 대피 시뮬레이션 소프트웨어의 화면을 디자인해보자. 어떤 구성으로 어떤 정보와 시각적 표현을 담을 것인지 실제로 스케치 해보자. </p>
+                </div>
+              </div>
+
+              <!-- 과제 5 -->
+              <div class="question-item">
+                <h3>과제 5</h3>
+                <div class="question-content">
+                  <p>내가 만든 대피 시뮬레이션 소프트웨어가 잘 만들어 졌는지 어떻게 평가할 수 있으며, 건물의 대피 효율성을 높이는 설계를 위해 어떻게 활용할 수 있을지 구체적인 방법을 제안해보자. </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 우측: 예시 답안, 평가 기준, 탐침 질문 -->
+        <div class="materials-right">
+          <div class="question-tabs-container">
+            <!-- 제목 -->
+            <h2 class="section-title">예시 답안, 평가 기준, 탐침 질문 확인</h2>
+            
+            <!-- 과제별 탭 -->
+            <div class="question-tabs">
+              <button class="question-tab-button active" data-question="1">과제 1</button>
+              <button class="question-tab-button" data-question="2">과제 2</button>
+              <button class="question-tab-button" data-question="3">과제 3</button>
+              <button class="question-tab-button" data-question="4">과제 4</button>
+              <button class="question-tab-button" data-question="5">과제 5</button>
+              <button class="question-tab-button" data-question="summary">종합 평가 기준 및 탐침 질문</button>
+            </div>
+
+            <!-- 과제 1 탭 내용 -->
+            <div id="question-1-content" class="question-tab-content active">
+              <div class="materials-scrollable">
+                <!-- 예시 답안 -->
+                <div class="materials-section">
+                  <h2 class="section-title">예시 답안</h2>
+                  <div class="answer-text">
+                    <p>
+                        제가 만들고자 하는 대피 시뮬레이션 소프트웨어는 지하철역 내부에서 화재가 발생했을 때 승객들이 대피하는 상황을 재현하기 위한 것입니다. 지하철역은 지하 공간이고, 출입구가 제한적이며, 평소 이용 인원이 많아 화재 발생 시 대규모 인명 피해가 발생할 가능성이크기 때문에 다양한 시나리오의 화재 상황에서 대피에 걸리는 시간 등을 예측하여 대피 안내와 시설을 갖출 필요가 있습니다. 이 소프트웨어를 만든 목적은 화재 발생 시 사람들의 이동 경로와 병목 현상을 시뮬레이션하고, 출구 위치, 통로 폭, 안내 시스템의 차이에 따라 대피 시간이 어떻게 달라지는지를 확인하며 보다 효율적인 지하철역 설계 및 비상 대피 계획을 수립하는 데 도움을 주고자 합니다. 이 소프트웨어의 주요 기능은 지하철역 평면도 불러오기, 화재 발생 위치 및 확산 속도 설정, 사람 수, 이동 속도, 반응 시간, 전체 대피 시간, 사망·고립 인원 수 자동 계산, 여러 시나리오 결과 비교 기능 등을 포함하고자 합니다. 
+                    </p>
+                  </div>
+                </div>
+
+                <!-- 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">평가 기준</h2>
+                  <div id="criteria-table-1" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 과제 2 탭 내용 -->
+            <div id="question-2-content" class="question-tab-content">
+              <div class="materials-scrollable">
+                <!-- 예시 답안 -->
+                <div class="materials-section">
+                  <h2 class="section-title">예시 답안</h2>
+                  <div class="answer-text">
+                    <p>
+                        화재 발생 상황에 대해 다음과 같은 설정을 하고자 합니다: 화재 발생 위치(플랫폼, 대합실, 계단 근처 등), 화재 강도(연기 확산 속도, 온도 상승 속도), 전기 차단 여부(조명 유지 또는 정전), 일부 출구 폐쇄 여부. 화재의 영향은 시뮬레이션 화면에서 연기가 퍼지는 영역은 점점 시야가 흐려지고 해당 구역을 지나는 사람의 이동 속도가 감소하며 일정 시간이 지나면 해당 구역 통과가 불가능하도록 설정하고자 합니다. 이를 통해 서로 다른 화재 조건에서 대피 결과가 어떻게 달라지는지를 비교할 수 있도록 합니다. 
+                    </p>
+                  </div>
+                </div>
+
+                <!-- 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">평가 기준</h2>
+                  <div id="criteria-table-2" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 과제 3 탭 내용 -->
+            <div id="question-3-content" class="question-tab-content">
+              <div class="materials-scrollable">
+                <!-- 예시 답안 -->
+                <div class="materials-section">
+                  <h2 class="section-title">예시 답안</h2>
+                  <div class="answer-text">
+                    <p>
+                        사람을 각각 하나의 객체로 설정하고, 모든 사람이 동일하게 움직이기보다는 확률적 특성을 가진 개별적인 존재로 설정하고자 합니다. 각 사람은 다음과 같은 속성을 가집니다. 기본 이동 속도, 대피 반응 시간(경보 인식 후 이동을 시작하기까지의 시간), 시야 범위 혼잡에 대한 민감도(사람이 많을수록 속도가 얼마나 줄어드는지)입니다. 이때 이동 속도와 반응 시간은 모두 하나의 값으로 고정하지 않고, 정규분포와 같은 확률 분포를 이용해 사람마다 조금씩 다르게 부여하고자 하고, 이를 통해 실제 사람들의 행동 차이를 보다 현실적으로 반영하고자 합니다. 
+                    </p>
+                    <p>
+                        사람의 이동 방향은 단순히 가장 가까운 출구를 향해 가는 것이 아니라, 다음과 같은 요소를 종합해 결정됩니다. 출구까지의 예상 거리, 이동 경로에 있는 사람의 밀도, 연기나 화재로 인한 위험도, 이 요소들을 이용해 각 사람이 순간마다 위험도는 최소화하고, 이동 시간은 줄이려는 경향을 가진다고 가정하고, 그에 따라 확률적으로 갈림길에서 이동 경로를 선택하게 하고자 합니다. 예를 들어, 사람들은 기본적으로 가까운 출구로 가는 최단 경로로 이동하되, 병목현상이 발생하는 경우, 또는 연기가 있는 경우 확률적으로 갈림길에서 다른 길을 선택하게 만듭니다. 이를 위해 각 경로별 위험도를 계산하고 위험도에 따라 경로별 확률을 할당하려고 합니다. 
+                    </p>
+                    <p>
+                        *확률적으로 계산하지 않고, 상황에 따라 일률적으로 계산하는 모델을 만들 수도 있으며, 목적함수와 같은 것을 만들어서 의사결정을 최적화하는 모델을 만들 수 있음. 교육과정 외 지식을 활용하는 경우는 교육과정 내 방법으로 수정하도록 유도하기. 
+                    </p>
+
+                  </div>
+                </div>
+
+                <!-- 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">평가 기준</h2>
+                  <div id="criteria-table-3" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 과제 4 탭 내용 -->
+            <div id="question-4-content" class="question-tab-content">
+              <div class="materials-scrollable">
+                <!-- 예시 답안 -->
+                <div class="materials-section">
+                  <h2 class="section-title">예시 답안</h2>
+                  <div class="answer-text">
+                    <div class="document-image-container">
+                      <img src="public/probingQuestion/escape_plan_sample01.png" alt="대피 시뮬레이션 예시 화면" class="document-image">
+                    </div>
+                    <p>
+                        왼쪽 패널에서 기존 지하철 평면도를 불러오고, 통로 넓이와 출구 위치를 수정할 수 있습니다. 화제 발생 위치(빨간 원표시)를 설정할 수 있습니다. 화재 강도를 조절하여 온도와 속도가 그에 맞춰 설정되게 하고, 인원수를 배치하면 랜덤하게 시작 위치가 배치됩니다. 
+                        오른쪽 패널에는 대피 성공 인원 실시간 현황과, 대피 통로가 막힌 인원, 평균 대피 시간 등의 현황을 볼 수 있습니다. 시뮬레이션이 시작되면 평면도를 입체화 하여, 파란색으로 표시된 인간들의 이동 상황을 보여주고, 화재구역은 빨간색, 연기 구역은 회색 등으로 표시됩니다. 개별 사람을 클릭하면 각 사람이 갈림길에서 판단하는 위험도 현황이 뜨게 됩니다. 
+                    </p>
+                  </div>
+                </div>
+
+                <!-- 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">평가 기준</h2>
+                  <div id="criteria-table-4" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 과제 5 탭 내용 -->
+            <div id="question-5-content" class="question-tab-content">
+              <div class="materials-scrollable">
+                <!-- 예시 답안 -->
+                <div class="materials-section">
+                  <h2 class="section-title">예시 답안</h2>
+                  <div class="answer-text">
+                    <p>
+                        이 소프트웨어의 완성도를 평가하기 위해 동일한 조건에서 여러 번 실행했을 때 결과가 일관적인지 확인하고, 실제 화재 대피 실험이나 기존 연구 결과와 비교해 대피 시간의 타당성을 검증합니다. 또한 출구 위치를 바꾸거나 통로 폭을 넓히는 등 설계를 변경했을 때
+                        평균 대피 시간이 얼마나 감소하는지 병목 현상이 줄어드는지를 정량적으로 분석합니다. 
+                        이를 통해 지하철역 설계 단계에서 최적의 출구 배치안을 찾거나 기존 지하철역의 위험 요소를 사전에 점검할 수 있고, 대피 실패 인원이 많이 발생하는 구간에 산소마스크나 대피소 마련 등의 시설 대비를 할 수 있고, 비상 대피 훈련 시 교육 자료로 활용할 수 있을 것입니다. 
+                    </p>
+                  </div>
+                </div>
+
+                <!-- 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">평가 기준</h2>
+                  <div id="criteria-table-5" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 종합 평가 기준 및 탐침 질문 탭 내용 -->
+            <div id="question-summary-content" class="question-tab-content">
+              <div class="materials-scrollable">
+                <!-- 종합 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">종합 평가 기준</h2>
+                  <div id="summary-criteria-table" class="handsontable-container"></div>
+                </div>
+
+                <!-- 탐침 질문 -->
+                <div class="materials-section">
+                  <h2 class="section-title" style="display: inline-block; width: 100%;">탐침 질문 <button id="view-probing-questions-btn" class="btn btn-primary" style="font-size: 0.875rem; padding: 0.25rem 0.75rem; margin-left: 0.5rem; vertical-align: baseline;">크게 보기</button></h2>
+                  <div id="probing-questions-table" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 탐침 질문 만들기 탭 -->
+    <div id="probing-tab" class="main-tab-content">
+      <!-- 상단 버튼 영역 -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div class="sub-tabs" style="margin: 0;">
+          <button class="sub-tab-button active" data-sub-tab="student-a">학생 A의 케이스</button>
+          <button class="sub-tab-button" data-sub-tab="student-b">학생 B의 케이스</button>
+        </div>
+        <button id="view-my-probing-questions-btn" class="btn btn-secondary" style="font-size: 0.875rem; padding: 0.5rem 1rem;">내가 만든 탐침 질문 보기</button>
+      </div>
+
+      <!-- 학생 A의 케이스 -->
+      <div id="student-a-tab" class="sub-tab-content active">
+        <!-- 시작하기 화면 -->
+        <div id="student-a-start-screen" style="text-align: center; padding: 3rem;">
+          <h2 style="margin-bottom: 2rem; color: #1f2937;">학생 A의 케이스 탐침 질문 만들기</h2>
+          <p style="margin-bottom: 2rem; color: #6b7280;">각 과제별로 학생 A의 답변을 확인하고 탐침 질문을 작성해주세요.</p>
+          <button id="start-probing-a-btn" class="btn btn-primary" style="font-size: 1.125rem; padding: 1rem 2rem;">시작하기</button>
+        </div>
+
+        <!-- 작업 화면 (시작하기 클릭 후 표시) -->
+        <div id="student-a-work-screen" style="display: none;">
+          <!-- 과제별 탭 -->
+          <div class="question-tabs" style="margin-bottom: 1.5rem;">
+            <button class="question-tab-button active" data-question="1">과제 1</button>
+            <button class="question-tab-button" data-question="2">과제 2</button>
+            <button class="question-tab-button" data-question="3">과제 3</button>
+            <button class="question-tab-button" data-question="4">과제 4</button>
+            <button class="question-tab-button" data-question="5">과제 5</button>
+            <button id="submit-probing-a-btn" class="btn btn-primary" style="margin-left: auto; padding: 0.6rem 1.2rem; font-size: 0.875rem;">최종 제출하기</button>
+          </div>
+
+          <!-- 과제별 내용 -->
+          <div id="question-1-probing-content" class="question-probing-content active">
+            <!-- 과제 정보 표시 영역 -->
+            <div class="question-info-section" style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">과제 1</h3>
+              <div id="question-1-text" style="margin-bottom: 1.5rem; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">예시 답안</h4>
+              <div id="question-1-answer" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
+              <div id="question-1-criteria" class="handsontable-container"></div>
+            </div>
+
+            <!-- 입력 영역 (좌우 분할) -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <!-- 좌측: 학생 A 답변 -->
+              <div class="section-card">
+                <h2 class="section-title">학생 A 답변</h2>
+                <div id="student-a-answer-1" class="student-answer-content"></div>
+              </div>
+
+              <!-- 우측: 탐침 질문 만들기 -->
+              <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                  <h2 style="margin: 0;">탐침 질문 만들기</h2>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="save-status" data-question="1" data-student="a" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
+                    <button class="btn btn-primary save-probing-btn" data-question="1" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">과제별 저장</button>
+                  </div>
+                </div>
+                <div id="probing-questions-a-1" class="handsontable-container"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 과제 2~5도 동일한 구조로 생성 (숨김 처리) -->
+          <div id="question-2-probing-content" class="question-probing-content" style="display: none;">
+            <div class="question-info-section" style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">과제 2</h3>
+              <div id="question-2-text" style="margin-bottom: 1.5rem; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">예시 답안</h4>
+              <div id="question-2-answer" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
+              <div id="question-2-criteria" class="handsontable-container"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <div class="section-card">
+                <h2 class="section-title">학생 A 답변</h2>
+                <div id="student-a-answer-2" class="student-answer-content"></div>
+              </div>
+              <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                  <h2 style="margin: 0;">탐침 질문 만들기</h2>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="save-status" data-question="2" data-student="a" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
+                    <button class="btn btn-primary save-probing-btn" data-question="2" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">과제별 저장</button>
+                  </div>
+                </div>
+                <div id="probing-questions-a-2" class="handsontable-container"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="question-3-probing-content" class="question-probing-content" style="display: none;">
+            <div class="question-info-section" style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">과제 3</h3>
+              <div id="question-3-text" style="margin-bottom: 1.5rem; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">예시 답안</h4>
+              <div id="question-3-answer" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
+              <div id="question-3-criteria" class="handsontable-container"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <div class="section-card">
+                <h2 class="section-title">학생 A 답변</h2>
+                <div id="student-a-answer-3" class="student-answer-content"></div>
+              </div>
+              <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                  <h2 style="margin: 0;">탐침 질문 만들기</h2>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="save-status" data-question="3" data-student="a" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
+                    <button class="btn btn-primary save-probing-btn" data-question="3" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">과제별 저장</button>
+                  </div>
+                </div>
+                <div id="probing-questions-a-3" class="handsontable-container"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="question-4-probing-content" class="question-probing-content" style="display: none;">
+            <div class="question-info-section" style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">과제 4</h3>
+              <div id="question-4-text" style="margin-bottom: 1.5rem; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">예시 답안</h4>
+              <div id="question-4-answer" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
+              <div id="question-4-criteria" class="handsontable-container"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <div class="section-card">
+                <h2 class="section-title">학생 A 답변</h2>
+                <div id="student-a-answer-4" class="student-answer-content"></div>
+              </div>
+              <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                  <h2 style="margin: 0;">탐침 질문 만들기</h2>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="save-status" data-question="4" data-student="a" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
+                    <button class="btn btn-primary save-probing-btn" data-question="4" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">과제별 저장</button>
+                  </div>
+                </div>
+                <div id="probing-questions-a-4" class="handsontable-container"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="question-5-probing-content" class="question-probing-content" style="display: none;">
+            <div class="question-info-section" style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">과제 5</h3>
+              <div id="question-5-text" style="margin-bottom: 1.5rem; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">예시 답안</h4>
+              <div id="question-5-answer" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
+              <div id="question-5-criteria" class="handsontable-container"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <div class="section-card">
+                <h2 class="section-title">학생 A 답변</h2>
+                <div id="student-a-answer-5" class="student-answer-content"></div>
+              </div>
+              <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                  <h2 style="margin: 0;">탐침 질문 만들기</h2>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="save-status" data-question="5" data-student="a" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
+                    <button class="btn btn-primary save-probing-btn" data-question="5" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">과제별 저장</button>
+                  </div>
+                </div>
+                <div id="probing-questions-a-5" class="handsontable-container"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 학생 B의 케이스 -->
+      <div id="student-b-tab" class="sub-tab-content">
+        <!-- 시작하기 화면 -->
+        <div id="student-b-start-screen" style="text-align: center; padding: 3rem;">
+          <h2 style="margin-bottom: 2rem; color: #1f2937;">학생 B의 케이스 탐침 질문 만들기</h2>
+          <p style="margin-bottom: 2rem; color: #6b7280;">각 과제별로 학생 B의 답변을 확인하고 탐침 질문을 작성해주세요.</p>
+          <button id="start-probing-b-btn" class="btn btn-primary" style="font-size: 1.125rem; padding: 1rem 2rem;">시작하기</button>
+        </div>
+
+        <!-- 작업 화면 (시작하기 클릭 후 표시) -->
+        <div id="student-b-work-screen" style="display: none;">
+          <!-- 과제별 탭 -->
+          <div class="question-tabs" style="margin-bottom: 1.5rem;">
+            <button class="question-tab-button active" data-question="1">과제 1</button>
+            <button class="question-tab-button" data-question="2">과제 2</button>
+            <button class="question-tab-button" data-question="3">과제 3</button>
+            <button class="question-tab-button" data-question="4">과제 4</button>
+            <button class="question-tab-button" data-question="5">과제 5</button>
+            <button id="submit-probing-b-btn" class="btn btn-primary" style="margin-left: auto; padding: 0.6rem 1.2rem; font-size: 0.875rem;">최종 제출하기</button>
+          </div>
+
+          <!-- 과제별 내용 -->
+          <div id="question-1-probing-content-b" class="question-probing-content active">
+            <!-- 과제 정보 표시 영역 -->
+            <div class="question-info-section" style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">과제 1</h3>
+              <div id="question-1-text-b" style="margin-bottom: 1.5rem; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">예시 답안</h4>
+              <div id="question-1-answer-b" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
+              <div id="question-1-criteria-b" class="handsontable-container"></div>
+            </div>
+
+            <!-- 입력 영역 (좌우 분할) -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <!-- 좌측: 학생 B 답변 -->
+              <div class="section-card">
+                <h2 class="section-title">학생 B 답변</h2>
+                <div id="student-b-answer-1" class="student-answer-content"></div>
+              </div>
+
+              <!-- 우측: 탐침 질문 만들기 -->
+              <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                  <h2 style="margin: 0;">탐침 질문 만들기</h2>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="save-status" data-question="1" data-student="b" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
+                    <button class="btn btn-primary save-probing-btn" data-question="1" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">과제별 저장</button>
+                  </div>
+                </div>
+                <div id="probing-questions-b-1" class="handsontable-container"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 과제 2~5도 동일한 구조로 생성 (숨김 처리) -->
+          <div id="question-2-probing-content-b" class="question-probing-content" style="display: none;">
+            <div class="question-info-section" style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">과제 2</h3>
+              <div id="question-2-text-b" style="margin-bottom: 1.5rem; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">예시 답안</h4>
+              <div id="question-2-answer-b" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
+              <div id="question-2-criteria-b" class="handsontable-container"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <div class="section-card">
+                <h2 class="section-title">학생 B 답변</h2>
+                <div id="student-b-answer-2" class="student-answer-content"></div>
+              </div>
+              <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                  <h2 style="margin: 0;">탐침 질문 만들기</h2>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="save-status" data-question="2" data-student="b" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
+                    <button class="btn btn-primary save-probing-btn" data-question="2" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">과제별 저장</button>
+                  </div>
+                </div>
+                <div id="probing-questions-b-2" class="handsontable-container"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="question-3-probing-content-b" class="question-probing-content" style="display: none;">
+            <div class="question-info-section" style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">과제 3</h3>
+              <div id="question-3-text-b" style="margin-bottom: 1.5rem; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">예시 답안</h4>
+              <div id="question-3-answer-b" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
+              <div id="question-3-criteria-b" class="handsontable-container"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <div class="section-card">
+                <h2 class="section-title">학생 B 답변</h2>
+                <div id="student-b-answer-3" class="student-answer-content"></div>
+              </div>
+              <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                  <h2 style="margin: 0;">탐침 질문 만들기</h2>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="save-status" data-question="3" data-student="b" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
+                    <button class="btn btn-primary save-probing-btn" data-question="3" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">과제별 저장</button>
+                  </div>
+                </div>
+                <div id="probing-questions-b-3" class="handsontable-container"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="question-4-probing-content-b" class="question-probing-content" style="display: none;">
+            <div class="question-info-section" style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">과제 4</h3>
+              <div id="question-4-text-b" style="margin-bottom: 1.5rem; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">예시 답안</h4>
+              <div id="question-4-answer-b" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
+              <div id="question-4-criteria-b" class="handsontable-container"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <div class="section-card">
+                <h2 class="section-title">학생 B 답변</h2>
+                <div id="student-b-answer-4" class="student-answer-content"></div>
+              </div>
+              <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                  <h2 style="margin: 0;">탐침 질문 만들기</h2>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="save-status" data-question="4" data-student="b" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
+                    <button class="btn btn-primary save-probing-btn" data-question="4" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">과제별 저장</button>
+                  </div>
+                </div>
+                <div id="probing-questions-b-4" class="handsontable-container"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="question-5-probing-content-b" class="question-probing-content" style="display: none;">
+            <div class="question-info-section" style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">과제 5</h3>
+              <div id="question-5-text-b" style="margin-bottom: 1.5rem; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">예시 답안</h4>
+              <div id="question-5-answer-b" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
+              <div id="question-5-criteria-b" class="handsontable-container"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <div class="section-card">
+                <h2 class="section-title">학생 B 답변</h2>
+                <div id="student-b-answer-5" class="student-answer-content"></div>
+              </div>
+              <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                  <h2 style="margin: 0;">탐침 질문 만들기</h2>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="save-status" data-question="5" data-student="b" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
+                    <button class="btn btn-primary save-probing-btn" data-question="5" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">과제별 저장</button>
+                  </div>
+                </div>
+                <div id="probing-questions-b-5" class="handsontable-container"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="src/escape_plan.js"></script>
+</body>
+</html>
+

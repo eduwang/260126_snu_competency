@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>탐침질문 결과 보기</title>
+  <link rel="stylesheet" href="src/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="node_modules/sweetalert2/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="src/results_old.css">
+</head>
+<body>
+  <div class="page-container">
+    <div class="header-section">
+      <h1 style="margin: 0; color: #1f2937;">탐침질문 결과 보기</h1>
+      <div class="user-info-section">
+        <button id="backToMainBtn" class="back-btn">← 메인으로</button>
+        <span id="userInfo">🔐 로그인 후 이용해 주세요.</span>
+        <button id="logoutBtn" style="display: none;">로그아웃</button>
+      </div>
+    </div>
+
+    <div class="results-layout">
+      <!-- 좌측: 데이터 목록 -->
+      <div class="list-panel">
+        <h2 class="list-title">저장된 목록</h2>
+        <div id="dataList" class="data-list">
+          <p class="empty-message">데이터를 불러오는 중...</p>
+        </div>
+      </div>
+
+      <!-- 우측: 상세 내용 -->
+      <div class="detail-panel">
+        <div id="detailContent" class="detail-content">
+          <div class="empty-detail">
+            <p>좌측 목록에서 항목을 선택하세요</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="src/results_old.js"></script>
+</body>
+</html>

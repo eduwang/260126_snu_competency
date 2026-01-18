@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>워크숍 활동 - 메인</title>
+  <link rel="stylesheet" href="src/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="node_modules/sweetalert2/dist/sweetalert2.min.css">
+  <style>
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .user-section {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .user-info {
+      color: white;
+      font-weight: 500;
+    }
+    
+    .login-btn, .logout-btn {
+      padding: 0.625rem 1.25rem;
+      background: white;
+      color: var(--primary-color);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9375rem;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .login-btn:hover, .logout-btn:hover {
+      background: #f3f4f6;
+      transform: translateY(-1px);
+    }
+    
+    .nav-item {
+      opacity: 0.5;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    
+    .nav-item.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    .nav-item.admin-only {
+      display: none;
+    }
+    
+    .nav-item.admin-only.show {
+      display: flex;
+    }
+    
+    .qr-code-container {
+      width: 100%;
+      height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #f9fafb;
+    }
+    
+    .qr-code-image {
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .nav-item:hover .qr-code-image {
+      transform: scale(1.05);
+    }
+    
+    .qr-popup-image {
+      max-width: 90vw;
+      max-height: 90vh;
+      width: auto;
+      height: auto;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1>SNU 역량평가 면접 선도교사 워크숍</h1>
+          <p class="subtitle">SNU 역량평가 면접 선도교사 워크숍</p>
+        </div>
+        <div class="user-section">
+          <span id="userInfo" class="user-info">🔐 로그인 후 이용해 주세요.</span>
+          <button id="loginBtn" class="login-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10 17 15 12 10 7"></polyline>
+              <line x1="15" y1="12" x2="3" y2="12"></line>
+            </svg>
+            Google 로그인
+          </button>
+          <button id="logoutBtn" class="logout-btn" style="display: none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            로그아웃
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <nav class="nav-menu">
+        <a href="01_mock_eval_01_bottle_crack.html" class="nav-item" id="nav-mock-eval-01">
+          <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          <h2>모의평가 - 유리병 균열 패턴</h2>
+          <p>유리병 균열 패턴 문항</p>
+        </a>
+
+        <a href="01_mock_eval_02_college_entrance.html" class="nav-item" id="nav-mock-eval-02">
+          <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          <h2>모의평가 - 대학입시알고리즘</h2>
+          <p>대학입시알고리즘 문항</p>
+        </a>
+
+        <a href="02_probing_question_01_escape_plan.html" class="nav-item" id="nav-probing-01">
+          <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            <line x1="9" y1="10" x2="15" y2="10"></line>
+            <line x1="9" y1="14" x2="15" y2="14"></line>
+          </svg>
+          <h2>탐침 질문 만들기 - 대피시뮬레이션</h2>
+          <p>대피시뮬레이션 문항 탐침 질문 만들기</p>
+        </a>
+
+        <a href="02_probing_question_02_health_inequality.html" class="nav-item" id="nav-probing-02">
+          <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            <line x1="9" y1="10" x2="15" y2="10"></line>
+            <line x1="9" y1="14" x2="15" y2="14"></line>
+          </svg>
+          <h2>탐침 질문 만들기 - 건강불평등 연구</h2>
+          <p>건강불평등 연구 계획 문항 탐침 질문 만들기</p>
+        </a>
+
+        <a href="results.html" class="nav-item" id="nav-results">
+          <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+          </svg>
+          <h2>다른 사람 결과 보기</h2>
+          <p>다른 참가자들이 제작한 탐침질문과 결과를 확인합니다.</p>
+        </a>
+
+        <div class="nav-item visible" id="nav-qr-code">
+          <div class="qr-code-container">
+            <img src="link_qr.png" alt="QR 코드" class="qr-code-image" id="qr-code-image">
+          </div>
+          <h2 class="qr-link-text" style="cursor: pointer;">워크숍 만족도 조사</h2>
+          <p class="qr-link-text" style="cursor: pointer;">Link</p>
+        </div>
+
+        <a href="admin.html" class="nav-item admin-only" id="nav-admin">
+          <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          <h2>관리자 페이지</h2>
+          <p>모든 데이터를 확인하고 사용자를 등록합니다.</p>
+        </a>
+      </nav>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; 2026 SNU 역량평가 면접 선도교사 워크숍</p>
+    </footer>
+  </div>
+
+  <script type="module">
+    import { auth, db, googleProvider, isAdmin, addAdmin } from './src/firebaseConfig.js';
+    import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
+    import { doc, getDoc, query, where, getDocs, collection, setDoc, serverTimestamp } from 'firebase/firestore';
+    import Swal from 'sweetalert2';
+
+    // DOM 요소
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const userInfo = document.getElementById('userInfo');
+    const navItems = {
+      mockEval01: document.getElementById('nav-mock-eval-01'),
+      mockEval02: document.getElementById('nav-mock-eval-02'),
+      probing01: document.getElementById('nav-probing-01'),
+      probing02: document.getElementById('nav-probing-02'),
+      results: document.getElementById('nav-results'),
+      admin: document.getElementById('nav-admin')
+    };
+    
+    const qrCodeItem = document.getElementById('nav-qr-code');
+    
+    // QR 코드 항목은 항상 활성화
+    if (qrCodeItem) {
+      qrCodeItem.classList.add('visible');
+    }
+
+    // 로그인 버튼 클릭 이벤트
+    loginBtn.addEventListener('click', async () => {
+      console.log('🔐 로그인 버튼 클릭됨');
+      
+      // 로딩 알림 표시
+      Swal.fire({
+        title: '로그인 중...',
+        text: 'Google 계정으로 로그인합니다.',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      try {
+        console.log('🔐 Google 로그인 팝업 열기 시도...');
+        const result = await signInWithPopup(auth, googleProvider);
+        console.log('✅ 로그인 성공:', result.user.email);
+        
+        // 로딩 알림 닫기 (onAuthStateChanged에서 처리)
+        Swal.close();
+        
+      } catch (error) {
+        console.error('❌ 로그인 오류:', error);
+        console.error('에러 코드:', error.code);
+        console.error('에러 메시지:', error.message);
+        
+        let errorMessage = '로그인에 실패했습니다.';
+        let errorTitle = '로그인 실패';
+        
+        if (error.code === 'auth/popup-closed-by-user') {
+          errorMessage = '로그인 창이 닫혔습니다. 다시 시도해주세요.';
+          errorTitle = '로그인 취소';
+        } else if (error.code === 'auth/cancelled-popup-request') {
+          errorMessage = '로그인이 취소되었습니다.';
+        } else if (error.code === 'auth/popup-blocked') {
+          errorMessage = '팝업이 차단되었습니다. 브라우저 설정에서 팝업을 허용해주세요.';
+        } else if (error.code === 'auth/unauthorized-domain') {
+          errorMessage = '인증되지 않은 도메인입니다. Firebase Console에서 도메인을 추가해주세요.';
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        
+        Swal.fire({
+          icon: 'error',
+          title: errorTitle,
+          text: errorMessage,
+          confirmButtonText: '확인'
+        });
+      }
+    });
+
+    // 로그아웃 버튼 클릭 이벤트
+    logoutBtn.addEventListener('click', async () => {
+      const result = await Swal.fire({
+        title: '로그아웃',
+        text: '정말 로그아웃 하시겠습니까?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: '로그아웃',
+        cancelButtonText: '취소',
+        confirmButtonColor: '#ef4444'
+      });
+
+      if (result.isConfirmed) {
+        try {
+          await signOut(auth);
+          Swal.fire({
+            icon: 'success',
+            title: '로그아웃 완료',
+            text: '성공적으로 로그아웃되었습니다.',
+            timer: 1500,
+            showConfirmButton: false
+          });
+        } catch (error) {
+          console.error('로그아웃 오류:', error);
+          Swal.fire({
+            icon: 'error',
+            title: '로그아웃 실패',
+            text: '로그아웃 중 오류가 발생했습니다.',
+            confirmButtonText: '확인'
+          });
+        }
+      }
+    });
+
+    // 메뉴 설정 불러오기 및 적용
+    async function loadMenuSettings() {
+      try {
+        const settingsDoc = await getDoc(doc(db, 'menuSettings', 'main'));
+        const settings = settingsDoc.exists() ? settingsDoc.data() : {};
+        
+        // 각 버튼의 표시 여부 설정
+        if (navItems.mockEval01) {
+          navItems.mockEval01.style.display = (settings.mockEval01 !== false) ? 'flex' : 'none';
+        }
+        if (navItems.mockEval02) {
+          navItems.mockEval02.style.display = (settings.mockEval02 !== false) ? 'flex' : 'none';
+        }
+        if (navItems.probing01) {
+          navItems.probing01.style.display = (settings.probing01 !== false) ? 'flex' : 'none';
+        }
+        if (navItems.probing02) {
+          navItems.probing02.style.display = (settings.probing02 !== false) ? 'flex' : 'none';
+        }
+        if (navItems.results) {
+          navItems.results.style.display = (settings.activity2 !== false) ? 'flex' : 'none';
+        }
+        if (qrCodeItem) {
+          qrCodeItem.style.display = (settings.qrCode !== false) ? 'flex' : 'none';
+        }
+      } catch (error) {
+        console.error('메뉴 설정 불러오기 오류:', error);
+      }
+    }
+
+    // 네비게이션 항목 클릭 이벤트 (로그인 체크)
+    Object.values(navItems).forEach(navItem => {
+      if (navItem && navItem !== navItems.admin) {
+        navItem.addEventListener('click', (e) => {
+          if (!auth.currentUser) {
+            e.preventDefault();
+            Swal.fire({
+              icon: 'warning',
+              title: '로그인 필요',
+              text: '이 페이지를 이용하려면 로그인이 필요합니다.',
+              confirmButtonText: '확인'
+            });
+          }
+        });
+      }
+    });
+    
+    // QR 코드 이미지 클릭 이벤트 - 이미지 확대 팝업
+    const qrCodeImage = document.getElementById('qr-code-image');
+    if (qrCodeImage) {
+      qrCodeImage.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        Swal.fire({
+          html: `<img src="link_qr.png" alt="QR 코드" class="qr-popup-image">`,
+          width: 'auto',
+          padding: '2rem',
+          showConfirmButton: true,
+          confirmButtonText: '닫기',
+          customClass: {
+            popup: 'qr-popup',
+            htmlContainer: 'qr-popup-container'
+          },
+          didOpen: () => {
+            const popup = document.querySelector('.qr-popup');
+            if (popup) {
+              popup.style.textAlign = 'center';
+            }
+          }
+        });
+      });
+    }
+    
+    // 텍스트 클릭 이벤트 - Google Forms 링크로 이동
+    const qrLinkTexts = document.querySelectorAll('.qr-link-text');
+    qrLinkTexts.forEach(textElement => {
+      textElement.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.open('https://docs.google.com/forms/d/e/1FAIpQLSdDQxJBWnsGv_pkY3zqeFwGaBCApsTQkNrIl0PFyL3Y-0YPsA/viewform', '_blank');
+      });
+    });
+
+    // 사용자 등록 처리 함수
+    let isRegistering = false;
+    let registrationComplete = false;
+    async function handleUserRegistration(user) {
+      isRegistering = true;
+      registrationComplete = false;
+      try {
+        // users 컬렉션에서 해당 UID로 이미 등록된 사용자 확인
+        const userQuery = query(collection(db, 'users'), where('uid', '==', user.uid));
+        const userSnapshot = await getDocs(userQuery);
+        
+        if (!userSnapshot.empty) {
+          // 이미 등록된 사용자
+          const userData = userSnapshot.docs[0].data();
+          const displayName = userData.name 
+            ? `${userData.name}${userData.affiliation ? ` (${userData.affiliation})` : ''}`
+            : (user.displayName || user.email);
+          
+          userInfo.textContent = `👤 ${displayName} 님`;
+          isRegistering = false;
+          registrationComplete = true;
+          // UI 업데이트
+          await updateUserUI(user);
+          return;
+        }
+        
+        // 첫 로그인 - 코드 입력 받기
+        const codeResult = await Swal.fire({
+          title: '코드 입력',
+          html: `
+            <p style="margin-bottom: 1rem; color: #6b7280;">첫 로그인입니다. 코드를 입력해주세요.</p>
+            <input id="swal-code" class="swal2-input" placeholder="코드 입력" style="text-transform: uppercase;" maxlength="5">
+          `,
+          showCancelButton: false,
+          confirmButtonText: '확인',
+          cancelButtonText: '취소',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          preConfirm: () => {
+            const code = document.getElementById('swal-code').value.trim().toUpperCase();
+            if (!code) {
+              Swal.showValidationMessage('코드를 입력해주세요.');
+              return false;
+            }
+            return code;
+          }
+        });
+        
+        if (!codeResult.isConfirmed) {
+          // 코드 입력 취소 시 로그아웃
+          await signOut(auth);
+          isRegistering = false;
+          return;
+        }
+        
+        const code = codeResult.value;
+        
+        // 관리자 코드 확인
+        if (code === '12345') {
+          // 관리자로 등록
+          await addAdmin(user.uid);
+          await Swal.fire({
+            icon: 'success',
+            title: '관리자 등록 완료',
+            text: '관리자 계정으로 등록되었습니다.',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          userInfo.textContent = `👤 ${user.displayName || user.email} 님 (관리자)`;
+          isRegistering = false;
+          registrationComplete = true;
+          // UI 업데이트
+          await updateUserUI(user);
+          return;
+        }
+        
+        // 일반 사용자 코드 확인
+        const codeQuery = query(collection(db, 'users'), where('code', '==', code));
+        const codeSnapshot = await getDocs(codeQuery);
+        
+        if (codeSnapshot.empty) {
+          await Swal.fire({
+            icon: 'error',
+            title: '코드 오류',
+            text: '올바른 코드를 입력해주세요.',
+            confirmButtonText: '확인'
+          });
+          await signOut(auth);
+          isRegistering = false;
+          registrationComplete = true;
+          return;
+        }
+        
+        // 코드가 이미 사용된 경우
+        const userDoc = codeSnapshot.docs[0];
+        const userData = userDoc.data();
+        if (userData.uid) {
+          await Swal.fire({
+            icon: 'error',
+            title: '코드 사용 불가',
+            text: '이미 사용된 코드입니다.',
+            confirmButtonText: '확인'
+          });
+          await signOut(auth);
+          isRegistering = false;
+          registrationComplete = true;
+          return;
+        }
+        
+        // 사용자 정보 업데이트
+        await setDoc(doc(db, 'users', userDoc.id), {
+          ...userData,
+          uid: user.uid,
+          email: user.email,
+          linkedAt: serverTimestamp()
+        }, { merge: true });
+        
+        const displayName = userData.name 
+          ? `${userData.name}${userData.affiliation ? ` (${userData.affiliation})` : ''}`
+          : (user.displayName || user.email);
+        
+        await Swal.fire({
+          icon: 'success',
+          title: '등록 완료',
+          text: `${displayName}님, 환영합니다!`,
+          timer: 2000,
+          showConfirmButton: false
+        });
+        
+        userInfo.textContent = `👤 ${displayName} 님`;
+        isRegistering = false;
+        registrationComplete = true;
+        // UI 업데이트
+        await updateUserUI(user);
+        
+      } catch (error) {
+        console.error('사용자 등록 오류:', error);
+        await Swal.fire({
+          icon: 'error',
+          title: '등록 실패',
+          text: error.message || '사용자 등록 중 오류가 발생했습니다.',
+          confirmButtonText: '확인'
+        });
+        await signOut(auth);
+        isRegistering = false;
+        registrationComplete = true;
+      }
+    }
+
+    // 인증 상태 변경 감지
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // 등록 처리 중이면 기다림 (handleUserRegistration이 완료될 때까지)
+        if (isRegistering) {
+          // 등록 완료까지 대기
+          const checkRegistration = setInterval(async () => {
+            if (registrationComplete) {
+              clearInterval(checkRegistration);
+              // 등록 완료 후 UI 업데이트
+              await updateUserUI(user);
+            }
+          }, 100);
+          return;
+        }
+        
+        // 첫 로그인인지 확인
+        const userQuery = query(collection(db, 'users'), where('uid', '==', user.uid));
+        const userSnapshot = await getDocs(userQuery);
+        const adminDoc = await getDoc(doc(db, 'adminUsers', user.uid));
+        
+        // 이미 등록된 사용자이거나 관리자인 경우
+        if (!userSnapshot.empty || adminDoc.exists()) {
+          await updateUserUI(user);
+        } else {
+          // 첫 로그인 - 코드 입력 처리
+          // handleUserRegistration 내에서 updateUserUI를 호출하므로 여기서는 호출하지 않음
+          await handleUserRegistration(user);
+        }
+      } else {
+        // 로그아웃된 경우
+        userInfo.textContent = '🔐 로그인 후 이용해 주세요.';
+        loginBtn.style.display = 'flex';
+        logoutBtn.style.display = 'none';
+
+        // 모든 네비게이션 항목 비활성화 (QR 코드 제외)
+        Object.values(navItems).forEach(navItem => {
+          if (navItem) {
+            navItem.classList.remove('visible');
+          }
+        });
+        
+        // QR 코드 항목은 항상 활성화 유지
+        if (qrCodeItem) {
+          qrCodeItem.classList.add('visible');
+        }
+
+        // 관리자 버튼 숨기기
+        navItems.admin.classList.remove('show');
+        
+        sessionStorage.removeItem('justLoggedIn');
+      }
+    });
+    
+    // 사용자 UI 업데이트 함수
+    async function updateUserUI(user) {
+      // 사용자 정보 가져오기
+      try {
+        const userQuery = query(collection(db, 'users'), where('uid', '==', user.uid));
+        const userSnapshot = await getDocs(userQuery);
+        
+        let displayName = user.displayName || user.email;
+        if (!userSnapshot.empty) {
+          const userData = userSnapshot.docs[0].data();
+          if (userData.name) {
+            displayName = `${userData.name}${userData.affiliation ? ` (${userData.affiliation})` : ''}`;
+          }
+        }
+        
+        userInfo.textContent = `👤 ${displayName} 님`;
+      } catch (error) {
+        console.error('사용자 정보 불러오기 오류:', error);
+        userInfo.textContent = `👤 ${user.displayName || user.email} 님`;
+      }
+      
+      loginBtn.style.display = 'none';
+      logoutBtn.style.display = 'flex';
+
+      // 모든 네비게이션 항목 활성화
+      Object.values(navItems).forEach(navItem => {
+        if (navItem) {
+          navItem.classList.add('visible');
+        }
+      });
+
+      // 메뉴 설정 불러오기 및 적용
+      await loadMenuSettings();
+
+      // 관리자 여부 확인
+      const userIsAdmin = await isAdmin(user.uid);
+      if (userIsAdmin) {
+        navItems.admin.classList.add('show');
+      } else {
+        navItems.admin.classList.remove('show');
+      }
+
+      // 로그인 성공 알림 (처음 로그인한 경우에만, 등록 완료된 경우는 handleUserRegistration에서 이미 표시)
+      if (sessionStorage.getItem('justLoggedIn') !== 'true' && !isRegistering && !registrationComplete) {
+        sessionStorage.setItem('justLoggedIn', 'true');
+        // 약간의 지연을 두어 로딩이 완전히 닫힌 후 표시
+        setTimeout(() => {
+          Swal.fire({
+            icon: 'success',
+            title: '로그인 성공',
+            text: `${user.displayName || user.email}님, 환영합니다!`,
+            timer: 2000,
+            showConfirmButton: false
+          });
+        }, 300);
+      }
+    }
+  </script>
+</body>
+</html>

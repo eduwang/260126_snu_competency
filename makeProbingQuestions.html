@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>탐침질문 만들기</title>
+  <link rel="stylesheet" href="src/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="node_modules/handsontable/dist/handsontable.full.min.css">
+  <link rel="stylesheet" href="node_modules/sweetalert2/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="src/makeProbingQuestions.css">
+</head>
+<body>
+  <div class="page-container">
+    <div class="header-section">
+      <h1 style="margin: 0; color: #1f2937;">탐침질문 만들기</h1>
+      <div class="user-info-section">
+        <button id="backToMainBtn" class="back-btn">← 메인으로</button>
+        <span id="userInfo">🔐 로그인 후 이용해 주세요.</span>
+        <button id="logoutBtn" style="display: none;">로그아웃</button>
+      </div>
+    </div>
+
+    <!-- 탭 메뉴 -->
+    <div class="tabs">
+      <button class="tab-button active" data-tab="document">📄 제시문 보기</button>
+      <button class="tab-button" data-tab="writing">✍️ 대화 및 탐침질문 작성</button>
+    </div>
+
+    <!-- 제시문 보기 탭 -->
+    <div id="document-tab" class="tab-content active">
+      <div class="document-viewer">
+        <h2 class="section-title">제시문</h2>
+        <div class="document-images">
+          <img src="/sample/6_페이지_1.jpg" alt="제시문 페이지 1">
+          <img src="/sample/6_페이지_2.jpg" alt="제시문 페이지 2">
+          <img src="/sample/6_페이지_3.jpg" alt="제시문 페이지 3">
+          <img src="/sample/6_페이지_4.jpg" alt="제시문 페이지 4">
+          <img src="/sample/6_페이지_5.jpg" alt="제시문 페이지 5">
+        </div>
+      </div>
+    </div>
+
+    <!-- 대화 및 탐침질문 작성 탭 -->
+    <div id="writing-tab" class="tab-content">
+      <div class="main-content">
+      <!-- 좌측: 면접관과 학생의 가상 대화 -->
+      <div class="section-card">
+        <div class="section-title">
+          <h2>💬 면접관과 학생의 가상 대화</h2>
+          <div style="display: flex; gap: 0.5rem;">
+            <button id="load-btn" class="btn btn-primary">불러오기</button>
+            <div class="table-controls">
+              <button id="add-conversation-row" class="btn btn-secondary">행 추가</button>
+              <button id="del-conversation-row" class="btn btn-secondary">행 삭제</button>
+            </div>
+          </div>
+        </div>
+        <div id="conversation-table" class="handsontable-container"></div>
+      </div>
+
+      <!-- 우측: 탐침질문 -->
+      <div class="section-card">
+        <div class="section-title">
+          <h2>❓ 탐침질문</h2>
+          <div class="table-controls">
+            <button id="add-probing-row" class="btn btn-secondary">행 추가</button>
+            <button id="del-probing-row" class="btn btn-secondary">행 삭제</button>
+          </div>
+        </div>
+        <div id="probing-questions-table" class="handsontable-container"></div>
+        
+        <!-- 가상의 학생 특성 입력 -->
+        <div class="student-characteristics">
+          <label for="studentCharacteristics">가상의 학생 특성</label>
+          <textarea 
+            id="studentCharacteristics" 
+            placeholder="예: 수학에 자신감이 없는 학생, 개념 이해는 잘하지만 계산 실수가 많은 학생 등..."
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- 제출 버튼 -->
+      <div class="submit-section">
+        <button id="submitBtn" class="submit-btn">제출하기</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="src/makeProbingQuestions.js"></script>
+</body>
+</html>

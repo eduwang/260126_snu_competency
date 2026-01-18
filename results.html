@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>탐침질문 결과 보기</title>
+  <link rel="stylesheet" href="src/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="node_modules/sweetalert2/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="src/resultsMain.css">
+</head>
+<body>
+  <div class="page-container">
+    <div class="header-section">
+      <h1 style="margin: 0; color: #1f2937;">탐침질문 결과 보기</h1>
+      <div class="user-info-section">
+        <button id="backToMainBtn" class="back-btn">← 메인으로</button>
+        <span id="userInfo">🔐 로그인 후 이용해 주세요.</span>
+        <button id="logoutBtn" style="display: none;">로그아웃</button>
+      </div>
+    </div>
+
+    <!-- 필터 섹션 -->
+    <div class="filters-section">
+      <!-- 시나리오 필터 -->
+      <div class="filter-group">
+        <label class="filter-label">시나리오</label>
+        <div class="tab-group" id="scenarioTabs">
+          <!-- 시나리오 탭은 JavaScript에서 동적으로 생성됩니다 -->
+        </div>
+      </div>
+
+      <!-- 학생 타입 필터 -->
+      <div class="filter-group">
+        <label class="filter-label">학생 타입</label>
+        <div class="tab-group" id="studentTypeTabs">
+          <button class="tab-btn active" data-student-type="A">학생 A</button>
+          <button class="tab-btn" data-student-type="B">학생 B</button>
+        </div>
+      </div>
+
+      <!-- 과제 필터 -->
+      <div class="filter-group">
+        <label class="filter-label">과제</label>
+        <div class="tab-group" id="questionTabs">
+          <button class="tab-btn active" data-question="all">전체</button>
+          <button class="tab-btn" data-question="1">과제 1</button>
+          <button class="tab-btn" data-question="2">과제 2</button>
+          <button class="tab-btn" data-question="3">과제 3</button>
+          <button class="tab-btn" data-question="4">과제 4</button>
+          <button class="tab-btn" data-question="5">과제 5</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 결과 표시 영역 -->
+    <div class="results-section">
+      <div id="resultsContent" class="results-content">
+        <div class="empty-state">
+          <p>필터를 선택하여 탐침 질문을 확인하세요.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="src/resultsMain.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>대학입시알고리즘 - 모의평가</title>
+  <link rel="stylesheet" href="src/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="node_modules/handsontable/dist/handsontable.full.min.css">
+  <link rel="stylesheet" href="node_modules/sweetalert2/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="src/bottle_crack.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      }
+    };
+  </script>
+</head>
+<body>
+  <div class="page-container">
+    <div class="header-section">
+      <h1 style="margin: 0; color: #1f2937;">대학입시알고리즘 - 모의평가</h1>
+      <div class="user-info-section">
+        <button id="backToMainBtn" class="back-btn">← 메인으로</button>
+        <span id="userInfo">🔐 로그인 후 이용해 주세요.</span>
+        <button id="logoutBtn" style="display: none;">로그아웃</button>
+      </div>
+    </div>
+
+    <!-- 최상단 탭 메뉴 -->
+    <div class="main-tabs">
+      <button class="main-tab-button active" data-main-tab="materials">📄 면접 자료(제시문 및 예시 답안 확인)</button>
+      <button class="main-tab-button" data-main-tab="evaluation">✍️ 모의 평가</button>
+    </div>
+
+    <!-- 면접 자료 확인 탭 -->
+    <div id="materials-tab" class="main-tab-content active">
+      <div class="materials-layout">
+        <!-- 좌측: 제시문 및 질문 -->
+        <div class="materials-left">
+          <div class="materials-section">
+            <h2 class="section-title">제시문 및 질문</h2>
+            
+            <!-- 제시문 탭 -->
+            <div class="document-tabs" style="margin-bottom: 1.5rem;">
+              <button class="document-tab-button active" data-document="1">제시문 1</button>
+              <button class="document-tab-button" data-document="2">제시문 2</button>
+            </div>
+            
+            <div class="document-content">
+              <!-- 제시문 1 내용 -->
+              <div id="document-1-content" class="document-tab-content active">
+                <div class="document-text">
+                  <p>아래 그래프는 지원자의 입학 지원시 제출한 자료를 바탕으로 해당 지원자가 입학했을 경우의 졸업 학점을 추정한 결과를 이용해서 그려졌다. 각 지원자의 예상 졸업 학점은 해당 대학교 졸업자들의 입학 지원 시 제출한 서류와 실제 졸업 학점의 상관 관계를 알고리즘을 통해서 학습한 결과로 추산되었다. 이 대학교에서는 이렇게 추산된 예상 졸업 학점을 바탕으로, 지원자들의 순위를 내어서 그 중 상위자를 합격시킨다고 가정하자.</p>
+                  <div class="document-image-container">
+                    <img src="public/mockEvaluation/college_entrance_01.png" alt="예측 알고리즘과 흑인 합격생 비율에 따른 예상 졸업 학점 하위자의 비율" class="document-image">
+                    <p style="text-align: center; margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280; font-style: italic;">예측 알고리즘과 흑인 합격생 비율에 따른 예상 졸업 학점 하위자의 비율</p>
+                  </div>
+                  <p>이 그래프는 대학 입시에 있어서 소수 인종인 흑인의 비율에 대해서 각기 다른 기계학습 알고리즘 a)Blind와 b)Aware를 적용했을 경우의 예측 결과를 나타낸다. x축에 나타난 흑인 합격생의 비율은 전체 합격생 중 흑인 합격생의 비율을 백분위로 나타낸다. 예를 들어서 총 500명이 지원해서, 100명의 지원자가 합격했고, 흑인 지원자가 85명, 이중 흑인 합격자가 15명이라면, 해당 사례의 x값은 15가 된다. y축 값은 각각의 경우, 예측 졸업 학점이 2.75 이하인 전체 합격자의 백분위 비율을 나타낸다. 총 100명의 합격자 중, 2.75 이하인 학생이 17명이라면, y값은 17이 된다.</p>
+                  <p>Blind 알고리즘(a)은 학습 과정에 있어서 백인, 아시아계, 흑인에게 동일한 잣대를 적용한 경우 중 가장 높은 예측률을 얻은 경우를 나타낸다. 즉, 인종이 다른 두 지원자의 예상 졸업 학점은 (인종을 제외한) 지원시 제출 자료가 동일하다고 했을 때, 동일하다. 반대로 Aware 알고리즘(b)은 각각의 인종 집단에게 서로 다른 최적화 알고리즘을 적용해서 각 인종 집단의 예상 졸업 학점 예측률을 개별적으로 최대화한 결과를 나타낸다. 예를 들어, 백인 학생들에 비해서, 흑인 학생 집단의 고등학교 내신 성적이 대학 졸업 학점과 더 높은 상관관계를 갖고 있다면, Aware 알고리즘에서는 흑인 학생들의 예상 졸업 학점을 예측할 때, 백인 학생들에 대한 예측을 할 때보다 내신 성적을 더 중요하게 이용한다.</p>
+                </div>
+              </div>
+              
+              <!-- 제시문 2 내용 -->
+              <div id="document-2-content" class="document-tab-content">
+                <div class="document-text">
+                  <p>선진 민주주의 국가에는 점점 더 많은 난민이 유입되고 있으며, 난민의 다수는 정착한 사회에 융화되는 데에 어려움을 겪고 있다. 난민을 수용한 국가에서 난민의 정착 지역을 배정하는 것은 난민 정착 과정에서 이루어지는 첫 번째 정책 결정 중 하나이다. 난민의 사회적 통합과 수용에는 지역 특성, 개인적 특성, 지역 특성과 개인 특성 간의 시너지(상승 효과)가 영향을 미친다. 예를 들어, 미국의 일부 정착 지역은 더 나은 경제적, 사회적 기회를 제공하며, 이는 더 높은 난민 취업률로 이어질 것이다. 또한, 특정 언어나 교육적 기술과 같은 특성을 가진 난민들은 정착 지역에 상관없이 경제적으로 성공할 가능성이 더 높다. 마지막으로, 개인적 특성에 따른 예상 취업 성과는 다양한 정착 지역에서 다르게 나타날 수 있다. 이는 장소와 사람 간의 시너지가 존재함을 나타내며, 특정 특성은 특정 위치에 더 적합할 수 있다. 예를 들어, 프랑스어가 모국어인 아프리카 난민들은 스위스의 다른 지역들에 비해서 프랑스어를 사용하는 지역에 배정되었을 때 더 높은 취업률을 보였다.</p>
+                  <p>아래 그래프는 다섯 개 지역에 정착한 난민들의 실제 취업률(Actual)과, 동일한 난민들을 실제와 다른 지역으로 정착시키는 모든 경우의 수 중, 컴퓨터 알고리즘을 통해서 얻은 가장 효율적인 정착 결과(Algorithmic)를 비교해서 나타낸 것이다. 효율적인 결과란 대상이 된 전체 난민들의 "예측된 평균 취업률"을 최대화한 결과를 말한다. 예측은 그동안 수집된 방대한 양의 취업 기록을 바탕으로 해당 개인 특성을 가진 난민의 취업 가능성을 계산함으로써 얻어지며, 각각의 지역에는 아래 표에 숫자로 쓰여진 수용 가능 인원이 있다. 실제와 알고리즘을 통한 최적화 경우 공히 모든 지역에 해당 인원이 배정되었다.</p>
+                  <div class="document-image-container">
+                    <img src="public/mockEvaluation/college_entrance_02.png" alt="다섯 개 지역의 정착 수용 인원, 실제 취업률과 알고리즘을 통한 최적화를 수행한 경우의 취업률 비교" class="document-image">
+                    <p style="text-align: center; margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280; font-style: italic;">다섯 개 지역의 정착 수용 인원, 실제 취업률(Actual)과 알고리즘을 통한 최적화를 수행한 경우(Algorithmic)의 취업률(Probability of Employment) 비교</p>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 질문 1 -->
+              <div class="question-item">
+                <h3>질문 1</h3>
+                <div class="question-content">
+                  <p>[제시문 1]의 사례에서, 해당 대학교에 적극적인 우대조치(affirmative action)가 시행되고 있다고 하자. 합격생 중 소수 인종인 흑인 학생의 비율이 정해졌다고 한다면, 각각의 알고리즘을 적용했을 때 어떤 차이가 발생하는가? </p>
+                </div>
+              </div>
+
+              <!-- 질문 2 -->
+              <div class="question-item">
+                <h3>질문 2</h3>
+                <div class="question-content">
+                  <p>(위와 같이 적극적인 우대조치 시행으로 흑인 학생 비율이 정해졌다고 하자.) [제시문 1]의 서로 다른 두 알고리즘의 추정 방법과 그래프에 나타난 예측 결과를 바탕으로, 어느 알고리즘에 기반한 예측을 활용한 입학 심사가 더 나은지 설명하시오. 본인이 생각하는 ‘나음’의 기준 혹은 원칙을 먼저 소개하고, 이를 바탕으로 각각을 서로 비교하시오. </p>
+                </div>
+              </div>
+
+              <!-- 질문 3 -->
+              <div class="question-item">
+                <h3>질문 3</h3>
+                <div class="question-content">
+                  <p>[제시문 1]의 사례를 통해 형성한 문제 의식을 바탕으로, [제시문 2]의 사례를 분석하고자 한다. [제시문 2]에서 이용된 알고리즘은 “대상이 된 전체 난민들의 예측된 평균 취업률을 최대화”한다. [제시문 2]에 소개된 알고리즘을 통한 배정을 실제로 시행했다고 한다면, [제시문 1]를 통해 문제 의식을 형성한 사람은 어떠한 비판을 할 수 있을까?</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 우측: 예시 답안, 평가 기준, 탐침 질문 -->
+        <div class="materials-right">
+          <div class="question-tabs-container">
+            <!-- 제목 -->
+            <h2 class="section-title">예시 답안, 평가 기준, 탐침 질문 확인</h2>
+            
+            <!-- 질문별 탭 -->
+            <div class="question-tabs">
+              <button class="question-tab-button active" data-question="1">질문 1</button>
+              <button class="question-tab-button" data-question="2">질문 2</button>
+              <button class="question-tab-button" data-question="3">질문 3</button>
+              <button class="question-tab-button" data-question="summary">종합 평가 기준 및 탐침 질문</button>
+            </div>
+
+            <!-- 질문 1 탭 내용 -->
+            <div id="question-1-content" class="question-tab-content active">
+              <div class="materials-scrollable">
+                <!-- 예시 답안 -->
+                <div class="materials-section">
+                  <h2 class="section-title">예시 답안</h2>
+                  <div class="answer-text">
+                    <p>적극적 우대조치가 시행되어 있다고 한다면, 전체 합격생 수가 정해진 경우 흑인의 합격인원이 정해졌다고 봐야한다. Blind 알고리즘을 사용한 경우와 Aware 알고리즘을 사용한 경우 흑인내 순위가 달라질 수 있으므로 합격생의 결과가 달라질 수 있다. 그림 1에서 보면, x축에 흑인 합격 비율이 고정된 경우, 예측되는 GPA가 낮은 학생 비율이 Blind 알고리즘을 쓴 경우가 Aware 알고리즘을 쓴 경우보다 더 많다.</p>
+                  </div>
+                </div>
+
+                <!-- 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">평가 기준</h2>
+                  <div id="criteria-table-1" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 질문 2 탭 내용 -->
+            <div id="question-2-content" class="question-tab-content">
+              <div class="materials-scrollable">
+                <!-- 예시 답안 -->
+                <div class="materials-section">
+                  <h2 class="section-title">예시 답안</h2>
+                  <div class="answer-text">
+                    <p><strong>(예시 답안 1)</strong></p>
+                    <p>Blind 알고리즘이 Aware 알고리즘과 달리 인종 차이를 고려하지 않은 모두에게 동일한 기준으로 구성된 것이므로, 공정성을 가지고 있다고 보아 더 나은 알고리즘이라고 생각한다. 여기서 공정성이란 선발 과정의 일관성과 객관성을 의미한다. 적극적 우대조치가 시행되는 상황이니 만큼 이미 기회의 불평등에 대한 조치가 이루어지고 있으므로, 그 안에서 선발하는 기준이 인종 상관없이 일관적으로 동등하게 작동하다는 신뢰를 형성하는 것이 필요하다. 그래야 선발된 사람들도 외부의 편견으로부터 더 자유로울 수 있다. Aware 알고리즘의 예측이 성적이 낮을 비율을 대체로 낮게 예측한다고 하더라도 이는 어디까지나 예측에 해당하기 때문에, 인종 차이를 고려하지 않은 알고리즘을 적용하는 것이 더 적절하다고 생각한다.</p>
+                    <p><strong>(예시 답안 2)</strong></p>
+                    <p>Aware 알고리즘에서 GPA가 낮은 학생의 비율 예측이 Blind 알고리즘 보다 더 작다는 것은 Aware 알고리즘이 더 효율적인 결과를 만들고 있다는 것이다. 여기서 효율성이란 대학에서 학업을 성공적으로 수행할 학생을 잘 선발하는 것이 입학 선발에서 가장 중요한 측면이라는 의미이다. 따라서, 인종적 문화적 특성과 상황에 맞춤화된 예측 알고리즘은 오히려 더욱 효율성을 극대화하는 입학 결과를 가능하게 한 것이라고 생각한다.</p>
+                  </div>
+                </div>
+
+                <!-- 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">평가 기준</h2>
+                  <div id="criteria-table-2" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 질문 3 탭 내용 -->
+            <div id="question-3-content" class="question-tab-content">
+              <div class="materials-scrollable">
+                <!-- 예시 답안 -->
+                <div class="materials-section">
+                  <h2 class="section-title">예시 답안</h2>
+                  <div class="answer-text">
+                    <p><strong>(예시 답안 1)</strong></p>
+                    <p>제시문 1 관련해서 Blind 알고리즘이 가진 공정성이 더 중요하다는 문제의식을 가졌다. 이는 실제 결과에 대한 인위적인 조장 보다 과정에서 발생하는 기회가 일관적이고 동등하게 주어지는 것이 더 중요하다는 것을 의미한다. 만약, 데이터로부터 학습된 알고리즘을 통해 사람들을 각자 다른 기준으로 배치하게 된다면, 난민 사이에 유리한 조건을 가진 집단에게 유리한 배치가 일어날 수 있어 또 다른 차별을 가져올 수 있다. 알고리즘이 만든 모델이 명확하게 공개된다고 해도 개인으로서는 특정 특성 때문에 불리한 지역에 배치되는 것에 대해 불합리하게 느낄 수 있다.</p>
+                    <p><strong>(예시 답안 2)</strong></p>
+                    <p>제시문 1 관련해서 Aware 알고리즘의 결과적 효율성이 더 중요하다는 문제의식을 가졌다. 따라서, 알고리즘을 이용한 배치는 최적에 가까운 취업률을 가질 확률이 높기에 매우 적절한 정책이라고 생각한다. 다만 알고리즘은 어디까지나 일반적인 패턴이기 때문에 개인의 사례에서는 각자의 선호와 판단이 다를 수 있다. 개인의 선택과 선호를 충분히 반영할 수 있는 방안을 통해 개인의 자율성 역시 반영될 필요가 있다.</p>
+                  </div>
+                </div>
+
+                <!-- 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">평가 기준</h2>
+                  <div id="criteria-table-3" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 종합 평가 기준 및 탐침 질문 탭 내용 -->
+            <div id="question-summary-content" class="question-tab-content">
+              <div class="materials-scrollable">
+                <!-- 종합 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">종합 평가 기준</h2>
+                  <div id="summary-criteria-table" class="handsontable-container"></div>
+                </div>
+
+                <!-- 탐침 질문 -->
+                <div class="materials-section">
+                  <h2 class="section-title" style="display: inline-block; width: 100%;">탐침 질문 <button id="view-probing-questions-btn" class="btn btn-primary" style="font-size: 0.875rem; padding: 0.25rem 0.75rem; margin-left: 0.5rem; vertical-align: baseline;">크게 보기</button></h2>
+                  <div id="probing-questions-table" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 모의 평가 탭 -->
+    <div id="evaluation-tab" class="main-tab-content">
+      <div style="padding: 2rem;">
+        <h2 style="color: #1f2937; margin-bottom: 1.5rem;">모의 평가</h2>
+        <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+          <iframe 
+            src="https://docs.google.com/forms/d/e/1FAIpQLScO8uoMNadLD-8aXgilNWJb3k0zvB6oSiJCCK8IVwbaSVFN3w/viewform?embedded=true" 
+            width="100%" 
+            height="1200" 
+            frameborder="0" 
+            marginheight="0" 
+            marginwidth="0"
+            style="border: none; display: block; min-height: 1200px;">
+            로드 중…
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="src/college_entrance.js"></script>
+</body>
+</html>
+

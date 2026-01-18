@@ -1,0 +1,401 @@
+.page-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1rem 1.5rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.user-info-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+#userInfo {
+  font-weight: 500;
+  color: #374151;
+}
+
+.back-btn {
+  padding: 0.5rem 1rem;
+  background: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.back-btn:hover {
+  background: #4b5563;
+}
+
+#logoutBtn {
+  padding: 0.5rem 1rem;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+#logoutBtn:hover {
+  background: #dc2626;
+}
+
+/* 최상단 탭 스타일 */
+.main-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.main-tab-button {
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-weight: 500;
+  color: #6b7280;
+  transition: all 0.2s;
+  font-size: 0.9375rem;
+}
+
+.main-tab-button:hover {
+  color: #2563eb;
+}
+
+.main-tab-button.active {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+}
+
+.main-tab-content {
+  display: none;
+}
+
+.main-tab-content.active {
+  display: block;
+}
+
+/* 면접 자료 확인 탭 레이아웃 */
+.materials-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  height: calc(100vh - 300px);
+  min-height: 600px;
+}
+
+.materials-left {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  overflow-y: auto;
+}
+
+.materials-right {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.question-tabs-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* 제시문 탭 스타일 */
+.document-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.document-tab-button {
+  padding: 0.6rem 1.2rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-weight: 500;
+  color: #6b7280;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.document-tab-button:hover {
+  color: #2563eb;
+}
+
+.document-tab-button.active {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+}
+
+.document-tab-content {
+  display: none;
+}
+
+.document-tab-content.active {
+  display: block;
+}
+
+/* 문항별 탭 스타일 */
+.question-tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+.question-tab-button {
+  padding: 0.6rem 1.2rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-weight: 500;
+  color: #6b7280;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.question-tab-button:hover {
+  color: #2563eb;
+}
+
+.question-tab-button.active {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+}
+
+.question-tab-content {
+  display: none;
+  flex: 1;
+  overflow: hidden;
+}
+
+.question-tab-content.active {
+  display: flex;
+  flex-direction: column;
+}
+
+.materials-scrollable {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 0.5rem;
+}
+
+.materials-section {
+  margin-bottom: 2rem;
+}
+
+.materials-section:last-child {
+  margin-bottom: 0;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+/* 제시문 및 문항 스타일 */
+.document-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.document-text {
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  line-height: 1.6;
+  color: #374151;
+}
+
+.document-text p {
+  margin: 0 0 0.5rem 0;
+}
+
+.document-text p:last-child {
+  margin-bottom: 0;
+}
+
+/* 유튜브 링크 스타일 (인라인) */
+.youtube-link-inline {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  margin-left: 0.5rem;
+  color: #ff0000;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.youtube-link-inline:hover {
+  color: #cc0000;
+  transform: scale(1.1);
+}
+
+.youtube-link-inline svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* 이미지 컨테이너 스타일 */
+.document-image-container {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.document-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.document-image:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.question-item {
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+.question-item h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #2563eb;
+}
+
+.question-content {
+  line-height: 1.6;
+  color: #374151;
+}
+
+/* 예시 답안 텍스트 스타일 */
+.answer-text {
+  padding: 1rem;
+  background: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  line-height: 1.8;
+  color: #374151;
+}
+
+.materials-scrollable .materials-section .answer-text p {
+  margin: 0 0 1rem 0 !important;
+  white-space: normal;
+  text-indent: 1em !important;
+  padding: 0 !important;
+  text-align: left;
+  line-height: 1.8;
+}
+
+.answer-text p:last-child {
+  margin-bottom: 0;
+}
+
+.handsontable-container {
+  margin-bottom: 1rem;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+}
+
+.btn-primary {
+  background: #2563eb;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+  .materials-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .materials-left,
+  .materials-right {
+    height: auto;
+    max-height: 600px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 1rem;
+  }
+
+  .header-section {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .user-info-section {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
