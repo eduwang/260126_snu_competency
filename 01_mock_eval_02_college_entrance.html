@@ -36,7 +36,7 @@
     <!-- 최상단 탭 메뉴 -->
     <div class="main-tabs">
       <button class="main-tab-button active" data-main-tab="materials">📄 면접 자료(제시문 및 예시 답안 확인)</button>
-      <button class="main-tab-button" data-main-tab="evaluation">✍️ 모의 평가</button>
+      <button class="main-tab-button" data-main-tab="evaluation">✍️ 모의평가</button>
     </div>
 
     <!-- 면접 자료 확인 탭 -->
@@ -207,18 +207,61 @@
     <!-- 모의 평가 탭 -->
     <div id="evaluation-tab" class="main-tab-content">
       <div style="padding: 2rem;">
-        <h2 style="color: #1f2937; margin-bottom: 1.5rem;">모의 평가</h2>
-        <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-          <iframe 
-            src="https://docs.google.com/forms/d/e/1FAIpQLScO8uoMNadLD-8aXgilNWJb3k0zvB6oSiJCCK8IVwbaSVFN3w/viewform?embedded=true" 
-            width="100%" 
-            height="1200" 
-            frameborder="0" 
-            marginheight="0" 
-            marginwidth="0"
-            style="border: none; display: block; min-height: 1200px;">
-            로드 중…
-          </iframe>
+        <h2 style="color: #1f2937; margin-bottom: 1.5rem;">모의평가</h2>
+        
+        <!-- 질문별 탭 버튼 -->
+        <div class="question-tabs" style="margin-bottom: 1.5rem;">
+          <button class="question-tab-button active evaluation-question-tab" data-evaluation-question="1">질문 1</button>
+          <button class="question-tab-button evaluation-question-tab" data-evaluation-question="2">질문 2</button>
+          <button class="question-tab-button evaluation-question-tab" data-evaluation-question="3">질문 3</button>
+        </div>
+
+        <!-- 질문 1 평가 -->
+        <div id="evaluation-question-1-content" class="evaluation-question-content active">
+          <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <iframe 
+              src="" 
+              width="100%" 
+              height="1200" 
+              frameborder="0" 
+              marginheight="0" 
+              marginwidth="0"
+              style="border: none; display: block; min-height: 1200px;">
+              로드 중…
+            </iframe>
+          </div>
+        </div>
+
+        <!-- 질문 2 평가 -->
+        <div id="evaluation-question-2-content" class="evaluation-question-content">
+          <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <iframe 
+              src="" 
+              width="100%" 
+              height="1200" 
+              frameborder="0" 
+              marginheight="0" 
+              marginwidth="0"
+              style="border: none; display: block; min-height: 1200px;">
+              로드 중…
+            </iframe>
+          </div>
+        </div>
+
+        <!-- 질문 3 평가 -->
+        <div id="evaluation-question-3-content" class="evaluation-question-content">
+          <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <iframe 
+              src="" 
+              width="100%" 
+              height="1200" 
+              frameborder="0" 
+              marginheight="0" 
+              marginwidth="0"
+              style="border: none; display: block; min-height: 1200px;">
+              로드 중…
+            </iframe>
+          </div>
         </div>
       </div>
     </div>

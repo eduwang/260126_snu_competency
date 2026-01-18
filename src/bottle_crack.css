@@ -210,6 +210,15 @@
   flex-direction: column;
 }
 
+/* 평가 문항별 탭 콘텐츠 스타일 */
+.evaluation-question-content {
+  display: none;
+}
+
+.evaluation-question-content.active {
+  display: block;
+}
+
 .materials-scrollable {
   display: flex;
   flex-direction: column;

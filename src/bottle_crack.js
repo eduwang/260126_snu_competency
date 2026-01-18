@@ -50,6 +50,27 @@ function initQuestionTabs() {
   });
 }
 
+// 평가 문항별 탭 전환 기능
+function initEvaluationQuestionTabs() {
+  const evaluationQuestionTabButtons = document.querySelectorAll('.evaluation-question-tab');
+  const evaluationQuestionContents = document.querySelectorAll('.evaluation-question-content');
+  
+  evaluationQuestionTabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const targetQuestion = button.getAttribute('data-evaluation-question');
+      
+      evaluationQuestionTabButtons.forEach(btn => btn.classList.remove('active'));
+      evaluationQuestionContents.forEach(content => content.classList.remove('active'));
+      
+      button.classList.add('active');
+      const targetContent = document.getElementById(`evaluation-question-${targetQuestion}-content`);
+      if (targetContent) {
+        targetContent.classList.add('active');
+      }
+    });
+  });
+}
+
 // 평가 기준 Handsontable 초기화
 function initCriteriaTables() {
   // 문제별 평가 기준 데이터
@@ -473,6 +494,7 @@ onAuthStateChanged(auth, async (user) => {
 document.addEventListener('DOMContentLoaded', () => {
   initMainTabs();
   initQuestionTabs();
+  initEvaluationQuestionTabs();
   initCriteriaTables();
   initViewProbingQuestionsBtn();
   initImagePopups();

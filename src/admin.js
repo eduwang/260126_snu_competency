@@ -776,16 +776,24 @@ async function loadMenuSettings() {
       const data = settingsDoc.data();
       document.getElementById('mockEval01Toggle').checked = data.mockEval01 !== false;
       document.getElementById('mockEval02Toggle').checked = data.mockEval02 !== false;
+      document.getElementById('mockEval03Toggle').checked = data.mockEval03 !== false;
+      document.getElementById('mockEval04Toggle').checked = data.mockEval04 !== false;
+      document.getElementById('mockEval05Toggle').checked = data.mockEval05 !== false;
       document.getElementById('probing01Toggle').checked = data.probing01 !== false;
       document.getElementById('probing02Toggle').checked = data.probing02 !== false;
+      document.getElementById('probing03Toggle').checked = data.probing03 !== false;
       document.getElementById('activity2Toggle').checked = data.activity2 !== false;
       document.getElementById('qrCodeToggle').checked = data.qrCode !== false;
     } else {
       // 기본값: 모두 활성화
       document.getElementById('mockEval01Toggle').checked = true;
       document.getElementById('mockEval02Toggle').checked = true;
+      document.getElementById('mockEval03Toggle').checked = true;
+      document.getElementById('mockEval04Toggle').checked = true;
+      document.getElementById('mockEval05Toggle').checked = true;
       document.getElementById('probing01Toggle').checked = true;
       document.getElementById('probing02Toggle').checked = true;
+      document.getElementById('probing03Toggle').checked = true;
       document.getElementById('activity2Toggle').checked = true;
       document.getElementById('qrCodeToggle').checked = true;
     }
@@ -799,12 +807,28 @@ async function loadMenuSettings() {
       await saveMenuSettings('mockEval02', e.target.checked);
     });
 
+    document.getElementById('mockEval03Toggle').addEventListener('change', async (e) => {
+      await saveMenuSettings('mockEval03', e.target.checked);
+    });
+
+    document.getElementById('mockEval04Toggle').addEventListener('change', async (e) => {
+      await saveMenuSettings('mockEval04', e.target.checked);
+    });
+
+    document.getElementById('mockEval05Toggle').addEventListener('change', async (e) => {
+      await saveMenuSettings('mockEval05', e.target.checked);
+    });
+
     document.getElementById('probing01Toggle').addEventListener('change', async (e) => {
       await saveMenuSettings('probing01', e.target.checked);
     });
 
     document.getElementById('probing02Toggle').addEventListener('change', async (e) => {
       await saveMenuSettings('probing02', e.target.checked);
+    });
+
+    document.getElementById('probing03Toggle').addEventListener('change', async (e) => {
+      await saveMenuSettings('probing03', e.target.checked);
     });
 
     document.getElementById('activity2Toggle').addEventListener('change', async (e) => {

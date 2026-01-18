@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>건강 불평등 - 모의평가</title>
+  <link rel="stylesheet" href="src/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="node_modules/handsontable/dist/handsontable.full.min.css">
+  <link rel="stylesheet" href="node_modules/sweetalert2/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="src/bottle_crack.css">
+</head>
+<body>
+  <div class="page-container">
+    <div class="header-section">
+      <h1 style="margin: 0; color: #1f2937;">건강 불평등 - 모의평가</h1>
+      <div class="user-info-section">
+        <button id="backToMainBtn" class="back-btn">← 메인으로</button>
+        <span id="userInfo">🔐 로그인 후 이용해 주세요.</span>
+        <button id="logoutBtn" style="display: none;">로그아웃</button>
+      </div>
+    </div>
+
+    <!-- 최상단 탭 메뉴 -->
+    <div class="main-tabs">
+      <button class="main-tab-button active" data-main-tab="materials">📄 면접 자료(제시문 및 예시 답안 확인)</button>
+      <button class="main-tab-button" data-main-tab="evaluation">✍️ 모의평가</button>
+    </div>
+
+    <!-- 면접 자료 확인 탭 -->
+    <div id="materials-tab" class="main-tab-content active">
+      <div class="materials-layout">
+        <!-- 좌측: 제시문 및 과제 -->
+        <div class="materials-left">
+          <div class="materials-section">
+            <h2 class="section-title">제시문 및 과제</h2>
+            <div class="document-content">
+              <!-- 제시문 내용은 여기에 직접 입력 -->
+              <div class="document-text">
+                <p>
+                    한국 사회가 직면하고 있는 교육, 경제, 환경 등 다양한 불평등으로 인한 건강 불평등 문제를 연구하기 위해 데이터를 수집하고 분석한 후 공중보건 개선을 위한 정책적 제언을 하고자 한다. 다음에 제시된 노동자의 건강 불평등에 관한 예시 연구를 참고하여, 과제1~과제5를 단계적으로 수행한다. 이를 통해 나의 연구 과정을 구체적으로 서술하고, 창의적 아이디어와 논리적인 사고를 보이도록 한다.
+                </p>
+                <p>
+                    한 연구에서는 일터에서 발생하는 불평등이 노동자의 건강 불평등으로 이어지는 문제를 분석하며, 두 가지 주요 요인을 제시하였다. 첫째, 고용 형태는 임금, 근로시간, 작업 환경 등에서 큰 차이를 보이며, 특히 그림 1에서와 같이 불안정한 고용형태인 비정규직과 하청 노동자는 상대적으로 안정적인 정규직에 비해 건강 수준이 낮고, 작업장에서 건강 위해 요인에 더 많이 노출되었다. 이들은 보호 조치와 작업장 관리 감독이 부족한 환경에서 일하고 있는 것으로 나타났다.
+                </p>
+                <!-- 이미지 -->
+                <div class="document-image-container">
+                  <img src="public/probingQuestion/health_inequality_01.png" alt="고용 형태에 따른 작업장의 건강 위해요인 및 보호요인 노출 정도 비교" class="document-image">
+                  <p style="margin-top: 0.75rem; font-size: 0.875rem; color: #6b7280; text-align: center; line-height: 1.6;">
+                    고용 형태에 따른 작업장의 건강 위해요인 및 보호요인 노출 정도 비교 [자료: 한국산업안전보건공단, 산업안전보건연구원 (2017), 제5차 근로환경조사를 활용해 분석함]
+                  </p>
+                </div>
+                <p>
+                    둘째, 사업장 규모는 노동자 건강 불평등의 또 다른 중요한 요인으로 작용한다. 우리나라 노동자의 63.8%는 50인 미만 소규모 사업장에서 일하고 있지만, 이들은 대기업 노동자에 비해 건강 사각지대에 놓여 있다. 소규모 사업장은 노동권 보호 정책의 적용에서 제외되거나 후순위로 밀리는 경우가 많으며, 산업안전보건 규제에서도 예외로 간주되는 사례가 빈번하다. 연구에 따르면 그림 2에서와 같이 소규모 사업장 노동자는 업무상 사고 발생률이 높고, 주관적 건강 수준이 낮은 것으로 나타났다.
+                </p>
+                <!-- 이미지 -->
+                <div class="document-image-container">
+                  <img src="public/probingQuestion/health_inequality_02.png" alt="사업장 규모에 따른 건강 수준 및 건강 행태 불평등" class="document-image">
+                  <p style="margin-top: 0.75rem; font-size: 0.875rem; color: #6b7280; text-align: center; line-height: 1.6;">
+                    사업장 규모에 따른 건강 수준 및 건강 행태 불평등 [자료: 1) 고용노동부, 한국산업안전보건공단 (2020), 2019년 산업재해 발생 현황을 재가공함; 2) 본인의 건강 상태가 매우 좋거나 좋은 편이라고 응답한 근로자의 비율을 의미함. 한국산업안전보건공단, 산업안전보건연구원 (2017). 제5차 근로환경조사를 활용해 분석함]
+                  </p>
+                </div>
+                <p>
+                    또한 노동자 건강 불평등을 심화시키는 제도적 요인으로는 취약한 사회안전망과 느슨한 법적 규제가 있다. 산재보험 보상을 신청하려면 노동자가 업무 관련성을 직접 입증해야 하며, 이는 시간적·행정적 부담을 초래한다. 특히 고용 불안정성이 높은 노동자일수록 산재보험 신청이 어려운 경우가 많고, 병가와 상병수당이 없어 건강이 회복되지 않은 상태에서 복귀해야 하는 경우도 빈번하다. 게다가 노동 안전과 보건에 관한 법적 체계는 사업주의 책임과 의무에 대한 규제가 약하며, 하청업체와 소규모 사업장에서 안전보건 교육이 형식적으로 이루어지는 경우가 많다.
+                </p>
+                <p>
+                    이러한 문제를 해결하기 위해서는 산재 예방 활동과 안전사고에 대한 사업주의 책임을 강화하고, 노동자들이 안전 및 건강 위험 논의 과정에 참여할 수 있는 기회를 확대해야 한다. 또한, 산재보험의 보장성과 상병수당 제도를 도입하여 아플 때 쉴 수 있는 권리를 보장하는 제도적 기반을 마련해야 한다.
+                </p>
+                <p>
+                    [자료: KIHASA 한국보건사회연구원. 당신의 일터는 안녕한가요, 노동자 건강불평등. YouTube, 2023] <a href="https://youtu.be/UwL1YTrdhv8?si=fM4mXESpMd9B7S7E" target="_blank" class="youtube-link-inline" title="노동자 건강불평등 영상 보기">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                  </svg>
+                </a>
+                </p>
+              </div>
+              
+              <!-- 과제 1 -->
+              <div class="question-item">
+                <h3>과제 1</h3>
+                <div class="question-content">
+                  <p>제시문의 노동 환경 뿐 아니라 한국 사회의 특정 불평등으로 인한 건강 불평등에 관한 주제로 연구하고자 한다. 내가 데이터 조사를 통해 규명하고 싶은 주장을 구체화하고 연구의 목적과 필요성을 설명하여라.</p>
+                </div>
+              </div>
+
+              <!-- 과제 2 -->
+              <div class="question-item">
+                <h3>과제 2</h3>
+                <div class="question-content">
+                  <p>나의 주장을 규명하기 위한 데이터 수집 전략을 구체적으로 설계하여라. 특히 관심 집단을 선정한 후, 이 집단에 대해 어떤 데이터를 어떤 방식으로 수집할 것인지 설명하여라.</p>
+                </div>
+              </div>
+
+              <!-- 과제 3 -->
+              <div class="question-item">
+                <h3>과제 3</h3>
+                <div class="question-content">
+                  <p>수집한 데이터를 바탕으로 어떤 분석을 수행할지 설명하고, 나의 가설이 맞을 때와 틀릴 때의 예상 결과를 도표나 그림으로 간단히 표현하여라. </p>
+                </div>
+              </div>
+
+              <!-- 과제 4 -->
+              <div class="question-item">
+                <h3>과제 4</h3>
+                <div class="question-content">
+                  <p>수집한 데이터 표본이 전체 집단을 대표하지 못할 가능성과 그로 인해 발생할 수 있는 한계를 논의하고 이를 보완할 방안을 제안하여라.</p>
+                </div>
+              </div>
+
+              <!-- 과제 5 -->
+              <div class="question-item">
+                <h3>과제 5</h3>
+                <div class="question-content">
+                  <p>예상되는 연구 결과로부터 건강 불평등 해결을 위한 새로운 보건 정책을 제안해보고, 이 때 유의해야 할 점을 논의하여라.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 우측: 예시 답안, 평가 기준, 탐침 질문 -->
+        <div class="materials-right">
+          <div class="question-tabs-container">
+            <!-- 제목 -->
+            <h2 class="section-title">예시 답안, 평가 기준, 탐침 질문 확인</h2>
+            
+            <!-- 과제별 탭 -->
+            <div class="question-tabs">
+              <button class="question-tab-button active" data-question="1">과제 1</button>
+              <button class="question-tab-button" data-question="2">과제 2</button>
+              <button class="question-tab-button" data-question="3">과제 3</button>
+              <button class="question-tab-button" data-question="4">과제 4</button>
+              <button class="question-tab-button" data-question="5">과제 5</button>
+              <button class="question-tab-button" data-question="summary">종합 평가 기준 및 탐침 질문</button>
+            </div>
+
+            <!-- 과제 1 탭 내용 -->
+            <div id="question-1-content" class="question-tab-content active">
+              <div class="materials-scrollable">
+                <!-- 예시 답안 -->
+                <div class="materials-section">
+                  <h2 class="section-title">예시 답안</h2>
+                  <div class="answer-text">
+                    <p><strong>(예시 1)</strong><br>
+                    <strong>주장:</strong> 청소년기의 교육 수준의 불평등이 건강한 식습관과 생활습관에 부정적인 영향을 미친다.<br>
+                    <strong>연구의 목적과 필요성:</strong> 청소년기의 교육 불평등의 영향이 단순히 직업 선택이나 경제적 영향 뿐 아니라, 건강과 관련된 불평등을 초래함을 밝히고, 이를 통해 청소년기 교육에서 건강 관리에 관한 내용을 강화할 필요를 확인하고자 함.</p>
+                    <p><strong>(예시 2)</strong><br>
+                    <strong>주장:</strong> 이주민 가정에 노출되는 건강 정보 불균형이 질병 예방과 건강 관리에 부정적인 영향을 미친다.<br>
+                    <strong>연구의 목적과 필요성:</strong> 다양한 매체, 사회적 네트워크 등을 통해 건강과 관련된 정보, 건강 비용 확보 방안 등에 비교적 충분히 노출되는 원주민과 달리 이주민 가정에는 충분한 정보가 노출되지 않을 수 있으므로 이로 인한 건강 불평등이 발생하지 않는지 확인하고자 함.</p>
+                  </div>
+                </div>
+
+                <!-- 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">평가 기준</h2>
+                  <div id="criteria-table-1" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 과제 2 탭 내용 -->
+            <div id="question-2-content" class="question-tab-content">
+              <div class="materials-scrollable">
+                <!-- 예시 답안 -->
+                <div class="materials-section">
+                  <h2 class="section-title">예시 답안</h2>
+                  <div class="answer-text">
+                    <p><strong>(예시 1)</strong><br>
+                    전국 고등학생들을 대상으로 무작위 표본을 수집한다. 각 학생의 교육수준 정보를 얻기 위해 학생의 성적 수준, 지역, 학교의 계열/특목/특성화 여부 등을 조사한다. 식습관 정보를 얻기 위해 한 끼 당 평균적인 탄수화물, 단백질, 지방의 섭취 비율을 a:b:c 형식으로 답변하도록한다. 또한, 수면 생활습관 정보를 얻기 위해 평소 잠이 드는 시각과 일어나는 시각을 수집한다.</p>
+                    <p><strong>(예시 2)</strong><br>
+                    특정 지역의 이주민 가정과 일반 가정을 대상으로 각각 무작위 표본을 구성한다. 가정에서 건강을 주로 관리하는 성인을 대상으로 평소 건강과 관련된 정보를 어떻게 접하는지, 건강에 대한 대표적인 상식을 알고 있는지, 건강 보험 등에 대한 정보를 알고 있는지 설문한다. 또한 가정의 식습관 정보, 수면, 운동 등 생활 습관 정보를 질문한다.</p>
+                  </div>
+                </div>
+
+                <!-- 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">평가 기준</h2>
+                  <div id="criteria-table-2" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 과제 3 탭 내용 -->
+            <div id="question-3-content" class="question-tab-content">
+              <div class="materials-scrollable">
+                <!-- 예시 답안 -->
+                <div class="materials-section">
+                  <h2 class="section-title">예시 답안</h2>
+                  <div class="answer-text">
+                    <p><strong>(예시 1)</strong><br>
+                    <strong>분석 계획:</strong> 학교 유형별로 식습관을 비교하기 위해  탄수화물, 단백질, 지방의 섭취 비율을 학교 유형별로 비교하는 막대그래프를 각각 그려본다.  성적과 수면 시간의 산점도를 그리고 상관관계를 판단해 본다.<br>
+                    <strong>가설이 맞을 때:</strong> 특성화고>일반고>특목고 순으로 탄수화물 섭취 비율이 낮아지는 막대그래프, 성적과 수면 시간의 양의 상관관계<br>
+                    <strong>가설이 틀릴 때:</strong> 학교 유형 사이에 탄수화물 섭취 비율이 큰 차이가 없는 막대그래프, 성적과 수면 시간의 음의 상관관계</p>
+                    <p><strong>(예시 2)</strong><br>
+                    <strong>분석 계획:</strong> 설문을 종합하여 건강 상식 측정 점수, 건강 습관 점수 등을 만들고 이주민 가정과 일반 가정의 점수를 막대그래프로 비교한다.<br>
+                    <strong>가설이 맞을 때:</strong> 이주민 가정의 건강 상식 점수, 건강 습관 점수가 일반 가정보다 낮은 막대 그래프<br>
+                    <strong>가설이 틀릴 때:</strong> 이주민 가정의 건강 상식 점수, 건강 습관 점수가 일반 가정과 비슷한 막대 그래프</p>
+                  </div>
+                </div>
+
+                <!-- 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">평가 기준</h2>
+                  <div id="criteria-table-3" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 과제 4 탭 내용 -->
+            <div id="question-4-content" class="question-tab-content">
+              <div class="materials-scrollable">
+                <!-- 예시 답안 -->
+                <div class="materials-section">
+                  <h2 class="section-title">예시 답안</h2>
+                  <div class="answer-text">
+                    <p><strong>(예시 1)</strong><br>
+                    <strong>표본 대표성 문제:</strong> 고등학생의 성별 분포와 표본의 성별 분포가 차이가 많이 나는 경우, 이를 통합한 평균에서 건강 관리에 대한 남녀 차이로 인한 영향이 잘못 반영될 수 있음<br>
+                    <strong>보완방법:</strong> 성별 그룹을 나누어 분석하거나,  학생들의 성별 그룹에 따라 가중치를 부여하여 분석을 수행</p>
+                    <p><strong>(예시 2)</strong><br>
+                    <strong>표본 대표성 문제:</strong> 이주민 가정 중 문화권에 따라 건강 관련 교육 수준 등이 차이가 있을 수 있으므로, 이주민 표본의 본래 국가 지역 분포가 실제 국내 이주민 집단의 지역 분포가 차이가 나는 경우, 특시 교육 수준이 높은 국가 출신이 많이 표집된 경우 잘못된 결과가 나올 수 있음<br>
+                    <strong>보완방법:</strong> 본국을 GDP나 대륙 기준으로 나누어 분석해봄</p>
+                  </div>
+                </div>
+
+                <!-- 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">평가 기준</h2>
+                  <div id="criteria-table-4" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 과제 5 탭 내용 -->
+            <div id="question-5-content" class="question-tab-content">
+              <div class="materials-scrollable">
+                <!-- 예시 답안 -->
+                <div class="materials-section">
+                  <h2 class="section-title">예시 답안</h2>
+                  <div class="answer-text">
+                    <p><strong>(예시 1)</strong><br>
+                    <strong>정책 제안:</strong> 학교별 건강 관리 실태를 모니터링 하고, 학교 맞춤형 학생 건강 관리 지도 프로그램을 마련한다.<br>
+                    <strong>유의 사항:</strong> 성적이 높은 학생들의 수면 시간이 불충분한 편으로 나오는 경우 등, 오히려 불평등이 아니라 과도한 학업에 따른 건강을 해치는 습관 형성등의 문제가 있는 경우가 있을 수 있으므로, 이에 대한 정책도 필요하다.</p>
+                    <p><strong>(예시 2)</strong><br>
+                    <strong>정책 제안:</strong> 이주민 가정이 언어와 사회적 네트워크의 문제로 건강 관련 정보에 제대로 노출되지 않는 문제를 해결하기 위해 여러 가지 언어로 된 건강 관리 자료를 배포한다.<br>
+                    <strong>유의 사항:</strong> 이주민 가정의 다양한 식문화에 따른 건강관리의 특성을 이해할 필요가 있고 이를 존중한 식습관, 건강습관의 자료를 만들 필요가 있다.</p>
+                  </div>
+                </div>
+
+                <!-- 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">평가 기준</h2>
+                  <div id="criteria-table-5" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 종합 평가 기준 및 탐침 질문 탭 내용 -->
+            <div id="question-summary-content" class="question-tab-content">
+              <div class="materials-scrollable">
+                <!-- 종합 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">종합 평가 기준</h2>
+                  <div id="summary-criteria-table" class="handsontable-container"></div>
+                </div>
+
+                <!-- 탐침 질문 -->
+                <div class="materials-section">
+                  <h2 class="section-title" style="display: inline-block; width: 100%;">탐침 질문 <button id="view-probing-questions-btn" class="btn btn-primary" style="font-size: 0.875rem; padding: 0.25rem 0.75rem; margin-left: 0.5rem; vertical-align: baseline;">크게 보기</button></h2>
+                  <div id="probing-questions-table" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 모의 평가 탭 -->
+    <div id="evaluation-tab" class="main-tab-content">
+      <div style="padding: 2rem;">
+        <h2 style="color: #1f2937; margin-bottom: 1.5rem;">모의평가</h2>
+        
+        <!-- 과제별 탭 버튼 -->
+        <div class="question-tabs" style="margin-bottom: 1.5rem;">
+          <button class="question-tab-button active evaluation-question-tab" data-evaluation-question="1">과제 1</button>
+          <button class="question-tab-button evaluation-question-tab" data-evaluation-question="2">과제 2</button>
+          <button class="question-tab-button evaluation-question-tab" data-evaluation-question="3">과제 3</button>
+          <button class="question-tab-button evaluation-question-tab" data-evaluation-question="4">과제 4</button>
+          <button class="question-tab-button evaluation-question-tab" data-evaluation-question="5">과제 5</button>
+        </div>
+
+        <!-- 과제 1 평가 -->
+        <div id="evaluation-question-1-content" class="evaluation-question-content active">
+          <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <iframe 
+              src="" 
+              width="100%" 
+              height="1200" 
+              frameborder="0" 
+              marginheight="0" 
+              marginwidth="0"
+              style="border: none; display: block; min-height: 1200px;">
+              로드 중…
+            </iframe>
+          </div>
+        </div>
+
+        <!-- 과제 2 평가 -->
+        <div id="evaluation-question-2-content" class="evaluation-question-content">
+          <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <iframe 
+              src="" 
+              width="100%" 
+              height="1200" 
+              frameborder="0" 
+              marginheight="0" 
+              marginwidth="0"
+              style="border: none; display: block; min-height: 1200px;">
+              로드 중…
+            </iframe>
+          </div>
+        </div>
+
+        <!-- 과제 3 평가 -->
+        <div id="evaluation-question-3-content" class="evaluation-question-content">
+          <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <iframe 
+              src="" 
+              width="100%" 
+              height="1200" 
+              frameborder="0" 
+              marginheight="0" 
+              marginwidth="0"
+              style="border: none; display: block; min-height: 1200px;">
+              로드 중…
+            </iframe>
+          </div>
+        </div>
+
+        <!-- 과제 4 평가 -->
+        <div id="evaluation-question-4-content" class="evaluation-question-content">
+          <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <iframe 
+              src="" 
+              width="100%" 
+              height="1200" 
+              frameborder="0" 
+              marginheight="0" 
+              marginwidth="0"
+              style="border: none; display: block; min-height: 1200px;">
+              로드 중…
+            </iframe>
+          </div>
+        </div>
+
+        <!-- 과제 5 평가 -->
+        <div id="evaluation-question-5-content" class="evaluation-question-content">
+          <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <iframe 
+              src="" 
+              width="100%" 
+              height="1200" 
+              frameborder="0" 
+              marginheight="0" 
+              marginwidth="0"
+              style="border: none; display: block; min-height: 1200px;">
+              로드 중…
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="src/health_inequality_evaluation.js"></script>
+</body>
+</html>
