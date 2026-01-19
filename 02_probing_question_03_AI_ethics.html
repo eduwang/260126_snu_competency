@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>인공지능과 윤리 문제 - 탐침질문 만들기</title>
+  <link rel="stylesheet" href="src/common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="node_modules/handsontable/dist/handsontable.full.min.css">
+  <link rel="stylesheet" href="node_modules/sweetalert2/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="src/health_inequality.css">
+</head>
+<body>
+  <div class="page-container">
+    <div class="header-section">
+      <h1 style="margin: 0; color: #1f2937;">인공지능과 윤리 문제 - 탐침질문 만들기</h1>
+      <div class="user-info-section">
+        <button id="backToMainBtn" class="back-btn">← 메인으로</button>
+        <span id="userInfo">🔐 로그인 후 이용해 주세요.</span>
+        <button id="logoutBtn" style="display: none;">로그아웃</button>
+      </div>
+    </div>
+
+    <!-- 최상단 탭 메뉴 -->
+    <div class="main-tabs">
+      <button class="main-tab-button active" data-main-tab="materials">📄 면접 자료(제시문 및 예시 답안 확인)</button>
+      <button class="main-tab-button" data-main-tab="probing">✍️ 탐침 질문 만들기</button>
+    </div>
+
+    <!-- 면접 자료 확인 탭 -->
+    <div id="materials-tab" class="main-tab-content active">
+      <div class="materials-layout">
+        <!-- 좌측: 제시문 및 질문 -->
+        <div class="materials-left">
+          <div class="materials-section">
+            <h2 class="section-title">제시문 및 질문</h2>
+            <div class="document-content">
+              <!-- 제시문 내용은 여기에 직접 입력 -->
+              <div class="document-text">
+                <p>
+                  최근 인공지능 기술이 빠르게 발전하고 있다. 스스로 사고하고 판단할 수 있는 AI의 출현은 그동안 인간 중심의 사고방식과 철학에 큰 변화를 요구할 것이다. 또한, AI가 인간 사회에서 통용되는 규범을 준수하도록 하는 윤리 문제가 중요한 이슈로 떠오를 것으로 예상된다. 다음의 사례들을 읽고 질문에 답하시오.
+                </p>
+                
+                <p>
+                  <strong>[사례 1]</strong><br>
+                  영국에서 시작된 산업혁명 이후 자유 방임주의 경제 정책이 점차 자리잡아갔다. 그런데 산업혁명 이후의 노동자들의 삶은 매우 비참하였다. 자본가들은 임금이 비싼 숙련된 성인 노동자 대신 임금이 싼 부녀자나 아동을 고용하였다. 이들은 장시간 노동에 시달렸으며 작업 환경도 열악하였다. 실직한 노동자들, 특히 직물업에 종사하던 전통적인 수공업자들은 산업화에 대하여 매우 강한 반감을 지녔다. 이들에 의해 기계 파괴 운동 (러다이트 운동)이 전개되기도 하였다. 이처럼 당시의 노동 문제는 심각한 사회 문제였다.<br>
+                  노동자들은 열악한 노동조건을 개선하기 위해 스스로 단합하여 노동 운동을 전개해 나갔다. 그 결과 영국의 경우 공장법, 노동조합법 등이 제정되고 선거법이 개정되었으며 점차 노동자의 지위가 향상되었다.<br>
+                  <em>출처: 고등학교 &lt;사회&gt; (두산)</em>
+                </p>
+                
+                <p>
+                  <strong>[사례 2]</strong><br>
+                  우리가 보통 '인공지능 윤리' 하면 가장 많이 드는 사례가 바로 '트롤리 딜레마(Trolley Dilemma)'이다. 트롤리는 전차라는 뜻인데, 전차가 선로에서 어떤 윤리적 딜레마 상황에 처했을 때 과연 우리는 어떠한 선택을 해야 하는지에 대한 연구이다. 이 트롤리 딜레마는 최근 인공지능 윤리 분야에서 '자율주행차의 윤리적 딜레마' 상황을 설명하기 위한 사례로 많이 활용되고 있다. 내가 타고 가는 자율주행차의 브레이크가 고장이 났다. 그런데 앞쪽에는 길을 건너고 있는 많은 시민들이 있었다. 만약 이러한 경우 자율주행차의 알고리즘이 핸들을 그대로 유지하면 앞쪽에 있는 많은 사람이 죽게 되고, 만약 핸들을 틀어서 경로를 변경하면 앞쪽의 여러 사람은 살지만 탑승자인 내가 죽는다고 가정할 때, 과연 자율주행차는 어떤 알고리즘으로 프로그래밍 하는 것이 맞겠는가?<br>
+                  <em>출처: "자율주행차는 얼마나 윤리적인가?" 한국일보</em>
+                </p>
+                
+                <p style="margin-top: 1rem; padding: 1rem; background: #f3f4f6; border-radius: 6px; border-left: 4px solid #3b82f6;">
+                  <strong>트롤리 딜레마란:</strong> 인간의 도덕적 판단과 선택의 문제를 탐구하기 위해 고안된 사고 실험. 개인이 행동을 통해 더 큰 피해를 막기 위해 일부를 희생하는 것이 도덕적으로 정당화될 수 있는지를 질문함
+                </p>
+                
+                <p>
+                  <strong>[사례 3]</strong><br>
+                  2018년에는 글로벌 기업 아마존에서 인공지능 채용 프로그램 논란이 있었다. 아마존에서 AI 채용 프로그램을 개발했는데, 실제 적용하기 전 최종 시뮬레이션 과정에서 남성 지원자가 여성 지원자보다 지속적으로 더욱 높은 점수를 받는 편향이 일어났다. 원인을 분석했고, 아마존이라는 기업의 직원 구성에 그 원인이 있었다. 인공지능 채용 프로그램은 해당 기업에서 높은 성과와 좋은 평가를 받았던 직원들의 데이터를 기준으로 판단하게 되는데, 아마존은 IT 기업으로써 개발직군이 전체 직원수의 70% 이상을 차지했고, 그러한 개발직군 중 남자 직원수가 여성보다 압도적으로 많았기 때문이다. 결국 모수에서 남성 직원 중에 고성과자가 훨씬 더 많을 수밖에 없었으므로 이를 근거로 판단한 인공지능은 당연히 남성 지원자를 우대할 수밖에 없었던 것이다.<br>
+                  <em>출처: "아마존 채용 AI는 왜 남성을 우대했나?" 한국일보</em>
+                </p>
+              </div>
+              
+              <!-- 질문 1 -->
+              <div class="question-item">
+                <h3>질문 1</h3>
+                <div class="question-content">
+                  <p>사례 1에서 보듯, 과거에도 새로운 기술이 도입되면서 사회의 가치관에 큰 변화와 혼란이 있었다. 이 사례와 비교하여, 기술 발전과 함께 발생하는 윤리적 문제를 해결하기 위해 우리는 어떤 원칙을 세워야 하며, 이러한 원칙이 사례 2, 3에서의 자율주행차 설계, 인공지능 편향성 문제 해결에 어떻게 적용될 수 있는지 논의하시오.</p>
+                </div>
+              </div>
+
+              <!-- 질문 2 -->
+              <div class="question-item">
+                <h3>질문 2</h3>
+                <div class="question-content">
+                  <p>자율주행차가 다수를 위해 한 명을 희생시키는 결정을 내리는 것이 윤리적으로 정당하다고 생각하는가? 이 질문에 대한 찬성 또는 반대 입장을 철학적 관점을 바탕으로 논리적으로 설명하시오.</p>
+                </div>
+              </div>
+
+              <!-- 질문 3 -->
+              <div class="question-item">
+                <h3>질문 3</h3>
+                <div class="question-content">
+                  <p>사례 3에서 다음과 같은 주장이 존재한다고 가정하자. "AI가 실제로 채용에 차별을 했다고 생각하지 않는다. 이는 단지 데이터에 해당 직군에 남자 직원이 많기 때문에 생긴 일이며, 이러한 분포를 따르는 결정을 내리는 것은 자연스러우며 문제가 없다고 생각한다." 이에 대해 찬성 또는 반대하는 논리를 제시하시오.</p>
+                </div>
+              </div>
+
+              <!-- 질문 4 -->
+              <div class="question-item">
+                <h3>질문 4</h3>
+                <div class="question-content">
+                  <p>AI가 법률적 판단(예: 범죄 재발 가능성 예측)에 사용될 때 편향된 결과가 나타난다면, 그 영향이 어떻게 나타날 지 예측하고 이는 정의의 원칙과 어떻게 충돌하는지 설명하시오.</p>
+                </div>
+              </div>
+
+              <!-- 질문 5 -->
+              <div class="question-item">
+                <h3>질문 5</h3>
+                <div class="question-content">
+                  <p>인공지능의 윤리적 문제를 사회적 합의를 통해 해결할 수 있을까? 자율주행차의 윤리적 의사결정을 사회적 합의를 통해 해결할 수 있는지에 대해 찬성 또는 반대 의견을 제시하고, 이를 뒷받침하는 논리를 제시하시오.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 우측: 예시 답안, 평가 기준, 탐침 질문 -->
+        <div class="materials-right">
+          <div class="question-tabs-container">
+            <!-- 제목 -->
+            <h2 class="section-title">예시 답안, 평가 기준, 탐침 질문 확인</h2>
+            
+            <!-- 질문별 탭 -->
+            <div class="question-tabs">
+              <button class="question-tab-button active" data-question="1">질문 1</button>
+              <button class="question-tab-button" data-question="2">질문 2</button>
+              <button class="question-tab-button" data-question="3">질문 3</button>
+              <button class="question-tab-button" data-question="4">질문 4</button>
+              <button class="question-tab-button" data-question="5">질문 5</button>
+              <button class="question-tab-button" data-question="summary">종합 평가 기준 및 탐침 질문</button>
+            </div>
+
+            <!-- 질문 1 탭 내용 -->
+            <div id="question-1-content" class="question-tab-content active">
+              <div class="materials-scrollable">
+                <!-- 예시 답안 -->
+                <div class="materials-section">
+                  <h2 class="section-title">예시 답안</h2>
+                  <div class="answer-text">
+                    <p>
+                      산업혁명기의 부작용과 러다이트 운동, 그로 인해 공장법, 노동조합법이 제정되어온 사례를 보면 AI가 가져오는 사회적 변화에 대해 자유방임적으로 대응할 경우, 생각지 못한 사회적 문제와 부작용이 발생할 수 있다고 생각합니다. 따라서, 기술 발전에 따라 발생하는 윤리적 문제를 해결하기 위해 다음과 같은 원칙에 따라 대응할 필요가 있습니다.
+                    </p>
+                    <p>
+                      첫째, 기술에 의한 사회 변화가 소외계층에 가져올 소외의 심화에 적극적으로 대응한다는 원칙입니다. 산업혁명기 사례 처럼 효율성과 이익의 극대화만을 고려하여 기술을 활용하는 경우 소모되거나 차별받는 계층이 있을 수 있습니다. 이를 적극 대응하기 위해 모니터링과 이를 방지하는 제도와 윤리적 원칙을 도입하는 것이 필요합니다. 특히 사례 3에 적용하면 기술에 의해 특정 집단이 채용 차별을 격는 상황이 발생하지 않는지 모니터링하고 이를 방지할 수 있는 방법을 마련해야 한다는 의미입니다.
+                    </p>
+                    <p>
+                      둘째, 기술 변화가 초래할 수 있는 인권과 기본권에 대한 침해를 방지해야 한다는 원칙입니다. 기술이 사회의 많은 모습을 변화시키면서 생각지 못했던 인권 문제나 기본권의 제약상황이 생길 수 있습니다. 특히 사례 2와 같은 트롤리 상황에서 누구를 희생할지 결정하는 알고리즘은 인간의 가장 기본권인 '생명권'을 다루는 문제입니다. 알고리즘 설계 시 어떠한 상황에서도 인간의 생명권이 수단화되지 않도록 법적 가이드라인을 세우고, 사고 시 책임 소재를 명확히 하여 기술에 의해 인간의 기본권이 훼손되는 일을 막아야 합니다.
+                    </p>
+                    <p>
+                     셋째, 기술이 작동하는 원리에 윤리적 지향을 최대한 반영한다는 원칙입니다. 산업혁명기에는 문제가 크게 발생한 이후에 어렵게 제도적 보완이 이루어졌으므로, 이를 교훈 삼아 기술의 초기 청사진에 공정, 안전, 인권과 같은 윤리적 원칙을 반영할 필요가 있습니다. AI와 같은 기술은 특히 인간의 의사결정을 대신하기 때문에 인간과 사회가 추구하는 윤리적 의사결정의 원리가 담겨 있어야 합니다. 자율주행 사례 2나 AI에 의한 채용 차별 사례 3과 같은 사례를 막기 위해서는 기술의 설계 단계부터 이런 원칙을 담을 수 있도록 해야 합니다.
+                    </p>
+                    <p style="margin-top: 1rem; padding: 0.75rem; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px; font-size: 0.875rem; color: #92400e;">
+                      <strong>※ 평가 참고사항:</strong> 원칙을 제시하는 개수 보다는 원칙을 제시한 이유와, 사례 2, 3에 어떻게 적용되는지에 대한 충분한 설명을 하는지를 중심으로 평가해야함
+                    </p>
+                  </div>
+                </div>
+
+                <!-- 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">평가 기준</h2>
+                  <div id="criteria-table-1" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 질문 2 탭 내용 -->
+            <div id="question-2-content" class="question-tab-content">
+              <div class="materials-scrollable">
+                <!-- 예시 답안 -->
+                <div class="materials-section">
+                  <h2 class="section-title">예시 답안</h2>
+                  <div class="answer-text">
+                    <p><strong>(예시 1 : 찬성입장)</strong><br>
+                    저는 자율주행차가 다수를 위해 소수를 희생시키는 결정을 내리는 것이 윤리적으로 정당하다고 생각합니다. 비극적인 사고가 불가피한 상황에서는 피해자의 수를 줄이는 방향으로 선택하여 피해를 최소화하는 것이 사회적인 입장에서 전체의 피해를 최소화 하는 가장 합리적인 도덕적 선택이 될 수 있습니다. 이는 벤담과 밀의 '공리주의' 철학과 일맥상통하며, 도덕의 목적은 '최대 다수의 최대 행복'에 있다는 점과 결을 같이 합니다. 자율주행차는 개인의 감정이나 순간적 판단이 아니라 사전에 합의된 사회적 기준과 알고리즘에 따라 행동합니다. 따라서 공리주의적 원칙을 알고리즘에 반영하는 것은 인간 사회 전체의 안전과 효용을 극대화하기 위한 합리적인 선택이라고 할 수 있습니다.</p>
+                    <p><strong>(예시 2 : 반대입장)</strong><br>
+                    자율주행차가 다수를 살리기 위해 한 명을 희생시키는 결정을 내리는 것은 윤리적으로 정당하지 않다고 생각합니다. 이는 칸트의 의무론적 윤리관에 근거하여 설명할 수 있습니다. 칸트는 인간을 단순한 수단이 아닌 목적 그 자체로 존중해야 한다고 보았으며, 결과보다 행위의 도덕적 원칙을 중요하게 여겼습니다. 자율주행차가 특정 개인을 희생시키는 선택을 한다는 것은 그 개인을 다수의 생명을 구하기 위한 수단으로 사용하는 것입니다. 이는 인간의 존엄성과 생명권을 침해하는 행위이며, 어떤 상황에서도 허용되어서는 안 된다고 볼 수 있습니다. 이러한 알고리즘이 허용된다면, 사회는 개인의 생명을 상황에 따라 계산 가능한 대상으로 취급하게 될 위험이 있습니다. 이는 인간의 생명이 동등하게 존중받아야 한다는 윤리적 원칙을 훼손할 수 있습니다. 따라서 의무론적 관점에서 볼 때, 자율주행차에 다수를 위해 한 명을 희생시키는 결정을 하는 규칙을 알고리즘으로 넣는 것은 윤리적으로 정당하지 않습니다.</p>
+                  </div>
+                </div>
+
+                <!-- 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">평가 기준</h2>
+                  <div id="criteria-table-2" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 질문 3 탭 내용 -->
+            <div id="question-3-content" class="question-tab-content">
+              <div class="materials-scrollable">
+                <!-- 예시 답안 -->
+                <div class="materials-section">
+                  <h2 class="section-title">예시 답안</h2>
+                  <div class="answer-text">
+                    <p><strong>(예시 1: 찬성 입장)</strong><br>
+                    위 주장에 찬성하며, 인공지능의 채용 판단은 차별이 아니라 데이터에 근거한 합리적 결정이라고 생각합니다. 인공지능은 인간처럼 의도나 편견을 가지는 존재가 아니라, 주어진 데이터를 바탕으로 통계적 규칙을 학습하여 판단을 내리는 시스템입니다. 따라서 특정 직군에 남성 직원이 많다는 현실의 분포를 반영한 결과가 나타나는 것은 자연스러운 현상이라고 볼 수 있습니다. 어떤 특성을 가진 직원들이 어떤 성과를 내었는지에 대한 과거의 데이터는 가장 신뢰할 수 있는 판단 근거입니다. 인공지능이 고성과자를 많이 배출한 집단의 특성을 기준으로 평가하는 것은 효율성과 성과 극대화를 목표로 하는 기업의 입장에서 합리적인 선택이며 기업의 생산성과 경쟁력을 높이는 데 기여합니다. 더 나아가, 동일한 데이터를 인간 채용 담당자가 활용하더라도 비슷한 판단이 내려질 가능성이 높습니다. 이 경우 문제의 원인은 인공지능이 아니라 사회 구조적 현실에 있으며, 인공지능의 판단 자체를 차별로 규정하는 것은 기술의 책임을 과도하게 묻는 것이라고 생각합니다. 인공지능은 주어진 데이터 내에서 가장 객관적이고 효율적인 판단을 하도록 활용하고, 이를 보완하는 정책은 별도로 적용할 수 있다고 생각합니다.</p>
+                    <p><strong>(예시 2: 반대 입장)</strong><br>
+                    위 주장에 반대하며, 인공지능의 판단은 차별을 가져올 수 있다고 생각합니다. 인공지능은 중립적인 존재가 아니라, 어떤 데이터를 학습하느냐에 따라 기존 사회의 불평등과 편향을 그대로 재생산할 수 있는 기술입니다. 따라서 과거의 차별적인 구조 안에서 수집된 데이터를 그대로 따르는 것은 그 데이터 속에 담겨 있는 이미 존재하는 차별을 강화하는 결과를 낳을 수 있습니다. 인공지능이 사용하는 정보는 일견 객관적인 정보인 것 같지만, 어떤 변수를 선택하고 어떤 방식으로 표본이 선택되어 수집되었는가에 따라, 숨겨진 차별구조의 영향을 배제하지 못할 수 있습니다. 윤리적 책임의 관점에서 보면, 인공지능의 판단은 결국 인간이 설계한 알고리즘과 데이터 선택의 결과입니다. 따라서 차별적 결과가 발생했다면 이는 기술의 문제가 아니라 이를 관리·통제하지 않은 인간의 책임이며, 인공지능의 의사결정에서 차별을 없애는 방향에 대한 연구와 합의가 필요합니다.</p>
+                  </div>
+                </div>
+
+                <!-- 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">평가 기준</h2>
+                  <div id="criteria-table-3" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 질문 4 탭 내용 -->
+            <div id="question-4-content" class="question-tab-content">
+              <div class="materials-scrollable">
+                <!-- 예시 답안 -->
+                <div class="materials-section">
+                  <h2 class="section-title">예시 답안</h2>
+                  <div class="answer-text">
+                    <p>
+                      AI가 법률적 판단, 예를 들어 범죄 재발 가능성 예측에 사용될 때 편향된 결과가 나타난다면, 그 영향은 개인과 사회 전반에 심각하게 나타날 수 있습니다. 먼저 개인 차원에서는 특정 집단에 속해 있다는 이유로 실제 범죄 재발 가능성과 무관하게 더 높은 재범 가능성을 부여받아 보석 결정, 형량 산정, 가석방 여부 등에서 불리한 판결을 받을 가능성이 커집니다. 롤즈의 정의론 관점에서는 이러한 판단이 정의의 원칙에 위배된다고 봅니다. 정의론은 사회 제도가 개인의 기본적 권리와 공정한 기회 균등을 보장해야 한다고 주장합니다. 편향된 AI 판단은 개인의 실제 행위나 책임보다 집단적 특성을 기준으로 평가를 내리게 되며, 이는 법 앞의 평등 원칙을 침해합니다. 또한 사회적 약자에게 구조적으로 불리한 결과를 초래한다면 이는 정의롭지 않다고 판단합니다. 또한, 편향된 판결은 특정 집단에게 사회 복귀의 기회를 더 많이 차단함으로써 구조적으로 사회적 불평등을 더욱 심화시키는 결과를 낳습니다. 이는 공리주의적인 측면에서도 바람직한 결과가 아닙니다. 또한 사법 제도에 대한 시민들의 신뢰가 약화되어 법의 정당성 자체가 흔들릴 수 있습니다.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">평가 기준</h2>
+                  <div id="criteria-table-4" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 질문 5 탭 내용 -->
+            <div id="question-5-content" class="question-tab-content">
+              <div class="materials-scrollable">
+                <!-- 예시 답안 -->
+                <div class="materials-section">
+                  <h2 class="section-title">예시 답안</h2>
+                  <div class="answer-text">
+                    <p><strong>(예시 1: 찬성 입장)</strong><br>
+                    인공지능의 윤리적 문제, 특히 자율주행차의 윤리적 의사결정은 사회적 합의를 통해 해결할 수 있다고 생각합니다. 자율주행차는 개인의 사적 선택이 아니라 공공 영역에서 작동하는 기술이므로, 그 판단 기준 역시 사회 전체가 공유하는 규범에 기반해야 합니다. 자율주행차가 마주하는 윤리적 딜레마는 특정 개인의 도덕관을 따르기보다, 사회가 받아들일 수 있는 최소한의 공통 원칙을 설정하는 것이 중요합니다. 예를 들어 생명 보호의 우선순위, 무작위성의 배제 여부, 탑승자와 보행자의 권리 관계 등은 공개적인 토론과 합의를 통해 기준을 정할 수 있습니다. 이는 민주 사회에서 법과 제도를 정하는 방식과 유사합니다. 또한 사회적 합의를 통해 마련된 기준은 인공지능의 판단에 대한 예측 가능성과 책임성을 높입니다. 사전에 합의된 윤리 기준이 존재한다면, 사고 발생 시 책임의 소재를 명확히 할 수 있으며 사회적 갈등을 줄일 수 있습니다. 따라서 자율주행차의 윤리적 의사결정은 기술 문제가 아니라 사회적 규범 설정의 문제이며, 사회적 합의를 통해 해결 가능하다고 생각합니다.</p>
+                    <p><strong>(예시 2: 반대 입장)</strong><br>
+                    인공지능의 윤리적 문제를 사회적 합의만으로 해결하는 데에는 한계가 있다고 생각합니다. 자율주행차의 윤리적 의사결정은 생명과 직결된 문제이기 때문에, 사회 구성원 간의 가치관 차이가 매우 크게 드러날 수밖에 없습니다. 자율주행차의 트롤리 딜레마와 같은 문제에서 어떤 사람은 공리주의적 판단을 지지하고, 다른 사람은 개인의 생명권을 절대적으로 보호해야 한다는 입장을 취합니다. 이러한 근본적인 윤리관의 차이는 토론을 통해 쉽게 합의에 도달하기 어렵습니다. 사회적 합의가 이루어진다 하더라도, 이는 다수의 의견일 뿐 소수의 권리를 침해할 위험을 내포합니다. 또한 기술은 빠르게 발전하지만 사회적 합의는 그 속도를 따라가지 못하는 경우가 많습니다. 윤리 기준이 합의되는 시점에는 이미 기술 환경이 변화했을 가능성이 높으며, 이는 실효성 있는 기준 마련을 어렵게 합니다. 따라서 자율주행차의 윤리 문제는 사회적 합의만으로 해결하기보다는, 법적 원칙을 전제로 전문가 집단의 판단을 통해 신속한 의사결정과 기술 반영이 이루어 지되, 지속적인 검증과 수정이 병행되어야 한다고 생각합니다.</p>
+                  </div>
+                </div>
+
+                <!-- 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">평가 기준</h2>
+                  <div id="criteria-table-5" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 종합 평가 기준 및 탐침 질문 탭 내용 -->
+            <div id="question-summary-content" class="question-tab-content">
+              <div class="materials-scrollable">
+                <!-- 종합 평가 기준 -->
+                <div class="materials-section">
+                  <h2 class="section-title">종합 평가 기준</h2>
+                  <div id="summary-criteria-table" class="handsontable-container"></div>
+                </div>
+
+                <!-- 탐침 질문 -->
+                <div class="materials-section">
+                  <h2 class="section-title" style="display: inline-block; width: 100%;">탐침 질문 <button id="view-probing-questions-btn" class="btn btn-primary" style="font-size: 0.875rem; padding: 0.25rem 0.75rem; margin-left: 0.5rem; vertical-align: baseline;">크게 보기</button></h2>
+                  <div id="probing-questions-table" class="handsontable-container"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 탐침 질문 만들기 탭 -->
+    <div id="probing-tab" class="main-tab-content">
+      <!-- 상단 버튼 영역 -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div class="sub-tabs" style="margin: 0;">
+          <button class="sub-tab-button active" data-sub-tab="student-a">학생 A의 케이스</button>
+          <button class="sub-tab-button" data-sub-tab="student-b">학생 B의 케이스</button>
+        </div>
+        <button id="view-my-probing-questions-btn" class="btn btn-secondary" style="font-size: 0.875rem; padding: 0.5rem 1rem;">내가 만든 탐침 질문 보기</button>
+      </div>
+
+      <!-- 학생 A의 케이스 -->
+      <div id="student-a-tab" class="sub-tab-content active">
+        <!-- 시작하기 화면 -->
+        <div id="student-a-start-screen" style="text-align: center; padding: 3rem;">
+          <h2 style="margin-bottom: 2rem; color: #1f2937;">학생 A의 케이스 탐침 질문 만들기</h2>
+          <p style="margin-bottom: 2rem; color: #6b7280;">각 질문별로 학생 A의 답변을 확인하고 탐침 질문을 작성해주세요.</p>
+          <button id="start-probing-a-btn" class="btn btn-primary" style="font-size: 1.125rem; padding: 1rem 2rem;">시작하기</button>
+        </div>
+
+        <!-- 작업 화면 (시작하기 클릭 후 표시) -->
+        <div id="student-a-work-screen" style="display: none;">
+          <!-- 질문별 탭 -->
+          <div class="question-tabs" style="margin-bottom: 1.5rem;">
+            <button class="question-tab-button active" data-question="1">질문 1</button>
+            <button class="question-tab-button" data-question="2">질문 2</button>
+            <button class="question-tab-button" data-question="3">질문 3</button>
+            <button class="question-tab-button" data-question="4">질문 4</button>
+            <button class="question-tab-button" data-question="5">질문 5</button>
+            <button id="submit-probing-a-btn" class="btn btn-primary" style="margin-left: auto; padding: 0.6rem 1.2rem; font-size: 0.875rem;">최종 제출하기</button>
+          </div>
+
+          <!-- 질문별 내용 (질문 1~5 모두 동일한 구조) -->
+          <div id="question-1-probing-content" class="question-probing-content active">
+            <!-- 질문 정보 표시 영역 -->
+            <div class="question-info-section" style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">질문 1</h3>
+              <div id="question-1-text" style="margin-bottom: 1.5rem; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">예시 답안</h4>
+              <div id="question-1-answer" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
+              <div id="question-1-criteria" class="handsontable-container"></div>
+            </div>
+
+            <!-- 입력 영역 (좌우 분할) -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <!-- 좌측: 학생 A 답변 -->
+              <div class="section-card">
+                <h2 class="section-title">학생 A 답변</h2>
+                <div id="student-a-answer-1" class="student-answer-content"></div>
+              </div>
+
+              <!-- 우측: 탐침 질문 만들기 -->
+              <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                  <h2 style="margin: 0;">탐침 질문 만들기</h2>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="save-status" data-question="1" data-student="a" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
+                    <button class="btn btn-primary save-probing-btn" data-question="1" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">질문별 저장</button>
+                  </div>
+                </div>
+                <div id="probing-questions-a-1" class="handsontable-container"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 질문 2~5도 동일한 구조로 생성 (숨김 처리) -->
+          <div id="question-2-probing-content" class="question-probing-content" style="display: none;">
+            <div class="question-info-section" style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">질문 2</h3>
+              <div id="question-2-text" style="margin-bottom: 1.5rem; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">예시 답안</h4>
+              <div id="question-2-answer" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
+              <div id="question-2-criteria" class="handsontable-container"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <div class="section-card">
+                <h2 class="section-title">학생 A 답변</h2>
+                <div id="student-a-answer-2" class="student-answer-content"></div>
+              </div>
+              <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                  <h2 style="margin: 0;">탐침 질문 만들기</h2>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="save-status" data-question="2" data-student="a" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
+                    <button class="btn btn-primary save-probing-btn" data-question="2" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">질문별 저장</button>
+                  </div>
+                </div>
+                <div id="probing-questions-a-2" class="handsontable-container"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="question-3-probing-content" class="question-probing-content" style="display: none;">
+            <div class="question-info-section" style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">질문 3</h3>
+              <div id="question-3-text" style="margin-bottom: 1.5rem; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">예시 답안</h4>
+              <div id="question-3-answer" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
+              <div id="question-3-criteria" class="handsontable-container"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <div class="section-card">
+                <h2 class="section-title">학생 A 답변</h2>
+                <div id="student-a-answer-3" class="student-answer-content"></div>
+              </div>
+              <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                  <h2 style="margin: 0;">탐침 질문 만들기</h2>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="save-status" data-question="3" data-student="a" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
+                    <button class="btn btn-primary save-probing-btn" data-question="3" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">질문별 저장</button>
+                  </div>
+                </div>
+                <div id="probing-questions-a-3" class="handsontable-container"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="question-4-probing-content" class="question-probing-content" style="display: none;">
+            <div class="question-info-section" style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">질문 4</h3>
+              <div id="question-4-text" style="margin-bottom: 1.5rem; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">예시 답안</h4>
+              <div id="question-4-answer" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
+              <div id="question-4-criteria" class="handsontable-container"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <div class="section-card">
+                <h2 class="section-title">학생 A 답변</h2>
+                <div id="student-a-answer-4" class="student-answer-content"></div>
+              </div>
+              <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                  <h2 style="margin: 0;">탐침 질문 만들기</h2>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="save-status" data-question="4" data-student="a" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
+                    <button class="btn btn-primary save-probing-btn" data-question="4" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">질문별 저장</button>
+                  </div>
+                </div>
+                <div id="probing-questions-a-4" class="handsontable-container"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="question-5-probing-content" class="question-probing-content" style="display: none;">
+            <div class="question-info-section" style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">질문 5</h3>
+              <div id="question-5-text" style="margin-bottom: 1.5rem; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">예시 답안</h4>
+              <div id="question-5-answer" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
+              <div id="question-5-criteria" class="handsontable-container"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <div class="section-card">
+                <h2 class="section-title">학생 A 답변</h2>
+                <div id="student-a-answer-5" class="student-answer-content"></div>
+              </div>
+              <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                  <h2 style="margin: 0;">탐침 질문 만들기</h2>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="save-status" data-question="5" data-student="a" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
+                    <button class="btn btn-primary save-probing-btn" data-question="5" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">질문별 저장</button>
+                  </div>
+                </div>
+                <div id="probing-questions-a-5" class="handsontable-container"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 학생 B의 케이스 -->
+      <div id="student-b-tab" class="sub-tab-content">
+        <!-- 시작하기 화면 -->
+        <div id="student-b-start-screen" style="text-align: center; padding: 3rem;">
+          <h2 style="margin-bottom: 2rem; color: #1f2937;">학생 B의 케이스 탐침 질문 만들기</h2>
+          <p style="margin-bottom: 2rem; color: #6b7280;">각 질문별로 학생 B의 답변을 확인하고 탐침 질문을 작성해주세요.</p>
+          <button id="start-probing-b-btn" class="btn btn-primary" style="font-size: 1.125rem; padding: 1rem 2rem;">시작하기</button>
+        </div>
+
+        <!-- 작업 화면 (시작하기 클릭 후 표시) -->
+        <div id="student-b-work-screen" style="display: none;">
+          <!-- 질문별 탭 -->
+          <div class="question-tabs" style="margin-bottom: 1.5rem;">
+            <button class="question-tab-button active" data-question="1">질문 1</button>
+            <button class="question-tab-button" data-question="2">질문 2</button>
+            <button class="question-tab-button" data-question="3">질문 3</button>
+            <button class="question-tab-button" data-question="4">질문 4</button>
+            <button class="question-tab-button" data-question="5">질문 5</button>
+            <button id="submit-probing-b-btn" class="btn btn-primary" style="margin-left: auto; padding: 0.6rem 1.2rem; font-size: 0.875rem;">최종 제출하기</button>
+          </div>
+
+          <!-- 질문별 내용 (질문 1~5 모두 동일한 구조) -->
+          <div id="question-1-probing-content-b" class="question-probing-content active">
+            <!-- 질문 정보 표시 영역 -->
+            <div class="question-info-section" style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">질문 1</h3>
+              <div id="question-1-text-b" style="margin-bottom: 1.5rem; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">예시 답안</h4>
+              <div id="question-1-answer-b" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
+              <div id="question-1-criteria-b" class="handsontable-container"></div>
+            </div>
+
+            <!-- 입력 영역 (좌우 분할) -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <!-- 좌측: 학생 B 답변 -->
+              <div class="section-card">
+                <h2 class="section-title">학생 B 답변</h2>
+                <div id="student-b-answer-1" class="student-answer-content"></div>
+              </div>
+
+              <!-- 우측: 탐침 질문 만들기 -->
+              <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                  <h2 style="margin: 0;">탐침 질문 만들기</h2>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="save-status" data-question="1" data-student="b" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
+                    <button class="btn btn-primary save-probing-btn" data-question="1" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">질문별 저장</button>
+                  </div>
+                </div>
+                <div id="probing-questions-b-1" class="handsontable-container"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 질문 2~5도 동일한 구조로 생성 (숨김 처리) -->
+          <div id="question-2-probing-content-b" class="question-probing-content" style="display: none;">
+            <div class="question-info-section" style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">질문 2</h3>
+              <div id="question-2-text-b" style="margin-bottom: 1.5rem; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">예시 답안</h4>
+              <div id="question-2-answer-b" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
+              <div id="question-2-criteria-b" class="handsontable-container"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <div class="section-card">
+                <h2 class="section-title">학생 B 답변</h2>
+                <div id="student-b-answer-2" class="student-answer-content"></div>
+              </div>
+              <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                  <h2 style="margin: 0;">탐침 질문 만들기</h2>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="save-status" data-question="2" data-student="b" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
+                    <button class="btn btn-primary save-probing-btn" data-question="2" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">질문별 저장</button>
+                  </div>
+                </div>
+                <div id="probing-questions-b-2" class="handsontable-container"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="question-3-probing-content-b" class="question-probing-content" style="display: none;">
+            <div class="question-info-section" style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">질문 3</h3>
+              <div id="question-3-text-b" style="margin-bottom: 1.5rem; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">예시 답안</h4>
+              <div id="question-3-answer-b" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
+              <div id="question-3-criteria-b" class="handsontable-container"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <div class="section-card">
+                <h2 class="section-title">학생 B 답변</h2>
+                <div id="student-b-answer-3" class="student-answer-content"></div>
+              </div>
+              <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                  <h2 style="margin: 0;">탐침 질문 만들기</h2>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="save-status" data-question="3" data-student="b" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
+                    <button class="btn btn-primary save-probing-btn" data-question="3" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">질문별 저장</button>
+                  </div>
+                </div>
+                <div id="probing-questions-b-3" class="handsontable-container"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="question-4-probing-content-b" class="question-probing-content" style="display: none;">
+            <div class="question-info-section" style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">질문 4</h3>
+              <div id="question-4-text-b" style="margin-bottom: 1.5rem; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">예시 답안</h4>
+              <div id="question-4-answer-b" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
+              <div id="question-4-criteria-b" class="handsontable-container"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <div class="section-card">
+                <h2 class="section-title">학생 B 답변</h2>
+                <div id="student-b-answer-4" class="student-answer-content"></div>
+              </div>
+              <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                  <h2 style="margin: 0;">탐침 질문 만들기</h2>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="save-status" data-question="4" data-student="b" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
+                    <button class="btn btn-primary save-probing-btn" data-question="4" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">질문별 저장</button>
+                  </div>
+                </div>
+                <div id="probing-questions-b-4" class="handsontable-container"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="question-5-probing-content-b" class="question-probing-content" style="display: none;">
+            <div class="question-info-section" style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">질문 5</h3>
+              <div id="question-5-text-b" style="margin-bottom: 1.5rem; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">예시 답안</h4>
+              <div id="question-5-answer-b" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;"></div>
+              <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
+              <div id="question-5-criteria-b" class="handsontable-container"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <div class="section-card">
+                <h2 class="section-title">학생 B 답변</h2>
+                <div id="student-b-answer-5" class="student-answer-content"></div>
+              </div>
+              <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                  <h2 style="margin: 0;">탐침 질문 만들기</h2>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="save-status" data-question="5" data-student="b" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
+                    <button class="btn btn-primary save-probing-btn" data-question="5" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">질문별 저장</button>
+                  </div>
+                </div>
+                <div id="probing-questions-b-5" class="handsontable-container"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="src/ai_ethics.js"></script>
+</body>
+</html>

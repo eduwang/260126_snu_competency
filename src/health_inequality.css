@@ -578,6 +578,23 @@
   margin-bottom: 0;
 }
 
+/* 탐침 질문 만들기 탭의 질문별 콘텐츠 스타일 */
+.question-probing-content {
+  display: none;
+}
+
+.question-probing-content.active {
+  display: block;
+}
+
+.question-info-section {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
 /* 반응형 디자인 */
 @media (max-width: 1024px) {
   .materials-layout {
