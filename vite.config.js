@@ -17,11 +17,16 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         '01_mock_eval_01_bottle_crack': resolve(__dirname, '01_mock_eval_01_bottle_crack.html'),
         '01_mock_eval_02_college_entrance': resolve(__dirname, '01_mock_eval_02_college_entrance.html'),
+        '01_mock_eval_03_escape_plan': resolve(__dirname, '01_mock_eval_03_escape_plan.html'),
+        '01_mock_eval_04_health_inequality': resolve(__dirname, '01_mock_eval_04_health_inequality.html'),
+        '01_mock_eval_05_AI_ethics': resolve(__dirname, '01_mock_eval_05_AI_ethics.html'),
         '02_probing_question_01_escape_plan': resolve(__dirname, '02_probing_question_01_escape_plan.html'),
         '02_probing_question_02_health_inequality': resolve(__dirname, '02_probing_question_02_health_inequality.html'),
+        '02_probing_question_03_AI_ethics': resolve(__dirname, '02_probing_question_03_AI_ethics.html'),
         'activity01': resolve(__dirname, 'activity01.html'),
         'admin': resolve(__dirname, 'admin.html'),
         'results': resolve(__dirname, 'results.html'),
+        'results_old': resolve(__dirname, 'results_old.html'),
         'makeProbingQuestions': resolve(__dirname, 'makeProbingQuestions.html')
       },
       output: {
