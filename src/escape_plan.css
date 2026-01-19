@@ -137,6 +137,10 @@
   margin-bottom: 1rem;
   border-bottom: 2px solid #e5e7eb;
   flex-shrink: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
 }
 
 .question-tab-button {
@@ -606,6 +610,38 @@
 
   .two-column-grid {
     grid-template-columns: 1fr;
+  }
+
+  /* 탐침 질문 만들기 영역 모바일 반응형 */
+  .probing-questions-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* 문항별 탭 가로 스크롤 */
+  .question-tabs {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    flex-wrap: nowrap;
+  }
+
+  .question-tabs::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .question-tabs::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+
+  .question-tabs::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+  }
+
+  .question-tabs::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
   }
 }
 

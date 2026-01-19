@@ -123,7 +123,7 @@
               <button class="question-tab-button" data-question="3">질문 3</button>
               <button class="question-tab-button" data-question="4">질문 4</button>
               <button class="question-tab-button" data-question="5">질문 5</button>
-              <button class="question-tab-button" data-question="summary">종합 평가 기준 및 탐침 질문</button>
+              <button class="question-tab-button" data-question="summary">추가 평가기준(종합) 및 탐침 질문</button>
             </div>
 
             <!-- 질문 1 탭 내용 -->
@@ -251,7 +251,7 @@
               <div class="materials-scrollable">
                 <!-- 종합 평가 기준 -->
                 <div class="materials-section">
-                  <h2 class="section-title">종합 평가 기준</h2>
+                  <h2 class="section-title">추가 평가기준(종합)</h2>
                   <div id="summary-criteria-table" class="handsontable-container"></div>
                 </div>
 
@@ -304,7 +304,7 @@
             </div>
 
             <!-- 입력 영역 (좌우 분할) -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="probing-questions-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
               <!-- 좌측: 학생 A 답변 -->
               <div class="section-card">
                 <h2 class="section-title">학생 A 답변</h2>
@@ -336,7 +336,7 @@
               <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
               <div id="question-2-criteria" class="handsontable-container"></div>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="probing-questions-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
               <div class="section-card">
                 <h2 class="section-title">학생 A 답변</h2>
                 <div id="student-a-answer-2" class="student-answer-content"></div>
@@ -364,7 +364,7 @@
               <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
               <div id="question-3-criteria" class="handsontable-container"></div>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="probing-questions-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
               <div class="section-card">
                 <h2 class="section-title">학생 A 답변</h2>
                 <div id="student-a-answer-3" class="student-answer-content"></div>
@@ -391,7 +391,7 @@
               <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
               <div id="question-4-criteria" class="handsontable-container"></div>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="probing-questions-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
               <div class="section-card">
                 <h2 class="section-title">학생 A 답변</h2>
                 <div id="student-a-answer-4" class="student-answer-content"></div>
@@ -419,7 +419,7 @@
               <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
               <div id="question-5-criteria" class="handsontable-container"></div>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="probing-questions-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
               <div class="section-card">
                 <h2 class="section-title">학생 A 답변</h2>
                 <div id="student-a-answer-5" class="student-answer-content"></div>
@@ -466,7 +466,7 @@
             </div>
 
             <!-- 입력 영역 (좌우 분할) -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="probing-questions-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
               <!-- 좌측: 학생 B 답변 -->
               <div class="section-card">
                 <h2 class="section-title">학생 B 답변</h2>
@@ -498,7 +498,7 @@
               <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
               <div id="question-2-criteria-b" class="handsontable-container"></div>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="probing-questions-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
               <div class="section-card">
                 <h2 class="section-title">학생 B 답변</h2>
                 <div id="student-b-answer-2" class="student-answer-content"></div>
@@ -526,7 +526,7 @@
               <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
               <div id="question-3-criteria-b" class="handsontable-container"></div>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="probing-questions-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
               <div class="section-card">
                 <h2 class="section-title">학생 B 답변</h2>
                 <div id="student-b-answer-3" class="student-answer-content"></div>
@@ -554,7 +554,7 @@
               <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
               <div id="question-4-criteria-b" class="handsontable-container"></div>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="probing-questions-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
               <div class="section-card">
                 <h2 class="section-title">학생 B 답변</h2>
                 <div id="student-b-answer-4" class="student-answer-content"></div>
@@ -582,7 +582,7 @@
               <h4 style="margin-bottom: 0.75rem; color: #1f2937;">평가 기준</h4>
               <div id="question-5-criteria-b" class="handsontable-container"></div>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="probing-questions-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
               <div class="section-card">
                 <h2 class="section-title">학생 B 답변</h2>
                 <div id="student-b-answer-5" class="student-answer-content"></div>
