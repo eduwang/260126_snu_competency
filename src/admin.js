@@ -553,9 +553,15 @@ async function loadAllData() {
     querySnapshot.forEach((docSnap) => {
       const data = docSnap.data();
       const createdAt = data.createdAt?.toDate?.() || new Date();
+      const updatedAt = data.updatedAt?.toDate?.() || createdAt;
       
-      // endTime이 있는 데이터만 표시 (제출 완료된 데이터)
-      if (!data.endTime) {
+      // endTime 조건 제거: 모든 저장된 탐침 질문 표시
+      // 단, 탐침 질문이 있는 데이터만 포함
+      const hasProbingQuestions = data.questions && Object.values(data.questions).some(
+        q => q && q.probingQuestions && q.probingQuestions.length > 0
+      );
+      
+      if (!hasProbingQuestions) {
         return;
       }
       
@@ -574,6 +580,7 @@ async function loadAllData() {
         id: docSnap.id,
         ...data,
         createdAt: createdAt,
+        updatedAt: updatedAt,
         displayName: displayName,
         userName: userName,
         userAffiliation: userAffiliation
@@ -730,16 +737,19 @@ function renderDataDetail(data) {
   // 시나리오 표시
   const scenarioLabel = scenario ? ` - ${scenario}` : '';
 
-  // 과제별 내용 생성
-  let questionsHTML = '';
-  for (let i = 1; i <= 5; i++) {
-    const questionData = questions[i];
-    if (!questionData) continue;
+    // 과제/질문별 내용 생성
+    // 시나리오별로 "과제" 또는 "질문" 표기 구분
+    const questionLabel = scenario === '인공지능과윤리' ? '질문' : '과제';
+    
+    let questionsHTML = '';
+    for (let i = 1; i <= 5; i++) {
+      const questionData = questions[i];
+      if (!questionData) continue;
 
-    const questionText = questionData.text || '';
-    const exampleAnswer = questionData.exampleAnswer || '';
-    let studentAnswer = questionData.studentAnswer || '';
-    const probingQuestions = questionData.probingQuestions || [];
+      const questionText = questionData.text || '';
+      const exampleAnswer = questionData.exampleAnswer || '';
+      let studentAnswer = questionData.studentAnswer || '';
+      const probingQuestions = questionData.probingQuestions || [];
     
     // 학생 답변에 이미지 추가 (시나리오별로)
     if (studentAnswer && scenario === '대피시뮬레이션') {
@@ -802,11 +812,13 @@ function renderDataDetail(data) {
       probingTableHTML = '<p style="color: #6b7280; font-size: 0.875rem;">탐침 질문이 없습니다.</p>';
     }
 
+    const questionTitleLabel = scenario === '인공지능과윤리' ? '질문 본문' : '과제 본문';
+    
     questionsHTML += `
       <div class="question-detail-section">
-        <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">과제 ${i}</h3>
+        <h3 style="margin-top: 0; color: #2563eb; margin-bottom: 1rem;">${questionLabel} ${i}</h3>
         <div class="question-content-section">
-          <h4 style="margin-bottom: 0.75rem; color: #1f2937; font-size: 1rem;">과제 본문</h4>
+          <h4 style="margin-bottom: 0.75rem; color: #1f2937; font-size: 1rem;">${questionTitleLabel}</h4>
           <div class="question-text-content" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; line-height: 1.8;">${questionText}</div>
           
           <h4 style="margin-bottom: 0.75rem; color: #1f2937; font-size: 1rem;">${studentTypeLabel} 응답</h4>
@@ -833,7 +845,7 @@ function renderDataDetail(data) {
       </div>
     </div>
     <div class="questions-container">
-      ${questionsHTML || '<p style="color: #6b7280;">과제 데이터가 없습니다.</p>'}
+      ${questionsHTML || `<p style="color: #6b7280;">${questionLabel} 데이터가 없습니다.</p>`}
     </div>
   `;
 
