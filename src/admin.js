@@ -180,7 +180,7 @@ function renderUsersList() {
     return;
   }
 
-  const usersHTML = allUsers.map(user => {
+  const usersHTML = allUsers.map((user, index) => {
     const createdAt = user.createdAt?.toDate?.() || new Date();
     const linkedAt = user.linkedAt?.toDate?.();
     const isLinked = !!user.uid;
@@ -192,7 +192,7 @@ function renderUsersList() {
           <div class="user-details">
             소속: ${user.affiliation || '소속 없음'}<br>
             ${user.email ? `이메일: ${user.email}<br>` : ''}
-            ${user.password ? `비밀번호: <span class="user-code" style="font-family: monospace; font-weight: 600; color: #2563eb;">${user.password}</span><br>` : ''}
+            ${user.password ? `비밀번호: <span class="user-code" data-password="${user.password}" data-index="${index}" style="font-family: monospace; font-weight: 600; color: #2563eb; cursor: pointer; user-select: none; transition: opacity 0.2s;" title="클릭하여 복사">${user.password}</span><br>` : ''}
             생성일: ${createdAt.toLocaleString('ko-KR')}
             ${linkedAt ? `<br>연결일: ${linkedAt.toLocaleString('ko-KR')}` : ''}
           </div>
@@ -211,6 +211,49 @@ function renderUsersList() {
   }).join('');
 
   usersContainer.innerHTML = usersHTML;
+  
+  // 비밀번호 클릭 시 복사 기능 추가
+  usersContainer.querySelectorAll('.user-code').forEach(element => {
+    element.addEventListener('click', async () => {
+      const password = element.getAttribute('data-password');
+      if (!password) return;
+      
+      try {
+        await navigator.clipboard.writeText(password);
+        // 복사 성공 피드백
+        const originalText = element.textContent;
+        element.textContent = '복사됨!';
+        element.style.opacity = '0.7';
+        
+        setTimeout(() => {
+          element.textContent = originalText;
+          element.style.opacity = '1';
+        }, 1000);
+      } catch (err) {
+        // 클립보드 API가 지원되지 않는 경우 대체 방법
+        const textArea = document.createElement('textarea');
+        textArea.value = password;
+        textArea.style.position = 'fixed';
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          const originalText = element.textContent;
+          element.textContent = '복사됨!';
+          element.style.opacity = '0.7';
+          
+          setTimeout(() => {
+            element.textContent = originalText;
+            element.style.opacity = '1';
+          }, 1000);
+        } catch (err) {
+          console.error('복사 실패:', err);
+        }
+        document.body.removeChild(textArea);
+      }
+    });
+  });
 }
 
 // 사용자 수정 함수 (전역으로 등록)
@@ -339,11 +382,14 @@ document.getElementById('addUserBtn').addEventListener('click', async () => {
 
   if (result.isConfirmed) {
     try {
+      // 현재 관리자 정보 저장 (로그아웃 후 재로그인을 위해)
+      const adminEmail = currentUser?.email;
+      
       // 5자리 랜덤 비밀번호 생성
       const password = generateRandomPassword();
       const { name, affiliation, email } = result.value;
       
-      // Firebase Authentication에 사용자 생성
+      // Firebase Authentication에 사용자 생성 (자동으로 새 사용자로 로그인됨)
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const uid = userCredential.user.uid;
       
@@ -357,29 +403,91 @@ document.getElementById('addUserBtn').addEventListener('click', async () => {
         createdAt: serverTimestamp()
       });
 
-      Swal.fire({
+      // 즉시 로그아웃 (새로 생성된 사용자로 로그인된 상태이므로)
+      await signOut(auth);
+
+      // 사용자 추가 완료 메시지 표시
+      await Swal.fire({
         icon: 'success',
         title: '사용자 추가 완료',
         html: `
           <p style="margin-bottom: 1.5rem;">사용자가 추가되었습니다.</p>
           <div style="background: #f3f4f6; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: left;">
             <p style="margin: 0 0 0.5rem 0; font-weight: 600; font-size: 0.875rem; color: #6b7280;">이메일 (아이디)</p>
-            <p style="margin: 0; font-weight: 700; font-size: 1.25rem; color: #1f2937; font-family: monospace; letter-spacing: 0.05em; word-break: break-all;">${email}</p>
+            <p id="email-display" style="margin: 0; font-weight: 700; font-size: 1.25rem; color: #1f2937; font-family: monospace; letter-spacing: 0.05em; word-break: break-all; cursor: pointer; user-select: none; transition: opacity 0.2s;" title="클릭하여 복사">${email}</p>
           </div>
           <div style="background: #eff6ff; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: left; border: 2px solid #2563eb;">
             <p style="margin: 0 0 0.5rem 0; font-weight: 600; font-size: 0.875rem; color: #2563eb;">비밀번호</p>
-            <p style="margin: 0; font-weight: 700; font-size: 1.5rem; color: #1e40af; font-family: monospace; letter-spacing: 0.1em;">${password}</p>
+            <p id="password-display" style="margin: 0; font-weight: 700; font-size: 1.5rem; color: #1e40af; font-family: monospace; letter-spacing: 0.1em; cursor: pointer; user-select: none; transition: opacity 0.2s;" title="클릭하여 복사">${password}</p>
           </div>
           <p style="margin-top: 0.5rem; font-size: 0.875rem; color: #ef4444; font-weight: 600;">
             ⚠️ 이 정보를 반드시 사용자에게 전달하세요. 비밀번호는 저장되지 않습니다.
           </p>
+          <p style="margin-top: 1rem; font-size: 0.875rem; color: #6b7280;">
+            관리자 계정으로 다시 로그인해주세요.
+          </p>
         `,
         confirmButtonText: '확인',
-        width: '500px'
+        width: '500px',
+        didOpen: () => {
+          // 복사 함수
+          const copyToClipboard = async (text, element) => {
+            try {
+              await navigator.clipboard.writeText(text);
+              // 복사 성공 피드백
+              const originalText = element.textContent;
+              element.textContent = '복사됨!';
+              element.style.opacity = '0.7';
+              
+              setTimeout(() => {
+                element.textContent = originalText;
+                element.style.opacity = '1';
+              }, 1000);
+            } catch (err) {
+              // 클립보드 API가 지원되지 않는 경우 대체 방법
+              const textArea = document.createElement('textarea');
+              textArea.value = text;
+              textArea.style.position = 'fixed';
+              textArea.style.opacity = '0';
+              document.body.appendChild(textArea);
+              textArea.select();
+              try {
+                document.execCommand('copy');
+                const originalText = element.textContent;
+                element.textContent = '복사됨!';
+                element.style.opacity = '0.7';
+                
+                setTimeout(() => {
+                  element.textContent = originalText;
+                  element.style.opacity = '1';
+                }, 1000);
+              } catch (err) {
+                console.error('복사 실패:', err);
+              }
+              document.body.removeChild(textArea);
+            }
+          };
+
+          // 이메일 클릭 시 복사 기능 추가
+          const emailDisplay = document.getElementById('email-display');
+          if (emailDisplay) {
+            emailDisplay.addEventListener('click', () => {
+              copyToClipboard(email, emailDisplay);
+            });
+          }
+
+          // 비밀번호 클릭 시 복사 기능 추가
+          const passwordDisplay = document.getElementById('password-display');
+          if (passwordDisplay) {
+            passwordDisplay.addEventListener('click', () => {
+              copyToClipboard(password, passwordDisplay);
+            });
+          }
+        }
       });
 
-      // 사용자 목록 새로고침
-      loadUsers();
+      // 메인 페이지로 리다이렉트 (로그인 페이지)
+      window.location.href = '/index.html';
       
     } catch (error) {
       console.error('사용자 추가 오류:', error);

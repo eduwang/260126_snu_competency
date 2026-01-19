@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 let currentUser = null;
 let allData = [];
 let processedData = []; // 탐침 질문을 사용자별로 그룹화한 데이터
+let anonymousUserMap = new Map(); // 사용자 ID -> 익명 ID 매핑
 
 // 필터 상태
 let selectedScenario = '대피시뮬레이션'; // 기본값을 대피시뮬레이션으로 설정
@@ -147,6 +148,22 @@ async function loadAllData() {
       }
     });
 
+    // 익명 ID 매핑 생성 (사용자 ID를 기반으로 일관된 익명 ID 생성)
+    anonymousUserMap = new Map();
+    const uniqueUserIds = new Set();
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data.uid && data.endTime) {
+        uniqueUserIds.add(data.uid);
+      }
+    });
+    
+    // 사용자 ID를 정렬하여 일관된 익명 ID 할당
+    const sortedUserIds = Array.from(uniqueUserIds).sort();
+    sortedUserIds.forEach((userId, index) => {
+      anonymousUserMap.set(userId, `사용자${index + 1}`);
+    });
+
     allData = [];
     querySnapshot.forEach((doc) => {
       const data = doc.data();
@@ -157,19 +174,15 @@ async function loadAllData() {
         return;
       }
       
-      // 등록된 사용자 정보 가져오기
-      const userInfo = usersMap.get(data.uid);
-      let displayName = data.displayName || data.userName || '익명';
-      if (userInfo && userInfo.name) {
-        displayName = `${userInfo.name}${userInfo.affiliation ? ` (${userInfo.affiliation})` : ''}`;
-      }
+      // 익명 ID 사용
+      const anonymousId = anonymousUserMap.get(data.uid) || '익명';
       
       allData.push({
         id: doc.id,
         ...data,
         createdAt: createdAt,
-        displayName: displayName,
-        affiliation: userInfo?.affiliation || ''
+        displayName: anonymousId, // 익명 ID로 대체
+        affiliation: '' // 소속 정보 제거
       });
     });
 
@@ -209,8 +222,8 @@ function processData() {
     const studentType = data.studentType || '';
     const questions = data.questions || {};
     const userId = data.uid || data.id;
-    const displayName = data.displayName || '익명';
-    const affiliation = data.affiliation || '';
+    const displayName = data.displayName || '익명'; // 이미 익명 ID로 처리됨
+    const affiliation = ''; // 소속 정보는 표시하지 않음
     const createdAt = data.createdAt;
     
     // 각 문항별로 처리
@@ -574,7 +587,6 @@ function renderUserProbingGroup(user) {
       <div class="user-probing-header">
         <div>
           <span class="user-name">${user.displayName}</span>
-          ${user.affiliation ? `<span class="user-affiliation">(${user.affiliation})</span>` : ''}
         </div>
         <div style="font-size: 0.875rem; color: #6b7280;">
           총 ${user.probingQuestions.length}개
