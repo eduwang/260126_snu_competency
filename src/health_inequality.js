@@ -1355,28 +1355,40 @@ function getQuestionInfo(questionNum) {
 }
 
 // 학생 A 시작하기 버튼 클릭
-async function startProbingA() {
+// 학생 A 초기화 (페이지 로드 시 자동 실행)
+async function initProbingA() {
   if (!currentUser) {
-    Swal.fire({
-      icon: 'error',
-      title: '로그인 필요',
-      text: '로그인 후 이용해주세요.'
-    });
     return;
   }
 
   try {
-    // Firestore 문서 생성
-    const now = new Date();
-    const startTime = {
-      date: now.toISOString().split('T')[0],
-      time: now.toTimeString().split(' ')[0].substring(0, 5)
-    };
+    // 기존 문서 찾기 또는 새로 생성
+    const q = query(
+      collection(db, 'probingQuestions_new'),
+      where('uid', '==', currentUser.uid),
+      where('scenario', '==', '건강불평등'),
+      where('studentType', '==', 'A')
+    );
+    
+    const querySnapshot = await getDocs(q);
+    let docRef;
+    
+    if (!querySnapshot.empty) {
+      // 기존 문서가 있으면 사용
+      probingDocIdA = querySnapshot.docs[0].id;
+      docRef = doc(db, 'probingQuestions_new', probingDocIdA);
+    } else {
+      // 새 문서 생성
+      const now = new Date();
+      const startTime = {
+        date: now.toISOString().split('T')[0],
+        time: now.toTimeString().split(' ')[0].substring(0, 5)
+      };
 
-    // 과제 정보 수집
-    const questions = {};
-    // 학생 A의 과제별 답변 초기 데이터 (건강불평등)
-    const studentAAnswers = {
+      // 과제 정보 수집
+      const questions = {};
+      // 학생 A의 과제별 답변 초기 데이터 (건강불평등)
+      const studentAAnswers = {
       1: '우선 예시에 있던 문제에서 나왔던 그 사례가 고용 유형이랑… 잠시만요. 고용 유형이랑 사업장 규모였는데, 저는 어떤 불평등이 있을까 생각을 하다가 최근에 뉴스에서 나온 주 52시간 근무제 예외에 관한 뉴스가 생각이 났습니다. 그게 반도체 산업에서 추가적으로 산업의 특성 때문에 추가로 근무를 해야 된다는 얘기였는데, 그거랑 관련해서 전에 윤석열 정부에서 주 69시간 근무 제도 얘기를 했었고, 한국 사회가 예전에 그랬던 것처럼 야근이나 연장근무를 장려하는 문화가 있었던 걸로 알고 있어서, 그것과 관련해서 근무량이 많아지면 건강 악화 정도가 눈에 띄게 증가하는가를 규명해 보고자 했습니다. 이를 통해서 근무시간 제도 변경 시 주장에 대한 찬반 근거로서 이 연구를 활용하고, 과도한 업무 부담을 주는 사회 분위기를 바꿀 수 있지 않을까 생각합니다.',
       2: '관심 집단은 같은 직종, 비슷한 근무 환경이지만 근무시간만 차이나는 기업의 사람들을 전체적으로 조사를 해서 이상치를 제외하고 평균치로 비교하고자 합니다. 조사할 데이터는 주관적 건강 수준, 각종 질병 발생률, 시간에 따른 건강 악화 정도를 조사할 것입니다. 시간당 악화 정도가 중요하다고 생각해서 전체 비교와 시간당 비교를 두 번 진행하고 싶습니다. 기간은 직종별로 굉장히 다를 것 같은게, 근속시간이 엄청 긴 직종도 있고, 짧은 직종도 있어서 다를 수 있지만 긴 직종으로 했을 때, 한 2년 정도 조사하면 괜찮을 것 같습니다. 수집 방식은 주관적으로 물어볼 수 있는 것은 설문조사로 하고, 객관적 데이터는 건강검진 데이터 등을 통해 확보하겠습니다.',
       3: '세 번째는 어떤 분석을 수행할지, 가설이 맞을 때, 틀릴 때를 표현하는 건데, 앞에서 얘기한 것처럼 건강 수준이나 시간에 따라 건강이 악화되는 정도가 유의미하게 차이가 있는지 예시 자료처럼 도표로 분석할 겁니다. 제가 시간이 넉넉하지 않아 굉장히 간소화된 도표만 그렸지만, 저 데이터 하나 뿐만 아니라 여러 데이터를 막대그래프로 데이터화 시켜서 비교하면 좋겠다고 생각했습니다. 가설이 맞으면 건강악화 정도-특히 시간당 악화 정도-가 유의미하게 차이가 날 것이고, 만약에 이 가설이 유의미하지 않다면 시간 당 건강악화 정도가 그렇게 큰 차이가 나지 않을 것입니다.',
@@ -1416,20 +1428,25 @@ async function startProbingA() {
       updatedAt: serverTimestamp()
     };
 
-    const docRef = await addDoc(collection(db, 'probingQuestions_new'), docData);
-    probingDocIdA = docRef.id;
+      const docRef = await addDoc(collection(db, 'probingQuestions_new'), docData);
+      probingDocIdA = docRef.id;
+    }
 
     // 저장 상태 초기화
     resetSaveStatus('a');
-
-    // 화면 전환
-    document.getElementById('student-a-start-screen').style.display = 'none';
-    document.getElementById('student-a-work-screen').style.display = 'block';
 
     // 과제 정보 표시 및 Handsontable 초기화
     initProbingQuestionScreens();
 
     // 초기 답변 표시
+    const studentAAnswers = {
+      1: '우선 예시에 있던 문제에서 나왔던 그 사례가 고용 유형이랑… 잠시만요. 고용 유형이랑 사업장 규모였는데, 저는 어떤 불평등이 있을까 생각을 하다가 최근에 뉴스에서 나온 주 52시간 근무제 예외에 관한 뉴스가 생각이 났습니다. 그게 반도체 산업에서 추가적으로 산업의 특성 때문에 추가로 근무를 해야 된다는 얘기였는데, 그거랑 관련해서 전에 윤석열 정부에서 주 69시간 근무 제도 얘기를 했었고, 한국 사회가 예전에 그랬던 것처럼 야근이나 연장근무를 장려하는 문화가 있었던 걸로 알고 있어서, 그것과 관련해서 근무량이 많아지면 건강 악화 정도가 눈에 띄게 증가하는가를 규명해 보고자 했습니다. 이를 통해서 근무시간 제도 변경 시 주장에 대한 찬반 근거로서 이 연구를 활용하고, 과도한 업무 부담을 주는 사회 분위기를 바꿀 수 있지 않을까 생각합니다.',
+      2: '관심 집단은 같은 직종, 비슷한 근무 환경이지만 근무시간만 차이나는 기업의 사람들을 전체적으로 조사를 해서 이상치를 제외하고 평균치로 비교하고자 합니다. 조사할 데이터는 주관적 건강 수준, 각종 질병 발생률, 시간에 따른 건강 악화 정도를 조사할 것입니다. 시간당 악화 정도가 중요하다고 생각해서 전체 비교와 시간당 비교를 두 번 진행하고 싶습니다. 기간은 직종별로 굉장히 다를 것 같은게, 근속시간이 엄청 긴 직종도 있고, 짧은 직종도 있어서 다를 수 있지만 긴 직종으로 했을 때, 한 2년 정도 조사하면 괜찮을 것 같습니다. 수집 방식은 주관적으로 물어볼 수 있는 것은 설문조사로 하고, 객관적 데이터는 건강검진 데이터 등을 통해 확보하겠습니다.',
+      3: '세 번째는 어떤 분석을 수행할지, 가설이 맞을 때, 틀릴 때를 표현하는 건데, 앞에서 얘기한 것처럼 건강 수준이나 시간에 따라 건강이 악화되는 정도가 유의미하게 차이가 있는지 예시 자료처럼 도표로 분석할 겁니다. 제가 시간이 넉넉하지 않아 굉장히 간소화된 도표만 그렸지만, 저 데이터 하나 뿐만 아니라 여러 데이터를 막대그래프로 데이터화 시켜서 비교하면 좋겠다고 생각했습니다. 가설이 맞으면 건강악화 정도-특히 시간당 악화 정도-가 유의미하게 차이가 날 것이고, 만약에 이 가설이 유의미하지 않다면 시간 당 건강악화 정도가 그렇게 큰 차이가 나지 않을 것입니다.',
+      4: '수집한 데이터 표본이 전체 집단을 대표하지 못할 가능성은 어느 정도 있을 수 밖에 없는게, 제가 설정한 데이터 포본이 같은 직종, 다른 환경적인 측면이 같은데 근무시간만 다른 회사를 설정을 했습니다. 이런 회사를 찾기 힘들고, 그런 회사들만 비교한다고 해서 전체 경향성을 나타내기 어렵다고 생각합니다. 이를 보완 방법은 더 다양한 요소의 변인들을 하나씩 바꿔서 훨씬 더 많은 비교를 해야한다고 생각합니다. 예를 들어 근무시간만 다르고 다른 변인들은 전부 같은데, 또 급여만 다를 경우에, 어떤 영향이 있는지 아니면 근무하는 환경이 실내인지 실외인지 이런것도 영향이 있는지 분석할 수 있고 이런식으로 되게 다양한 비교를 해야 보완할 수 있다고 생각했습니다.',
+      5: '연구 결과에서 결국 이야기하고 싶었던 것은 연장근무를 했을 때 노동자가 얼마나 건강이 약화될 수 있는지를 얘기하고 싶었고, 이를 실제로 적용시킬려면 연장근무를 강제하는 분위기를 없애야 한다고 생각했습니다. 이를 실행하기 위해서 연장근무를 할 때, 추가적인 서류를 내야 한다든지 아니면 추가적인 절차를 필요하게 해서 회사 입장에서도 함부로 연장근무를 강제하는 그런 문화를 없앨 수 있지 않을까라고 제안해보고 싶습니다. 유의할 점은 이렇게 했는데도 연장근무를 하는 분위기는 사라지지 않았는데 오히려 노동자가 이제 제출해야 되는 서류라던지 절차가 복잡해져서 할 일만 늘어나는 그런 허울뿐인 정책이 되면 안 될 것 같습니다.'
+    };
+
     for (let i = 1; i <= 5; i++) {
       const studentAnswerContainer = document.getElementById(`student-a-answer-${i}`);
       if (studentAnswerContainer && studentAAnswers[i]) {
@@ -1449,47 +1466,45 @@ async function startProbingA() {
     setTimeout(() => {
       loadProbingDataFromFirestore();
     }, 100);
-
-    Swal.fire({
-      icon: 'success',
-      title: '시작되었습니다',
-      text: '탐침 질문 작성을 시작하세요!',
-      timer: 2000,
-      showConfirmButton: false
-    });
   } catch (error) {
-    console.error('문서 생성 오류:', error);
-    Swal.fire({
-      icon: 'error',
-      title: '오류',
-      text: '작업을 시작하는 중 오류가 발생했습니다.'
-    });
+    console.error('초기화 오류:', error);
   }
 }
 
-// 학생 B 시작하기 버튼 클릭
-async function startProbingB() {
+// 학생 B 초기화 (페이지 로드 시 자동 실행)
+async function initProbingB() {
   if (!currentUser) {
-    Swal.fire({
-      icon: 'error',
-      title: '로그인 필요',
-      text: '로그인 후 이용해주세요.'
-    });
     return;
   }
 
   try {
-    // Firestore 문서 생성
-    const now = new Date();
-    const startTime = {
-      date: now.toISOString().split('T')[0],
-      time: now.toTimeString().split(' ')[0].substring(0, 5)
-    };
+    // 기존 문서 찾기 또는 새로 생성
+    const q = query(
+      collection(db, 'probingQuestions_new'),
+      where('uid', '==', currentUser.uid),
+      where('scenario', '==', '건강불평등'),
+      where('studentType', '==', 'B')
+    );
+    
+    const querySnapshot = await getDocs(q);
+    let docRef;
+    
+    if (!querySnapshot.empty) {
+      // 기존 문서가 있으면 사용
+      probingDocIdB = querySnapshot.docs[0].id;
+      docRef = doc(db, 'probingQuestions_new', probingDocIdB);
+    } else {
+      // 새 문서 생성
+      const now = new Date();
+      const startTime = {
+        date: now.toISOString().split('T')[0],
+        time: now.toTimeString().split(' ')[0].substring(0, 5)
+      };
 
-    // 과제 정보 수집
-    const questions = {};
-    // 학생 B의 과제별 답변 초기 데이터 (건강불평등)
-    const studentBAnswers = {
+      // 과제 정보 수집
+      const questions = {};
+      // 학생 B의 과제별 답변 초기 데이터 (건강불평등)
+      const studentBAnswers = {
       1: '네 저는 거주지 주변에 녹지 정도의 차이가 건강 불평등으로 이어진다고 하는 연구를 진행해 보려고 합니다. 일단 먼저 제가 하고 싶은 주장은 녹지는 사람의 삶에 큰 영향을 미치는 부분인데 깨끗한 공기뿐만 아니라 운동할 공간, 그리고 사람들끼리 시민들끼리 할 수 있는 사회적 화합의 장의 역할을 합니다. 그래서 이는 육체적 건강뿐만 아니라 정신적 건강에도 도움을 주는 공간인데요. 그렇기 때문에 저는 녹지의 정도가 시민들의 건강에도 큰 영향을 끼친다고 생각을 하고 있습니다. 그렇기 때문에 이것이 녹지가 건강 불평등으로 이어진다고 하는 주장을 하려고 합니다. 이 연구의 필요성을 먼저 말씀드리겠습니다. 이 연구의 필요성은 우리나라의 급진적이고 무분별한 개발과 도시화로 인해서 녹지가 점점 부족해지고 있는 현상이 나타나고 있는데요. 그래서 시민들의 쉼터와 건강을 책임질 공간이 부족해지고 또 그 극소수의 공간들이 유료화되는 현상이 벌어지고 있는 점에 주목하였습니다. 소도시가 아닌 이상 대도시에서의 녹지는 대부분 녹지 근처에 거주하기 위해서는 아주 비싼 돈을 지불해야 됩니다. 그래서 이것이 아주 우리 사회의 큰 문제라고 주목을 하였습니다. 이 연구의 목적은 그린벨트의 보호라든지 혹은 공원과 산책길 등을 개발하고 녹지를 유지하려는 정부의 정책을 더 지지하기 위해서 이런 연구를 시행하게 되었습니다.',
       2: '네, 문제 2번 답변을 드리자면 일단 먼저 관심 집단을 4개로 선정하였습니다. 우선 인구 20만 명 이하의 시, 군의 녹지지대 하나, 그리고 인구 20만 명 이하의 시, 군의 녹지가 아주 소규모의 녹지가 있는 지대 하나, 그리고 C는 100만 명 이상의 대도시의 녹지지대 하나, D는 100만명 이상의 시부에 녹지가 없는 지대라고 적었는데 정정하겠습니다.  A와 C는 뭔가 정확한 숫자는 모르지만 큰 규모의 녹지가 큰 규모의 녹지 하나 그리고 그 주변의 지대를 말하는 거고 B, D는 아주 작은 녹지 하나 그리고 그 주변의 지대를 말합니다. 그래서 한 지역당 뭔가 녹지 지대 하나를 선정하고 그 주변 변수를 보면 아시겠지만 반경 3KM 이내의 거주민들에 대해서 조사를 해보려고 합니다. 그래서 이런 관심 집단을 바탕으로 데이터를 10개를 생각을 해보았는데요. 먼저 독립변수로는 이렇게 7개가 있는데 혹시 다 읽어드려야 되나요? 1번은 그 도시에 선정된 녹지의 크기 제곱미터를 통해서 녹지의 크기 얼마나 되는지 확인을 해보고 두 번째로 녹지에서 반경 3KM 이내에 거주민이 얼마나 있는지 거주민의 수를 체크해봅니다. 제가 3KM라고 주장한 것은 좀 멀긴 해도 그 정도면 걸어가거나 금방 갈 수 있는 거리라고 생각을 해서 3KM로 선정을 하였습니다 그 다음에는 3, 4번은 같은 반경 3KM 이내에 거주민의 소득 분위와 가족 구성 나이, 성별, 가족 구성원의 수 등을 확인을 하고요. 5번에서는 방문하는 계절별 한 달 평균 방문자의 수 그리고 6번 계절별 한 달 평균 대기 상태를 체크하고 7번은 그 녹지 근처에 자전거나 운동기구 등이 있다면 그 대여소의 대여 빈도수를 체크하려고 합니다. 이 모든 독립변수는 계절별로 한 달마다 평균치를 내려고 하는데요. 왜냐하면 다양한 환경이기 때문에 계절마다 예를 들어서 겨울에는 사람들이 녹지에 많이 방문을 하지 않을 수 있기 때문에 계절별의 차이가 큰 차이가 될 것 같고, 또 한 달 평균로 낸 것은 당연히 뭔가 변수가 있을 수 있기 때문에 한 달을 기준으로 잘라서 12개월을 확인하면 좋을 것 같다고 생각하였습니다. 그래서 종속변수로는 8번 근처 아파트나 주택가에 아까 3KM 이내라고 한 그 부분에서 정신 건강 테스트를 시행을 해서 우울증 검사나 그런 정신 건강에 대한 테스트를 시행을 하면 좋을 것 같은데 물론 당연히 그렇게 길거리를 다니는 시민들에게 테스트를 시행을 요청하면 안 받아줄 가능성이 높으니까 간단하게 주관적 정신건강상태를 1번에서 10번 정도로 나타내달라고 하는 검사를 여론조사와 같이 전화를 통해서 하는 것도 대안이 될 수 있을 것 같습니다. 9번에서는 주관적으로 신체건강상태에 답변을 하는데 같이 여론조사와 같이 전화를 통해서 표본 추출을 통해서 몇 명에게 전화를 거는 방식이 좋을 것 같고요. 10번으로는 보건소에서 무료 건강검진센터 같은 곳이 있다면 그곳에서 건강검진을 하는 사람들의 건강이 어떤 상태인지 체크를 하는 것이 좋을 것 같습니다. 8번은 정신, 그리고 9번, 10번은 육체 건강의 측정을 위해서 나타낸 것입니다.',
       3: '이렇게 여기까지 되는 변수를 바탕으로 가설을 네 가지를 설정을 하였는데요. 가설을 먼저 말씀을 드리자면 첫 번째 가설은 대기 상태가 좋을수록 건강 상태가 좋을 것이다. 두 번째는 녹지 크기가 클수록 운동을 많이 할 것이고 이것이 건강 상태에 기여를 한다. 3번 녹지 크기가 클수록 정신 건강이 높아질 것이다. 그리고 마지막 가설 4번은 대도시일수록 경제적 수준이 높고, 특히 대도시일수록, 경제적 수준이 높을수록 녹지 근처에 거주할 확률이 높다는 것인데요. 1번 먼저 설명을 드리자면 녹지가 미세먼지에 영향을 끼친다는 선행 연구를 통해서 그것이 영향이 있음을 증명을 하고, 그 뒤에 이 미세먼지가 육체나 정신 건강 상태에 영향을 끼친다는 걸 얘기할 건데 1번 데이터에서의 녹지 크기 그리고 6번 데이터에서 대기 상태를 통해서 8, 9, 10의 정신 건강과 육체 건강에 영향이 있음을 분석을 하면 좋을 것 같고요. 10번에서 특히 폐렴이나 호흡기 질환 위주로 체크를 하면 좋을 것 같습니다. 그리고 전반적으로 도표와 그림은 제가 그릴 시간이 없어서 그리지 못했지만 말로 설명드리겠습니다. 그리고 2번 가설은 녹지 크기가 클수록 운동을 많이 하고 건강이 높아질 것이다. 인데요. 녹지 크기가 큰 곳일수록 운동을 하는 빈도가 높다는 것은 자전거나 운동기구의 대여 빈도 그리고 녹지의 방문자 수를 통해서 체크를 할 수 있고요. 이걸 통해서 종속변수인 육체와 정신건강에 영향을 미칠 것이라는 가설입니다. 가설 3번은 녹지 크기가 클수록 정신건강이 높다는 것인데 저는 개인적으로 녹지는 운동 공간, 미세먼지 뿐만이 아니라 사람들이 모이는 아고라의 역할도 하고 사회적 화합의 역할을 한다고 생각합니다. 그렇기 때문에 정신건강에 영향을 줄 것을 크게 느껴서 정신건강만 따로 분류하여서 어떤 녹지 크기가 정신건강에 어떤 영향을 미치는지 분석을 하려고 하고요. 아 그리고 5번은 방문자 수입니다. 5번 데이터는 가설 4번은 대도시일수록 경제적 수준이 높고, 대도시일수록 경제적 수준이 높을수록 녹지 근처에 거주할 확률이 높…, 경제적 수준이 높을수록 녹지 근처에 많이 거주한다입니다. 그래서 대도시와 소도시로 분류한 A, B와 C, D 집단에서 각각 1, 2, 3, 4번의 데이터를 체크하면 되는데요. 대도시 앞에서 제가 연구의 목적과 필요성을 말씀드릴 때 소도시에서는 사실 크게 경제적 수준과 녹지 근처 거주 여부가 차이가 나지 않을 수가 있지만 서울과 같은 대도시일수록 특히 경제적 수준이 높아야만 녹지 근처에 거주할 수 있을 것 같다고 말씀을 드렸는데, 이것을 증명하기 위해서 경제적 수준을 체크하고 녹지 근처에 사는 사람들의 경제적 수준을 체크하면 이것을 판단할 수 있을 것이라고 생각했습니다. 그런데 대도시와 소도시 여부를 판단하기 위해서 A, B와 C, D의 차이를 분석하면 될 것이라고 보았습니다.',
@@ -1526,20 +1541,25 @@ async function startProbingB() {
       createdAt: serverTimestamp()
     };
 
-    const docRef = await addDoc(collection(db, 'probingQuestions_new'), docData);
-    probingDocIdB = docRef.id;
+      const docRef = await addDoc(collection(db, 'probingQuestions_new'), docData);
+      probingDocIdB = docRef.id;
+    }
 
     // 저장 상태 초기화
     resetSaveStatus('b');
-
-    // 화면 전환
-    document.getElementById('student-b-start-screen').style.display = 'none';
-    document.getElementById('student-b-work-screen').style.display = 'block';
 
     // 과제 정보 표시 및 Handsontable 초기화
     initProbingQuestionScreensB();
 
     // 초기 답변 표시
+    const studentBAnswers = {
+      1: '네 저는 거주지 주변에 녹지 정도의 차이가 건강 불평등으로 이어진다고 하는 연구를 진행해 보려고 합니다. 일단 먼저 제가 하고 싶은 주장은 녹지는 사람의 삶에 큰 영향을 미치는 부분인데 깨끗한 공기뿐만 아니라 운동할 공간, 그리고 사람들끼리 시민들끼리 할 수 있는 사회적 화합의 장의 역할을 합니다. 그래서 이는 육체적 건강뿐만 아니라 정신적 건강에도 도움을 주는 공간인데요. 그렇기 때문에 저는 녹지의 정도가 시민들의 건강에도 큰 영향을 끼친다고 생각을 하고 있습니다. 그렇기 때문에 이것이 녹지가 건강 불평등으로 이어진다고 하는 주장을 하려고 합니다. 이 연구의 필요성을 먼저 말씀드리겠습니다. 이 연구의 필요성은 우리나라의 급진적이고 무분별한 개발과 도시화로 인해서 녹지가 점점 부족해지고 있는 현상이 나타나고 있는데요. 그래서 시민들의 쉼터와 건강을 책임질 공간이 부족해지고 또 그 극소수의 공간들이 유료화되는 현상이 벌어지고 있는 점에 주목하였습니다. 소도시가 아닌 이상 대도시에서의 녹지는 대부분 녹지 근처에 거주하기 위해서는 아주 비싼 돈을 지불해야 됩니다. 그래서 이것이 아주 우리 사회의 큰 문제라고 주목을 하였습니다. 이 연구의 목적은 그린벨트의 보호라든지 혹은 공원과 산책길 등을 개발하고 녹지를 유지하려는 정부의 정책을 더 지지하기 위해서 이런 연구를 시행하게 되었습니다.',
+      2: '네, 문제 2번 답변을 드리자면 일단 먼저 관심 집단을 4개로 선정하였습니다. 우선 인구 20만 명 이하의 시, 군의 녹지지대 하나, 그리고 인구 20만 명 이하의 시, 군의 녹지가 아주 소규모의 녹지가 있는 지대 하나, 그리고 C는 100만 명 이상의 대도시의 녹지지대 하나, D는 100만명 이상의 시부에 녹지가 없는 지대라고 적었는데 정정하겠습니다.  A와 C는 뭔가 정확한 숫자는 모르지만 큰 규모의 녹지가 큰 규모의 녹지 하나 그리고 그 주변의 지대를 말하는 거고 B, D는 아주 작은 녹지 하나 그리고 그 주변의 지대를 말합니다. 그래서 한 지역당 뭔가 녹지 지대 하나를 선정하고 그 주변 변수를 보면 아시겠지만 반경 3KM 이내의 거주민들에 대해서 조사를 해보려고 합니다. 그래서 이런 관심 집단을 바탕으로 데이터를 10개를 생각을 해보았는데요. 먼저 독립변수로는 이렇게 7개가 있는데 혹시 다 읽어드려야 되나요? 1번은 그 도시에 선정된 녹지의 크기 제곱미터를 통해서 녹지의 크기 얼마나 되는지 확인을 해보고 두 번째로 녹지에서 반경 3KM 이내에 거주민이 얼마나 있는지 거주민의 수를 체크해봅니다. 제가 3KM라고 주장한 것은 좀 멀긴 해도 그 정도면 걸어가거나 금방 갈 수 있는 거리라고 생각을 해서 3KM로 선정을 하였습니다 그 다음에는 3, 4번은 같은 반경 3KM 이내에 거주민의 소득 분위와 가족 구성 나이, 성별, 가족 구성원의 수 등을 확인을 하고요. 5번에서는 방문하는 계절별 한 달 평균 방문자의 수 그리고 6번 계절별 한 달 평균 대기 상태를 체크하고 7번은 그 녹지 근처에 자전거나 운동기구 등이 있다면 그 대여소의 대여 빈도수를 체크하려고 합니다. 이 모든 독립변수는 계절별로 한 달마다 평균치를 내려고 하는데요. 왜냐하면 다양한 환경이기 때문에 계절마다 예를 들어서 겨울에는 사람들이 녹지에 많이 방문을 하지 않을 수 있기 때문에 계절별의 차이가 큰 차이가 될 것 같고, 또 한 달 평균로 낸 것은 당연히 뭔가 변수가 있을 수 있기 때문에 한 달을 기준으로 잘라서 12개월을 확인하면 좋을 것 같다고 생각하였습니다. 그래서 종속변수로는 8번 근처 아파트나 주택가에 아까 3KM 이내라고 한 그 부분에서 정신 건강 테스트를 시행을 해서 우울증 검사나 그런 정신 건강에 대한 테스트를 시행을 하면 좋을 것 같은데 물론 당연히 그렇게 길거리를 다니는 시민들에게 테스트를 시행을 요청하면 안 받아줄 가능성이 높으니까 간단하게 주관적 정신건강상태를 1번에서 10번 정도로 나타내달라고 하는 검사를 여론조사와 같이 전화를 통해서 하는 것도 대안이 될 수 있을 것 같습니다. 9번에서는 주관적으로 신체건강상태에 답변을 하는데 같이 여론조사와 같이 전화를 통해서 표본 추출을 통해서 몇 명에게 전화를 거는 방식이 좋을 것 같고요. 10번으로는 보건소에서 무료 건강검진센터 같은 곳이 있다면 그곳에서 건강검진을 하는 사람들의 건강이 어떤 상태인지 체크를 하는 것이 좋을 것 같습니다. 8번은 정신, 그리고 9번, 10번은 육체 건강의 측정을 위해서 나타낸 것입니다.',
+      3: '이렇게 여기까지 되는 변수를 바탕으로 가설을 네 가지를 설정을 하였는데요. 가설을 먼저 말씀을 드리자면 첫 번째 가설은 대기 상태가 좋을수록 건강 상태가 좋을 것이다. 두 번째는 녹지 크기가 클수록 운동을 많이 할 것이고 이것이 건강 상태에 기여를 한다. 3번 녹지 크기가 클수록 정신 건강이 높아질 것이다. 그리고 마지막 가설 4번은 대도시일수록 경제적 수준이 높고, 특히 대도시일수록, 경제적 수준이 높을수록 녹지 근처에 거주할 확률이 높다는 것인데요. 1번 먼저 설명을 드리자면 녹지가 미세먼지에 영향을 끼친다는 선행 연구를 통해서 그것이 영향이 있음을 증명을 하고, 그 뒤에 이 미세먼지가 육체나 정신 건강 상태에 영향을 끼친다는 걸 얘기할 건데 1번 데이터에서의 녹지 크기 그리고 6번 데이터에서 대기 상태를 통해서 8, 9, 10의 정신 건강과 육체 건강에 영향이 있음을 분석을 하면 좋을 것 같고요. 10번에서 특히 폐렴이나 호흡기 질환 위주로 체크를 하면 좋을 것 같습니다. 그리고 전반적으로 도표와 그림은 제가 그릴 시간이 없어서 그리지 못했지만 말로 설명드리겠습니다. 그리고 2번 가설은 녹지 크기가 클수록 운동을 많이 하고 건강이 높아질 것이다. 인데요. 녹지 크기가 큰 곳일수록 운동을 하는 빈도가 높다는 것은 자전거나 운동기구의 대여 빈도 그리고 녹지의 방문자 수를 통해서 체크를 할 수 있고요. 이걸 통해서 종속변수인 육체와 정신건강에 영향을 미칠 것이라는 가설입니다. 가설 3번은 녹지 크기가 클수록 정신건강이 높다는 것인데 저는 개인적으로 녹지는 운동 공간, 미세먼지 뿐만이 아니라 사람들이 모이는 아고라의 역할도 하고 사회적 화합의 역할을 한다고 생각합니다. 그렇기 때문에 정신건강에 영향을 줄 것을 크게 느껴서 정신건강만 따로 분류하여서 어떤 녹지 크기가 정신건강에 어떤 영향을 미치는지 분석을 하려고 하고요. 아 그리고 5번은 방문자 수입니다. 5번 데이터는 가설 4번은 대도시일수록 경제적 수준이 높고, 대도시일수록 경제적 수준이 높을수록 녹지 근처에 거주할 확률이 높…, 경제적 수준이 높을수록 녹지 근처에 많이 거주한다입니다. 그래서 대도시와 소도시로 분류한 A, B와 C, D 집단에서 각각 1, 2, 3, 4번의 데이터를 체크하면 되는데요. 대도시 앞에서 제가 연구의 목적과 필요성을 말씀드릴 때 소도시에서는 사실 크게 경제적 수준과 녹지 근처 거주 여부가 차이가 나지 않을 수가 있지만 서울과 같은 대도시일수록 특히 경제적 수준이 높아야만 녹지 근처에 거주할 수 있을 것 같다고 말씀을 드렸는데, 이것을 증명하기 위해서 경제적 수준을 체크하고 녹지 근처에 사는 사람들의 경제적 수준을 체크하면 이것을 판단할 수 있을 것이라고 생각했습니다. 그런데 대도시와 소도시 여부를 판단하기 위해서 A, B와 C, D의 차이를 분석하면 될 것이라고 보았습니다.',
+      4: '문제 4번은 데이터 표본이 전체 집단을 대표하지 않거나 한계가 있는지 얘기해보라는 것인데 일단 첫 번째로는 제가 활동한 연구는 각 도시의 녹지 하나만을 선정하는 것입니다. 하지만 녹지가 많이 없는 공간이라면 그 녹지 하나가 큰 영향을 미치겠지만 녹지가 작지만 여러 군데 있다든지와 같은 상황이 있으면은 거주민도 사실 여러군 데의 녹지에 쉽게 방문을 할 수 있고 그렇기 때문에 거주민의 녹지의 방문 빈도라던지 다양한 것이 분산되기 때문에 큰 의미가 떨어질 것이라고 예상이 됩니다. 또한 제가 운동 상태를 체크하기 위해서 자전거 등 운동기구 대여소가 있을 것임을 가정했는데, 그런 것이 없는 녹지가 더 많을 것이기 때문에 운동 상태를 체크하기 어렵습니다. 하지만 방문자 수가 많을 운동을 체크하기엔 어려울 것이라 판단해서 혹시 가능하다면 자전거 대여소가 있으면 운동 상태를 체크하기 더 좋을 것 같아서 그 데이터를 포함하였습니다. 그리고 또 건강 상태와 정신건강 상태를 판단을 할 때 사실 개인의 건강검진 결과를 보지 않는 이상 전화응답 등 설문조사를 통해서 주관적인 개인의 판단에 의존하고 있기 때문에 조사의 신뢰성이 떨어질 수 있습니다. 그래서 보안책을 말씀드렸는데 보안책으로는 그래서 녹지를 A, B, C, D 4군데만 선정을 하는 것이 아니라 A, B, C, D 안에서도 다양한 녹지를 선정을 해가지고 다양성을 증대하는 것이 중요할 것 같다고 생각을 하였고요. 특징이 다양한 여러 곳에 분포된 녹지를 선정하는 것이 도움이 될 것 같고 또 랜덤으로 근처 3KM 이내 거주민의 전화 응답을 돌리는 것보다 특정 실험자를 선정해서 그 사람의 건강 상태와 운동 빈도 등을 꾸준히 체크하는 것이 조금 더 정확한 조사가 가능할 것이라고 판단을 하였습니다.',
+      5: '마지막 문제는… 제가 예상한 연구 결과는 가설이 다 충족된다고 생각을 하였고요. 그래서 이 결과를 통해서 교육 수준 향상을 위한 새로운 보건 정책을 제안해 보도록 하겠습니다. 그래서 제가 생각한 건 소도시보다는 대도시가 특히 녹지와 건강 상태의 여부에 큰 영향을 미칠 거라고 생각했는데 그래서 새로운 보건 정책으로 첫 번째로는 초중고등학교 근처에 운동장을 필수로 지어야 하는 것으로 알고 있습니다. 근데 운동장 말고도 일정 크기의 녹지나 혹은 텃밭 같은 것을 필수로 건설하도록 정책을 바꾸어서 자라나는 성장기의 아이들이 녹지를 함께 느끼고 즐기면서 자라날 수 있도록 한다면 녹지를 더 많이 늘릴 수 있을 것이라고 생각을 하였습니다. 이렇게 한다면 잘하는 학생들의 정신건강과 육체 건강에 더 큰 도움이 될 것이고 이것이 교육에도 교육과 학생들의 학습에도 큰 영향을 미칠 것이라고 생각을 했습니다. 왜냐하면 요즘 학생들은 사실 학교나 집을 왔다 갔다 하는 과정에서 녹지가 없는 이상 녹지를 찾아가거나 맞닥뜨릴 일이 좀 부족해진 것이 현실인데요. 그리고 또한 학습으로 인한 우울증이라든지 정신건강상태에 어려움을 호소하는 학생들이 많기 때문에 이들을 돕기 위해서 학교 근처에 녹지를 필수로 지정하고, 보존하는 것이 필요하다고 생각을 하였습니다. 두 번째로 생각한 보건정책은요. 교육과정에 생태체험학습을 포함시키는 것입니다. 계절별로 1년에 한 번씩 현장체험학습을 가는 것 말고도 한 달에 한 번 혹은 계절에 한 번씩 학교 근처에 녹지나 자연환경에 방문해서 생태체험을 하고 자연과 교감할 수 있는 시간을 필수적으로 지정을 해주는 것이 필요하다고 생각합니다. 이것이 만약에 이변이 어느 정도 있다고 하더라도 그 빈도수를 현저히 늘려야 할 것이라고 판단이 됩니다.'
+    };
+
     for (let i = 1; i <= 5; i++) {
       const studentAnswerContainer = document.getElementById(`student-b-answer-${i}`);
       if (studentAnswerContainer && studentBAnswers[i]) {
@@ -1559,21 +1579,8 @@ async function startProbingB() {
     setTimeout(() => {
       loadProbingDataFromFirestoreB();
     }, 100);
-
-    Swal.fire({
-      icon: 'success',
-      title: '시작되었습니다',
-      text: '탐침 질문 작성을 시작하세요!',
-      timer: 2000,
-      showConfirmButton: false
-    });
   } catch (error) {
-    console.error('문서 생성 오류:', error);
-    Swal.fire({
-      icon: 'error',
-      title: '오류',
-      text: '작업을 시작하는 중 오류가 발생했습니다.'
-    });
+    console.error('초기화 오류:', error);
   }
 }
 
@@ -2042,16 +2049,40 @@ async function saveProbingQuestion(questionNum, studentType) {
 
     const probingDataRaw = probingTable.getData().filter(row => row[0] || row[1]);
     // 탐침 질문을 객체 배열로 변환 (Firestore는 중첩 배열을 지원하지 않음)
-    const probingData = probingDataRaw.map(row => ({
+    const newProbingData = probingDataRaw.map(row => ({
       situation: row[0] || '',
       question: row[1] || ''
     }));
     
-    // 학생 답변은 읽기 전용이므로 저장하지 않음 (이미 Firestore에 저장되어 있음)
-
+    // 빈 데이터가 있으면 저장하지 않음
+    if (newProbingData.length === 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: '입력 필요',
+        text: '저장할 탐침 질문을 입력해주세요.'
+      });
+      return;
+    }
+    
+    // 기존 데이터 불러오기
     const docRef = doc(db, 'probingQuestions_new', probingDocId);
+    const docSnap = await getDoc(docRef);
+    
+    let existingProbingQuestions = [];
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      const questionData = data.questions?.[questionNum];
+      if (questionData && questionData.probingQuestions) {
+        existingProbingQuestions = questionData.probingQuestions;
+      }
+    }
+    
+    // 기존 데이터에 새로운 데이터 추가 (누적)
+    const updatedProbingQuestions = [...existingProbingQuestions, ...newProbingData];
+    
+    // 학생 답변은 읽기 전용이므로 저장하지 않음 (이미 Firestore에 저장되어 있음)
     await updateDoc(docRef, {
-      [`questions.${questionNum}.probingQuestions`]: probingData,
+      [`questions.${questionNum}.probingQuestions`]: updatedProbingQuestions,
       updatedAt: serverTimestamp()
     });
 
@@ -2066,6 +2097,9 @@ async function saveProbingQuestion(questionNum, studentType) {
     
     // 상태 메시지 업데이트
     updateSaveStatus(questionNum, studentType);
+
+    // 저장 후 입력창 초기화 (빈 행으로 리셋)
+    probingTable.loadData([['', '']]);
 
     Swal.fire({
       icon: 'success',
@@ -2112,117 +2146,84 @@ function resetSaveStatus(studentType) {
   }
 }
 
-// 제출하기
-async function submitProbingA() {
-  if (!probingDocIdA) {
+// 제출 내용 확인 (과제별)
+async function viewSubmittedProbingQuestions(questionNum, studentType) {
+  if (!currentUser) {
     Swal.fire({
       icon: 'error',
-      title: '오류',
-      text: '작업이 시작되지 않았습니다.'
+      title: '로그인 필요',
+      text: '로그인 후 이용해주세요.'
     });
     return;
   }
 
-  const result = await Swal.fire({
-    title: '제출하시겠습니까?',
-    text: '제출 후에는 수정할 수 없습니다.',
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonText: '최종 제출하기',
-    cancelButtonText: '취소'
-  });
-
-  if (result.isConfirmed) {
-    try {
-      const now = new Date();
-      const endTime = {
-        date: now.toISOString().split('T')[0],
-        time: now.toTimeString().split(' ')[0].substring(0, 5)
-      };
-
-      const docRef = doc(db, 'probingQuestions_new', probingDocIdA);
-      await updateDoc(docRef, {
-        endTime: endTime,
-        updatedAt: serverTimestamp()
-      });
-
+  try {
+    const probingDocId = studentType === 'a' ? probingDocIdA : probingDocIdB;
+    if (!probingDocId) {
       Swal.fire({
-        icon: 'success',
-        title: '제출 완료',
-        text: '탐침 질문이 제출되었습니다.',
-        confirmButtonText: '확인'
-      }).then(() => {
-        // 화면 초기화
-        document.getElementById('student-a-start-screen').style.display = 'block';
-        document.getElementById('student-a-work-screen').style.display = 'none';
-        probingDocIdA = null;
+        icon: 'info',
+        title: '저장된 데이터 없음',
+        text: '아직 저장된 탐침 질문이 없습니다.'
       });
-    } catch (error) {
-      console.error('제출 오류:', error);
-      Swal.fire({
-        icon: 'error',
-        title: '오류',
-        text: '제출 중 오류가 발생했습니다.'
-      });
+      return;
     }
-  }
-}
 
-// 제출하기 (학생 B)
-async function submitProbingB() {
-  if (!probingDocIdB) {
+    const docRef = doc(db, 'probingQuestions_new', probingDocId);
+    const docSnap = await getDoc(docRef);
+    
+    if (!docSnap.exists()) {
+      Swal.fire({
+        icon: 'info',
+        title: '저장된 데이터 없음',
+        text: '아직 저장된 탐침 질문이 없습니다.'
+      });
+      return;
+    }
+
+    const data = docSnap.data();
+    const questionData = data.questions?.[questionNum];
+    
+    if (!questionData || !questionData.probingQuestions || questionData.probingQuestions.length === 0) {
+      Swal.fire({
+        icon: 'info',
+        title: '저장된 데이터 없음',
+        text: '이 과제에 저장된 탐침 질문이 없습니다.'
+      });
+      return;
+    }
+
+    // HTML 생성
+    let html = `<div style="text-align: left; max-height: 60vh; overflow-y: auto;">`;
+    html += `<h3 style="margin-bottom: 1rem; color: #2563eb;">과제 ${questionNum} - 학생 ${studentType.toUpperCase()}</h3>`;
+    html += `<table style="width: 100%; border-collapse: collapse;">`;
+    html += `<thead><tr style="background: #f3f4f6;"><th style="padding: 0.75rem; border: 1px solid #e5e7eb; text-align: left;">상황 분석</th><th style="padding: 0.75rem; border: 1px solid #e5e7eb; text-align: left;">탐침 질문</th></tr></thead>`;
+    html += `<tbody>`;
+    
+    questionData.probingQuestions.forEach((item, index) => {
+      const situation = typeof item === 'object' ? (item.situation || '') : (item[0] || '');
+      const question = typeof item === 'object' ? (item.question || '') : (item[1] || '');
+      html += `<tr><td style="padding: 0.75rem; border: 1px solid #e5e7eb; vertical-align: top;">${situation}</td><td style="padding: 0.75rem; border: 1px solid #e5e7eb; vertical-align: top;">${question}</td></tr>`;
+    });
+    
+    html += `</tbody></table></div>`;
+
+    Swal.fire({
+      title: '제출 내용 확인',
+      html: html,
+      width: '800px',
+      confirmButtonText: '확인'
+    });
+  } catch (error) {
+    console.error('확인 오류:', error);
     Swal.fire({
       icon: 'error',
       title: '오류',
-      text: '작업이 시작되지 않았습니다.'
+      text: '데이터를 불러오는 중 오류가 발생했습니다.'
     });
-    return;
-  }
-
-  const result = await Swal.fire({
-    title: '제출하시겠습니까?',
-    text: '제출 후에는 수정할 수 없습니다.',
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonText: '최종 제출하기',
-    cancelButtonText: '취소'
-  });
-
-  if (result.isConfirmed) {
-    try {
-      const now = new Date();
-      const endTime = {
-        date: now.toISOString().split('T')[0],
-        time: now.toTimeString().split(' ')[0].substring(0, 5)
-      };
-
-      const docRef = doc(db, 'probingQuestions_new', probingDocIdB);
-      await updateDoc(docRef, {
-        endTime: endTime,
-        updatedAt: serverTimestamp()
-      });
-
-      Swal.fire({
-        icon: 'success',
-        title: '제출 완료',
-        text: '탐침 질문이 제출되었습니다.',
-        confirmButtonText: '확인'
-      }).then(() => {
-        // 화면 초기화
-        document.getElementById('student-b-start-screen').style.display = 'block';
-        document.getElementById('student-b-work-screen').style.display = 'none';
-        probingDocIdB = null;
-      });
-    } catch (error) {
-      console.error('제출 오류:', error);
-      Swal.fire({
-        icon: 'error',
-        title: '오류',
-        text: '제출 중 오류가 발생했습니다.'
-      });
-    }
   }
 }
+
+// 제출하기 (학생 A/B) - 제거됨 (과제별 저장으로 대체)
 
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', () => {
@@ -2250,12 +2251,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 학생 A 시작하기 버튼
-  const startBtnA = document.getElementById('start-probing-a-btn');
-  if (startBtnA) {
-    startBtnA.addEventListener('click', startProbingA);
-  }
-
   // 저장 버튼들 (동적으로 생성되므로 이벤트 위임 사용)
   document.addEventListener('click', (e) => {
     if (e.target.classList.contains('save-probing-btn')) {
@@ -2263,25 +2258,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const studentType = e.target.getAttribute('data-student');
       saveProbingQuestion(questionNum, studentType);
     }
+    // 제출 내용 확인 버튼
+    if (e.target.classList.contains('view-submitted-btn')) {
+      const questionNum = e.target.getAttribute('data-question');
+      const studentType = e.target.getAttribute('data-student');
+      viewSubmittedProbingQuestions(questionNum, studentType);
+    }
   });
 
-  // 제출하기 버튼
-  const submitBtnA = document.getElementById('submit-probing-a-btn');
-  if (submitBtnA) {
-    submitBtnA.addEventListener('click', submitProbingA);
-  }
-
-  // 학생 B 시작하기 버튼
-  const startBtnB = document.getElementById('start-probing-b-btn');
-  if (startBtnB) {
-    startBtnB.addEventListener('click', startProbingB);
-  }
-
-  // 제출하기 버튼 (학생 B)
-  const submitBtnB = document.getElementById('submit-probing-b-btn');
-  if (submitBtnB) {
-    submitBtnB.addEventListener('click', submitProbingB);
-  }
+  // 인증 상태 확인 후 자동 초기화
+  onAuthStateChanged(auth, (user) => {
+    currentUser = user;
+    if (user) {
+      initProbingA();
+      initProbingB();
+    }
+  });
 
   // 이미지 클릭 시 팝업으로 크게 보기
   document.addEventListener('click', (e) => {
@@ -2340,90 +2332,85 @@ async function showMyProbingQuestions() {
       return;
     }
 
-    // 데이터 정리 및 필터링 (클라이언트 측에서)
-    const submissions = [];
+    // 데이터 정리 (학생별, 과제별로 정리)
+    const organizedData = {
+      A: {},
+      B: {}
+    };
+
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      // endTime이 존재하고, scenario가 '대피시뮬레이션'인 경우만 포함
-      if (data.endTime && data.scenario === '건강불평등') {
-        submissions.push({
+      if (data.scenario !== '건강불평등') return;
+      
+      const studentType = data.studentType;
+      const questions = data.questions || {};
+      
+      // 각 과제별로 데이터 정리
+      for (let i = 1; i <= 5; i++) {
+        const questionData = questions[i];
+        if (!questionData || !questionData.probingQuestions || questionData.probingQuestions.length === 0) {
+          continue;
+        }
+        
+        if (!organizedData[studentType][i]) {
+          organizedData[studentType][i] = [];
+        }
+        
+        organizedData[studentType][i].push({
           id: doc.id,
-          studentType: data.studentType,
-          endTime: data.endTime,
-          questions: data.questions || {},
-          createdAt: data.createdAt
+          probingQuestions: questionData.probingQuestions,
+          updatedAt: data.updatedAt
         });
       }
     });
 
-    if (submissions.length === 0) {
+    // 저장된 데이터가 있는지 확인
+    const hasData = Object.keys(organizedData.A).length > 0 || Object.keys(organizedData.B).length > 0;
+    
+    if (!hasData) {
       Swal.fire({
         icon: 'info',
-        title: '제출된 데이터 없음',
-        text: '아직 제출한 탐침 질문이 없습니다.'
+        title: '저장된 데이터 없음',
+        text: '아직 저장된 탐침 질문이 없습니다.'
       });
       return;
     }
 
-    // 학생 타입별, 시간별로 정렬
-    submissions.sort((a, b) => {
-      if (a.studentType !== b.studentType) {
-        return a.studentType.localeCompare(b.studentType);
-      }
-      // 시간 역순 (최신순)
-      const timeA = `${a.endTime.date} ${a.endTime.time}`;
-      const timeB = `${b.endTime.date} ${b.endTime.time}`;
-      return timeB.localeCompare(timeA);
-    });
-
     // 팝업 HTML 생성
     let html = '<div style="text-align: left; max-height: 70vh; overflow-y: auto;">';
     
-    let currentStudentType = null;
-    submissions.forEach((submission, index) => {
-      // 학생 타입별 섹션
-      if (currentStudentType !== submission.studentType) {
-        if (currentStudentType !== null) {
-          html += '</div>'; // 이전 섹션 닫기
-        }
-        currentStudentType = submission.studentType;
-        html += `<h3 style="margin-top: 1.5rem; margin-bottom: 0.75rem; color: #2563eb;">학생 ${submission.studentType}의 케이스</h3>`;
-        html += '<div style="display: flex; flex-direction: column; gap: 0.5rem;">';
-      }
-
-      // 제출 시간 버튼
-      const timeStr = `${submission.endTime.date} ${submission.endTime.time}`;
-      html += `
-        <button class="submission-time-btn" 
-                data-submission-id="${submission.id}" 
-                data-student-type="${submission.studentType}"
-                style="padding: 0.75rem 1rem; text-align: left; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 6px; cursor: pointer; transition: background 0.2s;">
-          <strong>제출 시간:</strong> ${timeStr}
-        </button>
-        <div id="submission-${submission.id}" style="display: none; margin-left: 1rem; margin-bottom: 1rem; padding: 1rem; background: #f9fafb; border-radius: 6px; border: 1px solid #e5e7eb;">
-      `;
-
-      // 과제별 탐침 질문 표시
+    // 학생별로 표시
+    ['A', 'B'].forEach(studentType => {
+      const studentData = organizedData[studentType];
+      if (Object.keys(studentData).length === 0) return;
+      
+      html += `<h3 style="margin-top: 1.5rem; margin-bottom: 1rem; color: #2563eb; border-bottom: 2px solid #2563eb; padding-bottom: 0.5rem;">학생 ${studentType}의 케이스</h3>`;
+      
+      // 과제별로 표시
       for (let i = 1; i <= 5; i++) {
-        const questionData = submission.questions[i];
-        if (!questionData || !questionData.probingQuestions || questionData.probingQuestions.length === 0) {
-          continue;
-        }
-
-        html += `<div style="margin-bottom: 1rem;">`;
-        html += `<h4 style="margin-bottom: 0.5rem; color: #1f2937;">과제 ${i}</h4>`;
+        if (!studentData[i] || studentData[i].length === 0) continue;
+        
+        html += `<div style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; border: 1px solid #e5e7eb;">`;
+        html += `<h4 style="margin-bottom: 0.75rem; color: #1f2937;">과제 ${i}</h4>`;
+        
+        // 가장 최근 저장된 데이터 사용
+        const latestData = studentData[i].sort((a, b) => {
+          if (!a.updatedAt || !b.updatedAt) return 0;
+          return b.updatedAt.toMillis() - a.updatedAt.toMillis();
+        })[0];
+        
         html += `<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">`;
-        html += `<thead><tr style="background: #e5e7eb;"><th style="padding: 0.5rem; border: 1px solid #d1d5db; text-align: left; width: 30%;">상황</th><th style="padding: 0.5rem; border: 1px solid #d1d5db; text-align: left;">탐침 질문</th></tr></thead>`;
+        html += `<thead><tr style="background: #e5e7eb;"><th style="padding: 0.5rem; border: 1px solid #d1d5db; text-align: left; width: 30%;">상황 분석</th><th style="padding: 0.5rem; border: 1px solid #d1d5db; text-align: left;">탐침 질문</th></tr></thead>`;
         html += `<tbody>`;
 
-        questionData.probingQuestions.forEach(item => {
+        latestData.probingQuestions.forEach(item => {
           const situation = typeof item === 'object' ? (item.situation || '') : (Array.isArray(item) ? item[0] : '');
           const question = typeof item === 'object' ? (item.question || '') : (Array.isArray(item) ? item[1] : '');
           
           if (situation || question) {
             html += `<tr>`;
-            html += `<td style="padding: 0.5rem; border: 1px solid #d1d5db; font-weight: bold;">${situation}</td>`;
-            html += `<td style="padding: 0.5rem; border: 1px solid #d1d5db; white-space: pre-wrap;">${question.replace(/\n/g, '<br>')}</td>`;
+            html += `<td style="padding: 0.5rem; border: 1px solid #d1d5db; vertical-align: top;">${situation || '-'}</td>`;
+            html += `<td style="padding: 0.5rem; border: 1px solid #d1d5db; white-space: pre-wrap;">${question.replace(/\n/g, '<br>') || '-'}</td>`;
             html += `</tr>`;
           }
         });
@@ -2431,54 +2418,18 @@ async function showMyProbingQuestions() {
         html += `</tbody></table>`;
         html += `</div>`;
       }
-
-      html += `</div>`; // submission 내용 닫기
     });
-
-    if (currentStudentType !== null) {
-      html += '</div>'; // 마지막 섹션 닫기
-    }
-
+    
     html += '</div>';
 
     // SweetAlert2로 팝업 표시
-    const { value: result } = await Swal.fire({
+    Swal.fire({
       title: '내가 만든 탐침 질문',
       html: html,
       width: '900px',
       showConfirmButton: true,
-      confirmButtonText: '닫기',
-      didOpen: () => {
-        // 버튼 클릭 이벤트 추가
-        document.querySelectorAll('.submission-time-btn').forEach(btn => {
-          btn.addEventListener('click', function() {
-            const submissionId = this.getAttribute('data-submission-id');
-            const contentDiv = document.getElementById(`submission-${submissionId}`);
-            
-            if (contentDiv.style.display === 'none') {
-              contentDiv.style.display = 'block';
-              this.style.background = '#dbeafe';
-            } else {
-              contentDiv.style.display = 'none';
-              this.style.background = '#f3f4f6';
-            }
-          });
-
-          // 호버 효과
-          btn.addEventListener('mouseenter', function() {
-            if (this.style.background !== 'rgb(219, 234, 254)') {
-              this.style.background = '#e5e7eb';
-            }
-          });
-          btn.addEventListener('mouseleave', function() {
-            if (this.style.background !== 'rgb(219, 234, 254)') {
-              this.style.background = '#f3f4f6';
-            }
-          });
-        });
-      }
+      confirmButtonText: '닫기'
     });
-
   } catch (error) {
     console.error('데이터 불러오기 오류:', error);
     Swal.fire({

@@ -25,8 +25,8 @@
 
     <!-- 최상단 탭 메뉴 -->
     <div class="main-tabs">
-      <button class="main-tab-button active" data-main-tab="materials">📄 면접 자료(제시문 및 예시 답안 확인)</button>
-      <button class="main-tab-button" data-main-tab="evaluation">✍️ 모의평가</button>
+      <button class="main-tab-button active" data-main-tab="materials">📄 면접 자료(제시문 및 예시 답안 확인) & 모의평가</button>
+      <button class="main-tab-button" data-main-tab="evaluation" style="display: none;">✍️ 모의평가</button>
     </div>
 
     <!-- 면접 자료 확인 탭 -->
@@ -98,7 +98,7 @@
         <div class="materials-right">
           <div class="question-tabs-container">
             <!-- 제목 -->
-            <h2 class="section-title">예시 답안, 평가 기준, 탐침 질문 확인</h2>
+            <h2 class="section-title">예시 답안, 평가 기준, 탐침 질문 확인 & 모의평가</h2>
             
             <!-- 과제별 탭 -->
             <div class="question-tabs">
@@ -128,6 +128,24 @@
                   <h2 class="section-title">평가 기준</h2>
                   <div id="criteria-table-1" class="handsontable-container"></div>
                 </div>
+
+                <!-- 모의평가 -->
+                <div class="materials-section">
+                  <h2 class="section-title">모의평가</h2>
+                  <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-top: 1rem;">
+                    <iframe 
+                      id="evaluation-form-1"
+                      src="" 
+                      width="100%" 
+                      height="1200" 
+                      frameborder="0" 
+                      marginheight="0" 
+                      marginwidth="0"
+                      style="border: none; display: block; min-height: 1200px;">
+                      로드 중…
+                    </iframe>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -148,6 +166,24 @@
                 <div class="materials-section">
                   <h2 class="section-title">평가 기준</h2>
                   <div id="criteria-table-2" class="handsontable-container"></div>
+                </div>
+
+                <!-- 모의평가 -->
+                <div class="materials-section">
+                  <h2 class="section-title">모의평가</h2>
+                  <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-top: 1rem;">
+                    <iframe 
+                      id="evaluation-form-2"
+                      src="" 
+                      width="100%" 
+                      height="1200" 
+                      frameborder="0" 
+                      marginheight="0" 
+                      marginwidth="0"
+                      style="border: none; display: block; min-height: 1200px;">
+                      로드 중…
+                    </iframe>
+                  </div>
                 </div>
               </div>
             </div>
@@ -177,6 +213,24 @@
                   <h2 class="section-title">평가 기준</h2>
                   <div id="criteria-table-3" class="handsontable-container"></div>
                 </div>
+
+                <!-- 모의평가 -->
+                <div class="materials-section">
+                  <h2 class="section-title">모의평가</h2>
+                  <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-top: 1rem;">
+                    <iframe 
+                      id="evaluation-form-3"
+                      src="" 
+                      width="100%" 
+                      height="1200" 
+                      frameborder="0" 
+                      marginheight="0" 
+                      marginwidth="0"
+                      style="border: none; display: block; min-height: 1200px;">
+                      로드 중…
+                    </iframe>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -202,6 +256,24 @@
                   <h2 class="section-title">평가 기준</h2>
                   <div id="criteria-table-4" class="handsontable-container"></div>
                 </div>
+
+                <!-- 모의평가 -->
+                <div class="materials-section">
+                  <h2 class="section-title">모의평가</h2>
+                  <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-top: 1rem;">
+                    <iframe 
+                      id="evaluation-form-4"
+                      src="" 
+                      width="100%" 
+                      height="1200" 
+                      frameborder="0" 
+                      marginheight="0" 
+                      marginwidth="0"
+                      style="border: none; display: block; min-height: 1200px;">
+                      로드 중…
+                    </iframe>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -224,6 +296,24 @@
                 <div class="materials-section">
                   <h2 class="section-title">평가 기준</h2>
                   <div id="criteria-table-5" class="handsontable-container"></div>
+                </div>
+
+                <!-- 모의평가 -->
+                <div class="materials-section">
+                  <h2 class="section-title">모의평가</h2>
+                  <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-top: 1rem;">
+                    <iframe 
+                      id="evaluation-form-5"
+                      src="" 
+                      width="100%" 
+                      height="1200" 
+                      frameborder="0" 
+                      marginheight="0" 
+                      marginwidth="0"
+                      style="border: none; display: block; min-height: 1200px;">
+                      로드 중…
+                    </iframe>
+                  </div>
                 </div>
               </div>
             </div>
@@ -250,7 +340,7 @@
     </div>
 
     <!-- 모의 평가 탭 -->
-    <div id="evaluation-tab" class="main-tab-content">
+    <div id="evaluation-tab" class="main-tab-content" style="display: none;">
       <div style="padding: 2rem;">
         <h2 style="color: #1f2937; margin-bottom: 1.5rem;">모의평가</h2>
         

@@ -262,15 +262,8 @@
 
       <!-- 학생 A의 케이스 -->
       <div id="student-a-tab" class="sub-tab-content active">
-        <!-- 시작하기 화면 -->
-        <div id="student-a-start-screen" style="text-align: center; padding: 3rem;">
-          <h2 style="margin-bottom: 2rem; color: #1f2937;">학생 A의 케이스 탐침 질문 만들기</h2>
-          <p style="margin-bottom: 2rem; color: #6b7280;">각 과제별로 학생 A의 답변을 확인하고 탐침 질문을 작성해주세요.</p>
-          <button id="start-probing-a-btn" class="btn btn-primary" style="font-size: 1.125rem; padding: 1rem 2rem;">시작하기</button>
-        </div>
-
-        <!-- 작업 화면 (시작하기 클릭 후 표시) -->
-        <div id="student-a-work-screen" style="display: none;">
+        <!-- 작업 화면 -->
+        <div id="student-a-work-screen">
           <!-- 과제별 탭 -->
           <div class="question-tabs" style="margin-bottom: 1.5rem;">
             <button class="question-tab-button active" data-question="1">과제 1</button>
@@ -278,7 +271,6 @@
             <button class="question-tab-button" data-question="3">과제 3</button>
             <button class="question-tab-button" data-question="4">과제 4</button>
             <button class="question-tab-button" data-question="5">과제 5</button>
-            <button id="submit-probing-a-btn" class="btn btn-primary" style="margin-left: auto; padding: 0.6rem 1.2rem; font-size: 0.875rem;">최종 제출하기</button>
           </div>
 
           <!-- 과제별 내용 -->
@@ -307,7 +299,8 @@
                   <h2 style="margin: 0;">탐침 질문 만들기</h2>
                   <div style="display: flex; align-items: center; gap: 0.75rem;">
                     <span class="save-status" data-question="1" data-student="a" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
-                    <button class="btn btn-primary save-probing-btn" data-question="1" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">과제별 저장</button>
+                    <button class="btn btn-secondary view-submitted-btn" data-question="1" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">제출 내용 확인</button>
+                    <button class="btn btn-primary save-probing-btn" data-question="1" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">저장</button>
                   </div>
                 </div>
                 <div id="probing-questions-a-1" class="handsontable-container"></div>
@@ -335,7 +328,8 @@
                   <h2 style="margin: 0;">탐침 질문 만들기</h2>
                   <div style="display: flex; align-items: center; gap: 0.75rem;">
                     <span class="save-status" data-question="2" data-student="a" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
-                    <button class="btn btn-primary save-probing-btn" data-question="2" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">과제별 저장</button>
+                    <button class="btn btn-secondary view-submitted-btn" data-question="2" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">제출 내용 확인</button>
+                    <button class="btn btn-primary save-probing-btn" data-question="2" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">저장</button>
                   </div>
                 </div>
                 <div id="probing-questions-a-2" class="handsontable-container"></div>
@@ -362,7 +356,8 @@
                   <h2 style="margin: 0;">탐침 질문 만들기</h2>
                   <div style="display: flex; align-items: center; gap: 0.75rem;">
                     <span class="save-status" data-question="3" data-student="a" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
-                    <button class="btn btn-primary save-probing-btn" data-question="3" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">과제별 저장</button>
+                    <button class="btn btn-secondary view-submitted-btn" data-question="3" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">제출 내용 확인</button>
+                    <button class="btn btn-primary save-probing-btn" data-question="3" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">저장</button>
                   </div>
                 </div>
                 <div id="probing-questions-a-3" class="handsontable-container"></div>
@@ -389,7 +384,8 @@
                   <h2 style="margin: 0;">탐침 질문 만들기</h2>
                   <div style="display: flex; align-items: center; gap: 0.75rem;">
                     <span class="save-status" data-question="4" data-student="a" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
-                    <button class="btn btn-primary save-probing-btn" data-question="4" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">과제별 저장</button>
+                    <button class="btn btn-secondary view-submitted-btn" data-question="4" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">제출 내용 확인</button>
+                    <button class="btn btn-primary save-probing-btn" data-question="4" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">저장</button>
                   </div>
                 </div>
                 <div id="probing-questions-a-4" class="handsontable-container"></div>
@@ -416,7 +412,8 @@
                   <h2 style="margin: 0;">탐침 질문 만들기</h2>
                   <div style="display: flex; align-items: center; gap: 0.75rem;">
                     <span class="save-status" data-question="5" data-student="a" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
-                    <button class="btn btn-primary save-probing-btn" data-question="5" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">과제별 저장</button>
+                    <button class="btn btn-secondary view-submitted-btn" data-question="5" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">제출 내용 확인</button>
+                    <button class="btn btn-primary save-probing-btn" data-question="5" data-student="a" style="font-size: 0.875rem; padding: 0.5rem 1rem;">저장</button>
                   </div>
                 </div>
                 <div id="probing-questions-a-5" class="handsontable-container"></div>
@@ -428,15 +425,8 @@
 
       <!-- 학생 B의 케이스 -->
       <div id="student-b-tab" class="sub-tab-content">
-        <!-- 시작하기 화면 -->
-        <div id="student-b-start-screen" style="text-align: center; padding: 3rem;">
-          <h2 style="margin-bottom: 2rem; color: #1f2937;">학생 B의 케이스 탐침 질문 만들기</h2>
-          <p style="margin-bottom: 2rem; color: #6b7280;">각 과제별로 학생 B의 답변을 확인하고 탐침 질문을 작성해주세요.</p>
-          <button id="start-probing-b-btn" class="btn btn-primary" style="font-size: 1.125rem; padding: 1rem 2rem;">시작하기</button>
-        </div>
-
-        <!-- 작업 화면 (시작하기 클릭 후 표시) -->
-        <div id="student-b-work-screen" style="display: none;">
+        <!-- 작업 화면 -->
+        <div id="student-b-work-screen">
           <!-- 과제별 탭 -->
           <div class="question-tabs" style="margin-bottom: 1.5rem;">
             <button class="question-tab-button active" data-question="1">과제 1</button>
@@ -444,7 +434,6 @@
             <button class="question-tab-button" data-question="3">과제 3</button>
             <button class="question-tab-button" data-question="4">과제 4</button>
             <button class="question-tab-button" data-question="5">과제 5</button>
-            <button id="submit-probing-b-btn" class="btn btn-primary" style="margin-left: auto; padding: 0.6rem 1.2rem; font-size: 0.875rem;">최종 제출하기</button>
           </div>
 
           <!-- 과제별 내용 -->
@@ -473,7 +462,8 @@
                   <h2 style="margin: 0;">탐침 질문 만들기</h2>
                   <div style="display: flex; align-items: center; gap: 0.75rem;">
                     <span class="save-status" data-question="1" data-student="b" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
-                    <button class="btn btn-primary save-probing-btn" data-question="1" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">과제별 저장</button>
+                    <button class="btn btn-secondary view-submitted-btn" data-question="1" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">제출 내용 확인</button>
+                    <button class="btn btn-primary save-probing-btn" data-question="1" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">저장</button>
                   </div>
                 </div>
                 <div id="probing-questions-b-1" class="handsontable-container"></div>
@@ -501,7 +491,8 @@
                   <h2 style="margin: 0;">탐침 질문 만들기</h2>
                   <div style="display: flex; align-items: center; gap: 0.75rem;">
                     <span class="save-status" data-question="2" data-student="b" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
-                    <button class="btn btn-primary save-probing-btn" data-question="2" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">과제별 저장</button>
+                    <button class="btn btn-secondary view-submitted-btn" data-question="2" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">제출 내용 확인</button>
+                    <button class="btn btn-primary save-probing-btn" data-question="2" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">저장</button>
                   </div>
                 </div>
                 <div id="probing-questions-b-2" class="handsontable-container"></div>
@@ -528,7 +519,8 @@
                   <h2 style="margin: 0;">탐침 질문 만들기</h2>
                   <div style="display: flex; align-items: center; gap: 0.75rem;">
                     <span class="save-status" data-question="3" data-student="b" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
-                    <button class="btn btn-primary save-probing-btn" data-question="3" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">과제별 저장</button>
+                    <button class="btn btn-secondary view-submitted-btn" data-question="3" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">제출 내용 확인</button>
+                    <button class="btn btn-primary save-probing-btn" data-question="3" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">저장</button>
                   </div>
                 </div>
                 <div id="probing-questions-b-3" class="handsontable-container"></div>
@@ -555,7 +547,8 @@
                   <h2 style="margin: 0;">탐침 질문 만들기</h2>
                   <div style="display: flex; align-items: center; gap: 0.75rem;">
                     <span class="save-status" data-question="4" data-student="b" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
-                    <button class="btn btn-primary save-probing-btn" data-question="4" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">과제별 저장</button>
+                    <button class="btn btn-secondary view-submitted-btn" data-question="4" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">제출 내용 확인</button>
+                    <button class="btn btn-primary save-probing-btn" data-question="4" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">저장</button>
                   </div>
                 </div>
                 <div id="probing-questions-b-4" class="handsontable-container"></div>
@@ -582,7 +575,8 @@
                   <h2 style="margin: 0;">탐침 질문 만들기</h2>
                   <div style="display: flex; align-items: center; gap: 0.75rem;">
                     <span class="save-status" data-question="5" data-student="b" style="font-size: 0.875rem; color: #ef4444; font-weight: 500;">저장되지 않음</span>
-                    <button class="btn btn-primary save-probing-btn" data-question="5" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">과제별 저장</button>
+                    <button class="btn btn-secondary view-submitted-btn" data-question="5" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">제출 내용 확인</button>
+                    <button class="btn btn-primary save-probing-btn" data-question="5" data-student="b" style="font-size: 0.875rem; padding: 0.5rem 1rem;">저장</button>
                   </div>
                 </div>
                 <div id="probing-questions-b-5" class="handsontable-container"></div>

@@ -1259,29 +1259,40 @@ function getQuestionInfo(questionNum) {
   };
 }
 
-// 학생 A 시작하기 버튼 클릭
-async function startProbingA() {
+// 학생 A 초기화 (페이지 로드 시 자동 실행)
+async function initProbingA() {
   if (!currentUser) {
-    Swal.fire({
-      icon: 'error',
-      title: '로그인 필요',
-      text: '로그인 후 이용해주세요.'
-    });
     return;
   }
 
   try {
-    // Firestore 문서 생성
-    const now = new Date();
-    const startTime = {
-      date: now.toISOString().split('T')[0],
-      time: now.toTimeString().split(' ')[0].substring(0, 5)
-    };
+    // 기존 문서 찾기 또는 새로 생성
+    const q = query(
+      collection(db, 'probingQuestions_new'),
+      where('uid', '==', currentUser.uid),
+      where('scenario', '==', '대피시뮬레이션'),
+      where('studentType', '==', 'A')
+    );
+    
+    const querySnapshot = await getDocs(q);
+    let docRef;
+    
+    if (!querySnapshot.empty) {
+      // 기존 문서가 있으면 사용
+      probingDocIdA = querySnapshot.docs[0].id;
+      docRef = doc(db, 'probingQuestions_new', probingDocIdA);
+    } else {
+      // 새 문서 생성
+      const now = new Date();
+      const startTime = {
+        date: now.toISOString().split('T')[0],
+        time: now.toTimeString().split(' ')[0].substring(0, 5)
+      };
 
-    // 과제 정보 수집
-    const questions = {};
-    // 학생 A의 과제별 답변 초기 데이터
-    const studentAAnswers = {
+      // 과제 정보 수집
+      const questions = {};
+      // 학생 A의 과제별 답변 초기 데이터
+      const studentAAnswers = {
       1: '제가 문제 1번에서 이 대피 시뮬레이션 소프트웨어를 구체적으로 어떤 걸로 짤지 계획을 할 때 이 예시 영상이 많은 영감을 주었습니다. 이 예시 영상에서는 1층부터 6층, 7층 정도 되는 높이에 많은 사람들이 대피하는 모습이 실제로 시뮬레이션을 통해 보여지고 있습니다. 그런데 이 사람들은 지금 모두 1층으로 이동함에 있어서 계단 또는 한정된 출입구 등으로 인해 이동에 혼잡을 겪고 있었고 그리고 빠른 대피가 힘들어지는 상황으로 이어졌습니다. 저는 이 상황을 보면서 특히 백화점같이 창문이 없고 출입구가 1층으로 한정되어 있는 상황에서 방금 본 영상처럼 탈출이 힘들 수 있겠다는 생각을 하게 되었습니다. 그래서 재난상황은 화재로 하였고 그리고 건물의 종류는 아까 제가 말씀드린 백화점처럼 수용인원은 많으나 탈출구가 부족해 빠른 대피가 힘든 시설로 두었습니다. 이런 시설의 한 가지 예시를 추가로 더 드리자면 고층 빌딩 역시 있었습니다. 고층 빌딩은 창문이 있긴 하지만 대부분 고정형 창문인 경우가 많으며 고층일수록 기업차로 인해 창문을 열기도 힘들 뿐만 아니라 창문을 깨게 된다면 기압 차로 강한 바람으로 인해 탈출이 더 힘들어질 수 있습니다. 즉, 이러한 두 가지 건물의 종류는 제가 만들 시뮬레이션의 조건에 잘 부합하는 거라고 생각하였습니다. 그래서 제 소프트웨어의 목적은 다수의 탈출구를 가진 건물 설계를 위해 도움을 주는 것이 목적이며 또한 실제 건물을 세우기 전에 시뮬레이션을 통해 이러한 설계가 효과가 있는지 검증할 수 있다는 점에서 중요한 필요성을 가지고 있다고 생각합니다. 따라서 소프트웨어가 가진 기능은 벽, 출입문, 그리고 창문점을 포함한 건물 구조 설계 기능, 또 내부에 있는 대피인원, 즉 사람 모델의 자율적인 이동 기능, 또한 화재 상황, 즉 재난 상황을 명확히 설정하기 위한 화재 구역 설정 기능, 그리고 실제 화재 상황을 시뮬레이션하는 목적인 화재 번짐 기능 등을 생각하였습니다.',
       2: '문제 2번에서는 제가 이 화재라는 재난 상황을 구체적으로 어떻게 설계하고 시뮬레이션 내에서 어떻게 발생하고 그리고 어떻게 지정할 수 있는지에 대해서 말씀드리겠습니다. 우선 설계된 건물 내부에 화재가 발생한 곳을 직접 지정할 수 있게 할 것입니다. 이를 바탕으로 출입문 앞에서 화재가 발생하는 등 위험한 상황을 설정할 수 있고 이를 통해 다양한 상황에서도 안전하게 사람들이 대피할 수 있는 건물을 설계하는 데도 용이하다는 장점을 지닐 수 있을 것입니다. 또한 화재는 단순히 그 불길이 번지는 것 뿐만 아니라 주변 물체의 온도 상승, 그리고 화재로 인해 발생하는 연기의 확산 등을 통해 사람에게 피해가 갈 수 있습니다 그리고 이는 화재피해에 있어서 중요한 요소로 작용할 것입니다. 따라서 이렇게 실제로 화재가 발생했을 때 일어날 수 있는 피해를 시뮬레이션의 기능으로써 넣어야 된다고 생각했습니다.',
       3: '문제 3번은 아까 말씀드린 것에 의해서 재난 상황에서 사람은 그러면 어떻게 대피 상황을 설정하고 작동할 것인가입니다. 저는 사람이 대피할 때 움직임에 대해서 여러 가지 요인을 고려한 다음에 움직이도록 설정해야 된다고 생각했습니다. 특히 여기서는 화재 상황이므로 화재에서 발생할 수 있는 고온, 불길, 연기 등 자신을 위협할 수 있는 요인들과 주변 인구 복잡성 등의 반응을 하도록 만들어서 사람이 자율적으로 상황을 판단할 탈출구를 찾도록 하는 것을 목표로 하였습니다. 따라서 저는 미로찾기에 사용되는 DPS 알고리즘과 내비게이션 길찾기에도 활용이 된다는 A* 알고리즘 등을 활용한다면 사람이 화재 대피에 있어서 그 부분의 위협 상황에 대한 적당한 비용 함수를 설정하여 이를 고려한 알고리즘에 기반하여 명확하게 대피하는 것이 가능하다고 생각합니다.',
@@ -1321,15 +1332,13 @@ async function startProbingA() {
       updatedAt: serverTimestamp()
     };
 
-    const docRef = await addDoc(collection(db, 'probingQuestions_new'), docData);
-    probingDocIdA = docRef.id;
+      const docRef = await addDoc(collection(db, 'probingQuestions_new'), docData);
+      probingDocIdA = docRef.id;
+      docRef = doc(db, 'probingQuestions_new', probingDocIdA);
+    }
 
     // 저장 상태 초기화
     resetSaveStatus('a');
-
-    // 화면 전환
-    document.getElementById('student-a-start-screen').style.display = 'none';
-    document.getElementById('student-a-work-screen').style.display = 'block';
 
     // 과제 정보 표시 및 Handsontable 초기화
     initProbingQuestionScreens();
@@ -1338,47 +1347,45 @@ async function startProbingA() {
     setTimeout(() => {
       loadProbingDataFromFirestore();
     }, 100);
-
-    Swal.fire({
-      icon: 'success',
-      title: '시작되었습니다',
-      text: '탐침 질문 작성을 시작하세요!',
-      timer: 2000,
-      showConfirmButton: false
-    });
   } catch (error) {
-    console.error('문서 생성 오류:', error);
-    Swal.fire({
-      icon: 'error',
-      title: '오류',
-      text: '작업을 시작하는 중 오류가 발생했습니다.'
-    });
+    console.error('초기화 오류:', error);
   }
 }
 
-// 학생 B 시작하기 버튼 클릭
-async function startProbingB() {
+// 학생 B 초기화 (페이지 로드 시 자동 실행)
+async function initProbingB() {
   if (!currentUser) {
-    Swal.fire({
-      icon: 'error',
-      title: '로그인 필요',
-      text: '로그인 후 이용해주세요.'
-    });
     return;
   }
 
   try {
-    // Firestore 문서 생성
-    const now = new Date();
-    const startTime = {
-      date: now.toISOString().split('T')[0],
-      time: now.toTimeString().split(' ')[0].substring(0, 5)
-    };
+    // 기존 문서 찾기 또는 새로 생성
+    const q = query(
+      collection(db, 'probingQuestions_new'),
+      where('uid', '==', currentUser.uid),
+      where('scenario', '==', '대피시뮬레이션'),
+      where('studentType', '==', 'B')
+    );
+    
+    const querySnapshot = await getDocs(q);
+    let docRef;
+    
+    if (!querySnapshot.empty) {
+      // 기존 문서가 있으면 사용
+      probingDocIdB = querySnapshot.docs[0].id;
+      docRef = doc(db, 'probingQuestions_new', probingDocIdB);
+    } else {
+      // 새 문서 생성
+      const now = new Date();
+      const startTime = {
+        date: now.toISOString().split('T')[0],
+        time: now.toTimeString().split(' ')[0].substring(0, 5)
+      };
 
-    // 과제 정보 수집
-    const questions = {};
-    // 학생 B의 과제별 답변 초기 데이터
-    const studentBAnswers = {
+      // 과제 정보 수집
+      const questions = {};
+      // 학생 B의 과제별 답변 초기 데이터
+      const studentBAnswers = {
       1: '시작하겠습니다. 우선 저는 화재 발생 상황에서 사람들이 많은 영화관, 백화점 혹은 다른 대형 건물에서 사람들이 대피하는 상황을 소프트웨어로 재현하고자 했습니다. 이유는 화재 발생 시에는 몸을 낮추고 물이 젖은 수건으로 입을 가리라 같은 이론적인 내용은 사람들이 많이 알고 있지만 실제 상황에서는 머릿속 이론을 적용한 데는 어려움이 있다고 생각하기 때문입니다. 지금 당장 머릿속의 이론보다는 당장 눈앞에서 불이 나있고 연기가 피어나 있기 때문에 생존을 최우선시하는 방향으로 사람들이 움직일 거라고 생각을 했습니다. 그리고 이 소프트웨어에서는 사람들의 생존본능, 이 생존을 위해서 취하는 행위 중 하나인 군중심리, 어떤 집단에 속하고자 하는 행위를 반영하고자 했습니다 여러 실험에서도 확인되었지만 자신이 고른 답이 정답이라는 걸 확신하는 상황 속에서도 다른 사람들이 그건 답이 아니다, 이것이 답이다 라고 말하면 답을 바꾸는 행위는 비일비재하게 적용합니다. 저는 이것을 소프트웨어에 적용해보고자 했습니다.',
       2: '문제 2번에서는 저는 소프트웨어에서 화재가 시작한 장소를 바꿀 수 있게 할 것입니다. 그렇게 되면은 어떤 한 방에서 화재가 시작되고 그로 인해서 연기도 점차 다른 곳으로 퍼져나갑니다. 그렇게 되면은 그 화재가 시작된 방에 있던 사람들 그리고 그 근처에 있던 사람들은 대피를 가장 빨리 시작할 것이고 거기서 멀리 있는 사람들은 비교적 대피를 늦게 시작하게 될 것입니다. 단 여기에서 방화셔터나 아니면 사이렌 소리 그런 다른 요소들은 없다고 가정을 했습니다. 추후에는 방화셔터 혹은 사이렌 소리 같은 다른 청각적 요소도 추가해서 더 나은 소프트웨어를 만드는 것도 좋은 방법이라고 생각합니다. 그렇게 했을 때 화재가 진행됨에 따라서 연기도 점점 퍼져가서 시야를 방해한다는 설정도 추가할 것입니다. 시야가 방해가 되면 더 먼 곳을 보지 못하게 되고 그렇게 됐을 때는 다른 군중 심리가 더 강하게 작용할 수도 있고 만약에 불이 임계치를 넘는 거리에 있다라고 한다면 거기서 반대되는 방향으로 먼저 가려고 할 수도 있습니다. 아예 막다른 길로 갈 수도 있다고 생각합니다. 통로에 있던 사람이 다시 방으로 들어가는 그러한 식의 행동을 보일 수도 있을 거라고 기대됩니다. 그렇게 하면 조금 더 다채로운 상황을 만들 수 있게 되고 더 다양한 대피 상황을 가정할 수 있을 거라고 생각합니다.',
       3: '저는 우선 사람의 이동 방향을 결정하는 요인으로는 연기의 농도, 불과의 거리, 그리고 다른 사람들의 이동 경로를 추가했습니다. 그리고 이런 방향 외에도 사람들의 이동 속도, 이동 속력을 결정합니다. 변수를 또 추가할 것입니다. 그렇게 했을 때 우선 크게 4가지 상황을 가정할 것입니다. 불과 연기의 임계치가 모두 허용치를 넘은 경우에는 연기로 인해서 시야가 차단된 상태이기에 이동속력이 감소하게 되고 이때는 군중심리보다는 당장의 생존 본능이 앞서게 돼서 불과 반대 방향으로 이동하려는 성향이 강해질 것입니다. 그리고 불의 임계치가 허용치 이하고 연기 인계치가 허용치보다 높아진다면 역시나 연기로 인해서 이동속력이 감소하게 되고 당장 생존의 위협을 받지 않기 때문에 우선 다른 사람들의 이동 방향을 따르려고 할 것입니다. 그리고 다른 사람들의 이동 방향이 특정되지 않는다면 연기 반대 방향으로 가려고 할 것입니다. 그리고 그 상황에서 벗어나기 위해서 출구가 있는 아래층으로 이동하려는 경향을 보일 것입니다. 그리고 연기가 임계치 이하인데 불은 임계치 이상인 상황 사실 이런 상황은 잘 없으리라고 생각을 하지만 만약에 소프트웨어를 작동시켰을 때 이러한 상황이 나온다면 우선 불과 반대 방향으로 이동하도록 설정할 것입니다. 그리고 연기와 불이 모두 임계치 이하라면 사람이 화재의 상황을 인지하지 못하는 것이라고 판단하여, 그저 무작위의 방향으로 이동할 뿐 다른 사람들의 이동 방향에는 영향을 받지 않을 거라고 설정할 것입니다. 그리고 실제로 화재 현장에서 사람들은 부상을 입기 때문에 불이나 연기의 인계치가 높은 곳에 지속적으로 남아있는다면 이동속력이 영구 감소하게 되고 거기에 오래 노출되다 보면 사망하기도 하기 때문에 이동속력이 0이 된 사람은 사망한 것으로 판단할 것입니다.',
@@ -1415,15 +1422,13 @@ async function startProbingB() {
       createdAt: serverTimestamp()
     };
 
-    const docRef = await addDoc(collection(db, 'probingQuestions_new'), docData);
-    probingDocIdB = docRef.id;
+      const docRef = await addDoc(collection(db, 'probingQuestions_new'), docData);
+      probingDocIdB = docRef.id;
+      docRef = doc(db, 'probingQuestions_new', probingDocIdB);
+    }
 
     // 저장 상태 초기화
     resetSaveStatus('b');
-
-    // 화면 전환
-    document.getElementById('student-b-start-screen').style.display = 'none';
-    document.getElementById('student-b-work-screen').style.display = 'block';
 
     // 과제 정보 표시 및 Handsontable 초기화
     initProbingQuestionScreensB();
@@ -1432,21 +1437,8 @@ async function startProbingB() {
     setTimeout(() => {
       loadProbingDataFromFirestoreB();
     }, 100);
-
-    Swal.fire({
-      icon: 'success',
-      title: '시작되었습니다',
-      text: '탐침 질문 작성을 시작하세요!',
-      timer: 2000,
-      showConfirmButton: false
-    });
   } catch (error) {
-    console.error('문서 생성 오류:', error);
-    Swal.fire({
-      icon: 'error',
-      title: '오류',
-      text: '작업을 시작하는 중 오류가 발생했습니다.'
-    });
+    console.error('초기화 오류:', error);
   }
 }
 
@@ -1823,16 +1815,40 @@ async function saveProbingQuestion(questionNum, studentType) {
 
     const probingDataRaw = probingTable.getData().filter(row => row[0] || row[1]);
     // 탐침 질문을 객체 배열로 변환 (Firestore는 중첩 배열을 지원하지 않음)
-    const probingData = probingDataRaw.map(row => ({
+    const newProbingData = probingDataRaw.map(row => ({
       situation: row[0] || '',
       question: row[1] || ''
     }));
     
-    // 학생 답변은 읽기 전용이므로 저장하지 않음 (이미 Firestore에 저장되어 있음)
-
+    // 빈 데이터가 있으면 저장하지 않음
+    if (newProbingData.length === 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: '입력 필요',
+        text: '저장할 탐침 질문을 입력해주세요.'
+      });
+      return;
+    }
+    
+    // 기존 데이터 불러오기
     const docRef = doc(db, 'probingQuestions_new', probingDocId);
+    const docSnap = await getDoc(docRef);
+    
+    let existingProbingQuestions = [];
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      const questionData = data.questions?.[questionNum];
+      if (questionData && questionData.probingQuestions) {
+        existingProbingQuestions = questionData.probingQuestions;
+      }
+    }
+    
+    // 기존 데이터에 새로운 데이터 추가 (누적)
+    const updatedProbingQuestions = [...existingProbingQuestions, ...newProbingData];
+    
+    // 학생 답변은 읽기 전용이므로 저장하지 않음 (이미 Firestore에 저장되어 있음)
     await updateDoc(docRef, {
-      [`questions.${questionNum}.probingQuestions`]: probingData,
+      [`questions.${questionNum}.probingQuestions`]: updatedProbingQuestions,
       updatedAt: serverTimestamp()
     });
 
@@ -1847,6 +1863,9 @@ async function saveProbingQuestion(questionNum, studentType) {
     
     // 상태 메시지 업데이트
     updateSaveStatus(questionNum, studentType);
+
+    // 저장 후 입력창 초기화 (빈 행으로 리셋)
+    probingTable.loadData([['', '']]);
 
     Swal.fire({
       icon: 'success',
@@ -1893,117 +1912,84 @@ function resetSaveStatus(studentType) {
   }
 }
 
-// 제출하기
-async function submitProbingA() {
-  if (!probingDocIdA) {
+// 제출 내용 확인 (과제별)
+async function viewSubmittedProbingQuestions(questionNum, studentType) {
+  if (!currentUser) {
     Swal.fire({
       icon: 'error',
-      title: '오류',
-      text: '작업이 시작되지 않았습니다.'
+      title: '로그인 필요',
+      text: '로그인 후 이용해주세요.'
     });
     return;
   }
 
-  const result = await Swal.fire({
-    title: '제출하시겠습니까?',
-    text: '제출 후에는 수정할 수 없습니다.',
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonText: '최종 제출하기',
-    cancelButtonText: '취소'
-  });
-
-  if (result.isConfirmed) {
-    try {
-      const now = new Date();
-      const endTime = {
-        date: now.toISOString().split('T')[0],
-        time: now.toTimeString().split(' ')[0].substring(0, 5)
-      };
-
-      const docRef = doc(db, 'probingQuestions_new', probingDocIdA);
-      await updateDoc(docRef, {
-        endTime: endTime,
-        updatedAt: serverTimestamp()
-      });
-
+  try {
+    const probingDocId = studentType === 'a' ? probingDocIdA : probingDocIdB;
+    if (!probingDocId) {
       Swal.fire({
-        icon: 'success',
-        title: '제출 완료',
-        text: '탐침 질문이 제출되었습니다.',
-        confirmButtonText: '확인'
-      }).then(() => {
-        // 화면 초기화
-        document.getElementById('student-a-start-screen').style.display = 'block';
-        document.getElementById('student-a-work-screen').style.display = 'none';
-        probingDocIdA = null;
+        icon: 'info',
+        title: '저장된 데이터 없음',
+        text: '아직 저장된 탐침 질문이 없습니다.'
       });
-    } catch (error) {
-      console.error('제출 오류:', error);
-      Swal.fire({
-        icon: 'error',
-        title: '오류',
-        text: '제출 중 오류가 발생했습니다.'
-      });
+      return;
     }
-  }
-}
 
-// 제출하기 (학생 B)
-async function submitProbingB() {
-  if (!probingDocIdB) {
+    const docRef = doc(db, 'probingQuestions_new', probingDocId);
+    const docSnap = await getDoc(docRef);
+    
+    if (!docSnap.exists()) {
+      Swal.fire({
+        icon: 'info',
+        title: '저장된 데이터 없음',
+        text: '아직 저장된 탐침 질문이 없습니다.'
+      });
+      return;
+    }
+
+    const data = docSnap.data();
+    const questionData = data.questions?.[questionNum];
+    
+    if (!questionData || !questionData.probingQuestions || questionData.probingQuestions.length === 0) {
+      Swal.fire({
+        icon: 'info',
+        title: '저장된 데이터 없음',
+        text: '이 과제에 저장된 탐침 질문이 없습니다.'
+      });
+      return;
+    }
+
+    // HTML 생성
+    let html = `<div style="text-align: left; max-height: 60vh; overflow-y: auto;">`;
+    html += `<h3 style="margin-bottom: 1rem; color: #2563eb;">과제 ${questionNum} - 학생 ${studentType.toUpperCase()}</h3>`;
+    html += `<table style="width: 100%; border-collapse: collapse;">`;
+    html += `<thead><tr style="background: #f3f4f6;"><th style="padding: 0.75rem; border: 1px solid #e5e7eb; text-align: left;">상황 분석</th><th style="padding: 0.75rem; border: 1px solid #e5e7eb; text-align: left;">탐침 질문</th></tr></thead>`;
+    html += `<tbody>`;
+    
+    questionData.probingQuestions.forEach((item, index) => {
+      const situation = typeof item === 'object' ? (item.situation || '') : (item[0] || '');
+      const question = typeof item === 'object' ? (item.question || '') : (item[1] || '');
+      html += `<tr><td style="padding: 0.75rem; border: 1px solid #e5e7eb; vertical-align: top;">${situation}</td><td style="padding: 0.75rem; border: 1px solid #e5e7eb; vertical-align: top;">${question}</td></tr>`;
+    });
+    
+    html += `</tbody></table></div>`;
+
+    Swal.fire({
+      title: '제출 내용 확인',
+      html: html,
+      width: '800px',
+      confirmButtonText: '확인'
+    });
+  } catch (error) {
+    console.error('확인 오류:', error);
     Swal.fire({
       icon: 'error',
       title: '오류',
-      text: '작업이 시작되지 않았습니다.'
+      text: '데이터를 불러오는 중 오류가 발생했습니다.'
     });
-    return;
-  }
-
-  const result = await Swal.fire({
-    title: '제출하시겠습니까?',
-    text: '제출 후에는 수정할 수 없습니다.',
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonText: '최종 제출하기',
-    cancelButtonText: '취소'
-  });
-
-  if (result.isConfirmed) {
-    try {
-      const now = new Date();
-      const endTime = {
-        date: now.toISOString().split('T')[0],
-        time: now.toTimeString().split(' ')[0].substring(0, 5)
-      };
-
-      const docRef = doc(db, 'probingQuestions_new', probingDocIdB);
-      await updateDoc(docRef, {
-        endTime: endTime,
-        updatedAt: serverTimestamp()
-      });
-
-      Swal.fire({
-        icon: 'success',
-        title: '제출 완료',
-        text: '탐침 질문이 제출되었습니다.',
-        confirmButtonText: '확인'
-      }).then(() => {
-        // 화면 초기화
-        document.getElementById('student-b-start-screen').style.display = 'block';
-        document.getElementById('student-b-work-screen').style.display = 'none';
-        probingDocIdB = null;
-      });
-    } catch (error) {
-      console.error('제출 오류:', error);
-      Swal.fire({
-        icon: 'error',
-        title: '오류',
-        text: '제출 중 오류가 발생했습니다.'
-      });
-    }
   }
 }
+
+// 제출하기 (학생 B) - 제거됨 (과제별 저장으로 대체)
 
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', () => {
@@ -2031,12 +2017,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 학생 A 시작하기 버튼
-  const startBtnA = document.getElementById('start-probing-a-btn');
-  if (startBtnA) {
-    startBtnA.addEventListener('click', startProbingA);
-  }
-
   // 저장 버튼들 (동적으로 생성되므로 이벤트 위임 사용)
   document.addEventListener('click', (e) => {
     if (e.target.classList.contains('save-probing-btn')) {
@@ -2044,25 +2024,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const studentType = e.target.getAttribute('data-student');
       saveProbingQuestion(questionNum, studentType);
     }
+    // 제출 내용 확인 버튼
+    if (e.target.classList.contains('view-submitted-btn')) {
+      const questionNum = e.target.getAttribute('data-question');
+      const studentType = e.target.getAttribute('data-student');
+      viewSubmittedProbingQuestions(questionNum, studentType);
+    }
   });
 
-  // 제출하기 버튼
-  const submitBtnA = document.getElementById('submit-probing-a-btn');
-  if (submitBtnA) {
-    submitBtnA.addEventListener('click', submitProbingA);
-  }
-
-  // 학생 B 시작하기 버튼
-  const startBtnB = document.getElementById('start-probing-b-btn');
-  if (startBtnB) {
-    startBtnB.addEventListener('click', startProbingB);
-  }
-
-  // 제출하기 버튼 (학생 B)
-  const submitBtnB = document.getElementById('submit-probing-b-btn');
-  if (submitBtnB) {
-    submitBtnB.addEventListener('click', submitProbingB);
-  }
+  // 인증 상태 확인 후 자동 초기화
+  onAuthStateChanged(auth, (user) => {
+    currentUser = user;
+    if (user) {
+      initProbingA();
+      initProbingB();
+    }
+  });
 
   // 이미지 클릭 시 팝업으로 크게 보기
   document.addEventListener('click', (e) => {
@@ -2121,90 +2098,85 @@ async function showMyProbingQuestions() {
       return;
     }
 
-    // 데이터 정리 및 필터링 (클라이언트 측에서)
-    const submissions = [];
+    // 데이터 정리 (학생별, 과제별로 정리)
+    const organizedData = {
+      A: {},
+      B: {}
+    };
+
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      // endTime이 존재하고, scenario가 '대피시뮬레이션'인 경우만 포함
-      if (data.endTime && data.scenario === '대피시뮬레이션') {
-        submissions.push({
+      if (data.scenario !== '대피시뮬레이션') return;
+      
+      const studentType = data.studentType;
+      const questions = data.questions || {};
+      
+      // 각 과제별로 데이터 정리
+      for (let i = 1; i <= 5; i++) {
+        const questionData = questions[i];
+        if (!questionData || !questionData.probingQuestions || questionData.probingQuestions.length === 0) {
+          continue;
+        }
+        
+        if (!organizedData[studentType][i]) {
+          organizedData[studentType][i] = [];
+        }
+        
+        organizedData[studentType][i].push({
           id: doc.id,
-          studentType: data.studentType,
-          endTime: data.endTime,
-          questions: data.questions || {},
-          createdAt: data.createdAt
+          probingQuestions: questionData.probingQuestions,
+          updatedAt: data.updatedAt
         });
       }
     });
 
-    if (submissions.length === 0) {
+    // 저장된 데이터가 있는지 확인
+    const hasData = Object.keys(organizedData.A).length > 0 || Object.keys(organizedData.B).length > 0;
+    
+    if (!hasData) {
       Swal.fire({
         icon: 'info',
-        title: '제출된 데이터 없음',
-        text: '아직 제출한 탐침 질문이 없습니다.'
+        title: '저장된 데이터 없음',
+        text: '아직 저장된 탐침 질문이 없습니다.'
       });
       return;
     }
 
-    // 학생 타입별, 시간별로 정렬
-    submissions.sort((a, b) => {
-      if (a.studentType !== b.studentType) {
-        return a.studentType.localeCompare(b.studentType);
-      }
-      // 시간 역순 (최신순)
-      const timeA = `${a.endTime.date} ${a.endTime.time}`;
-      const timeB = `${b.endTime.date} ${b.endTime.time}`;
-      return timeB.localeCompare(timeA);
-    });
-
     // 팝업 HTML 생성
     let html = '<div style="text-align: left; max-height: 70vh; overflow-y: auto;">';
     
-    let currentStudentType = null;
-    submissions.forEach((submission, index) => {
-      // 학생 타입별 섹션
-      if (currentStudentType !== submission.studentType) {
-        if (currentStudentType !== null) {
-          html += '</div>'; // 이전 섹션 닫기
-        }
-        currentStudentType = submission.studentType;
-        html += `<h3 style="margin-top: 1.5rem; margin-bottom: 0.75rem; color: #2563eb;">학생 ${submission.studentType}의 케이스</h3>`;
-        html += '<div style="display: flex; flex-direction: column; gap: 0.5rem;">';
-      }
-
-      // 제출 시간 버튼
-      const timeStr = `${submission.endTime.date} ${submission.endTime.time}`;
-      html += `
-        <button class="submission-time-btn" 
-                data-submission-id="${submission.id}" 
-                data-student-type="${submission.studentType}"
-                style="padding: 0.75rem 1rem; text-align: left; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 6px; cursor: pointer; transition: background 0.2s;">
-          <strong>제출 시간:</strong> ${timeStr}
-        </button>
-        <div id="submission-${submission.id}" style="display: none; margin-left: 1rem; margin-bottom: 1rem; padding: 1rem; background: #f9fafb; border-radius: 6px; border: 1px solid #e5e7eb;">
-      `;
-
-      // 과제별 탐침 질문 표시
+    // 학생별로 표시
+    ['A', 'B'].forEach(studentType => {
+      const studentData = organizedData[studentType];
+      if (Object.keys(studentData).length === 0) return;
+      
+      html += `<h3 style="margin-top: 1.5rem; margin-bottom: 1rem; color: #2563eb; border-bottom: 2px solid #2563eb; padding-bottom: 0.5rem;">학생 ${studentType}의 케이스</h3>`;
+      
+      // 과제별로 표시
       for (let i = 1; i <= 5; i++) {
-        const questionData = submission.questions[i];
-        if (!questionData || !questionData.probingQuestions || questionData.probingQuestions.length === 0) {
-          continue;
-        }
-
-        html += `<div style="margin-bottom: 1rem;">`;
-        html += `<h4 style="margin-bottom: 0.5rem; color: #1f2937;">과제 ${i}</h4>`;
+        if (!studentData[i] || studentData[i].length === 0) continue;
+        
+        html += `<div style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; border: 1px solid #e5e7eb;">`;
+        html += `<h4 style="margin-bottom: 0.75rem; color: #1f2937;">과제 ${i}</h4>`;
+        
+        // 가장 최근 저장된 데이터 사용
+        const latestData = studentData[i].sort((a, b) => {
+          if (!a.updatedAt || !b.updatedAt) return 0;
+          return b.updatedAt.toMillis() - a.updatedAt.toMillis();
+        })[0];
+        
         html += `<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">`;
-        html += `<thead><tr style="background: #e5e7eb;"><th style="padding: 0.5rem; border: 1px solid #d1d5db; text-align: left; width: 30%;">상황</th><th style="padding: 0.5rem; border: 1px solid #d1d5db; text-align: left;">탐침 질문</th></tr></thead>`;
+        html += `<thead><tr style="background: #e5e7eb;"><th style="padding: 0.5rem; border: 1px solid #d1d5db; text-align: left; width: 30%;">상황 분석</th><th style="padding: 0.5rem; border: 1px solid #d1d5db; text-align: left;">탐침 질문</th></tr></thead>`;
         html += `<tbody>`;
 
-        questionData.probingQuestions.forEach(item => {
+        latestData.probingQuestions.forEach(item => {
           const situation = typeof item === 'object' ? (item.situation || '') : (Array.isArray(item) ? item[0] : '');
           const question = typeof item === 'object' ? (item.question || '') : (Array.isArray(item) ? item[1] : '');
           
           if (situation || question) {
             html += `<tr>`;
-            html += `<td style="padding: 0.5rem; border: 1px solid #d1d5db; font-weight: bold;">${situation}</td>`;
-            html += `<td style="padding: 0.5rem; border: 1px solid #d1d5db; white-space: pre-wrap;">${question.replace(/\n/g, '<br>')}</td>`;
+            html += `<td style="padding: 0.5rem; border: 1px solid #d1d5db; vertical-align: top;">${situation || '-'}</td>`;
+            html += `<td style="padding: 0.5rem; border: 1px solid #d1d5db; white-space: pre-wrap;">${question.replace(/\n/g, '<br>') || '-'}</td>`;
             html += `</tr>`;
           }
         });
@@ -2212,54 +2184,18 @@ async function showMyProbingQuestions() {
         html += `</tbody></table>`;
         html += `</div>`;
       }
-
-      html += `</div>`; // submission 내용 닫기
     });
-
-    if (currentStudentType !== null) {
-      html += '</div>'; // 마지막 섹션 닫기
-    }
-
+    
     html += '</div>';
 
     // SweetAlert2로 팝업 표시
-    const { value: result } = await Swal.fire({
+    Swal.fire({
       title: '내가 만든 탐침 질문',
       html: html,
       width: '900px',
       showConfirmButton: true,
-      confirmButtonText: '닫기',
-      didOpen: () => {
-        // 버튼 클릭 이벤트 추가
-        document.querySelectorAll('.submission-time-btn').forEach(btn => {
-          btn.addEventListener('click', function() {
-            const submissionId = this.getAttribute('data-submission-id');
-            const contentDiv = document.getElementById(`submission-${submissionId}`);
-            
-            if (contentDiv.style.display === 'none') {
-              contentDiv.style.display = 'block';
-              this.style.background = '#dbeafe';
-            } else {
-              contentDiv.style.display = 'none';
-              this.style.background = '#f3f4f6';
-            }
-          });
-
-          // 호버 효과
-          btn.addEventListener('mouseenter', function() {
-            if (this.style.background !== 'rgb(219, 234, 254)') {
-              this.style.background = '#e5e7eb';
-            }
-          });
-          btn.addEventListener('mouseleave', function() {
-            if (this.style.background !== 'rgb(219, 234, 254)') {
-              this.style.background = '#f3f4f6';
-            }
-          });
-        });
-      }
+      confirmButtonText: '닫기'
     });
-
   } catch (error) {
     console.error('데이터 불러오기 오류:', error);
     Swal.fire({

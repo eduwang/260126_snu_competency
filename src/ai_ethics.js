@@ -1278,28 +1278,40 @@ function getQuestionInfo(questionNum) {
 }
 
 // 학생 A 시작하기 버튼 클릭
-async function startProbingA() {
+// 학생 A 초기화 (페이지 로드 시 자동 실행)
+async function initProbingA() {
   if (!currentUser) {
-    Swal.fire({
-      icon: 'error',
-      title: '로그인 필요',
-      text: '로그인 후 이용해주세요.'
-    });
     return;
   }
 
   try {
-    // Firestore 문서 생성
-    const now = new Date();
-    const startTime = {
-      date: now.toISOString().split('T')[0],
-      time: now.toTimeString().split(' ')[0].substring(0, 5)
-    };
+    // 기존 문서 찾기 또는 새로 생성
+    const q = query(
+      collection(db, 'probingQuestions_new'),
+      where('uid', '==', currentUser.uid),
+      where('scenario', '==', '인공지능과윤리'),
+      where('studentType', '==', 'A')
+    );
+    
+    const querySnapshot = await getDocs(q);
+    let docRef;
+    
+    if (!querySnapshot.empty) {
+      // 기존 문서가 있으면 사용
+      probingDocIdA = querySnapshot.docs[0].id;
+      docRef = doc(db, 'probingQuestions_new', probingDocIdA);
+    } else {
+      // 새 문서 생성
+      const now = new Date();
+      const startTime = {
+        date: now.toISOString().split('T')[0],
+        time: now.toTimeString().split(' ')[0].substring(0, 5)
+      };
 
-    // 질문 정보 수집
-    const questions = {};
-    // 학생 A의 질문별 답변 초기 데이터
-    const studentAAnswers = {
+      // 질문 정보 수집
+      const questions = {};
+      // 학생 A의 질문별 답변 초기 데이터
+      const studentAAnswers = {
       1: '먼저 사례 1번을 통해서 기술 활용에 있어서는 장기적인 영향에 대해 고려를 해야 한다는 것을 알 수 있고 또한 기술이 사용자의 부를 위해서만 활용되었을 때 어떤 문제점들이 발생하는지를 알 수 있는데요. 이를 통해 두 가지 원칙을 세워보았습니다. 첫 번째로는 인공지능에게 적용되는 원칙으로 현재의 결과와 미래에 미칠 영향을 함께 고려해야 한다는 원칙인데요. 이를 통해 사례 3번의 기업 채용 AI를 통해 적용된 양상을 볼 수 있을 것 같습니다. 사례 3번에서는 AI가 기업 채용의 이상적인 모델을 현재 아마존 기업이 준 것으로 인해서 남성 직원들을 우대하는 것에 편향된 결과를 보여주고 있는데요. 이는 인공지능에게 채용의 목적과 길의 결과 즉 미래 지향적인 목적을 확실히 입력하는 것에 따라서 해결할 수 있을 것이라고 생각했습니다.\n다음으로 두 번째 원칙은 기술자에게 적용되는 원칙으로 생각해 보았는데요. 인공지능에게 궁극적인 목적 즉 1번에서와 같이 미래의 기업이 이러한 양상으로 발전되기를 원한다 등의 목적을 부여할 때 만약 사회적 합의에 따라서 그 목적을 부여했을 경우에는 그 기술자 개인이 책임을 지지 않지만 만약 인공지능에게 목적을 부여할 때 이를 자신, 개인 또는 기업 등의 특정 집단의 판단에 따라서 결정한 경우는 이로 인한 결과 등을 개인 또는 그 기업이 책임을 져야 한다고 생각을 했습니다.\n이는 사례에 2번에 트롤리 딜레마에 적용시켜 볼 수 있을 것 같은데요. 만약 인공지능에게 미래에 다수의 사람을 살리게 하는 것을 목적으로 두라는 걸 사회적 합의를 통해 결정 내렸다면 임산부나 어린아이 등을 우대하는 결정이 나왔을 텐데 이는 사회적 합의에 따라서 모두가 동의한 것이기 때문에 기술자 개인이나 기업이 책임을 지지 않을 수 있습니다. 그러나 만약 기업이 자신의 이미지를, 기업 이미지를 가장 우선시하는 결정을 입력했다면 운전자를 살리는 결정을 하게 될 텐데 이는 사회적 합의에 일치하지 않기 때문에 기업이 책임을 지는 등으로 사건을 해결해 나갈 수 있을 것이라고 생각했습니다.',
       2: '먼저 윤리적으로 정당한지 판단을 해볼 때 자신의 사회적 지위나 위치를 고려하지 않고 모두가 동의할 만한 선택을 한다는 점에서 자신이 누구인지 모를 때 과연 어떤 결정을 할 것인가를 예상해 볼 수 있는데요. 내가 노인인지 또 임산부인지 운전자인지 아무것도 모르는 상태에서는 누군가 죽는 것이 타당하다고 아무도 결정을 내릴 수 없을 것이라고 생각합니다. 그렇기 때문에 타인에 의한 희생은 결국 윤리적으로 정당하다고 할 수 없다는 것이 저의 의견인데요. 또 다른 저의 생각으로는 한 개인이 살아있음으로 지닌 미래의 다양한 가능성을 모두 고려할 수 없다고 생각합니다. 무조건적으로 다수가 살아나는 것이 사회의 이익이라고도 볼 수 없는게 운전자가 나중에 미래에 사회적으로 얼마나 큰 영향을 좋은 영향을 미칠 수 있는지 아무도 미래를 볼 수 없기 때문에 살아있는 것 자체로 무한한 가능성을 지닌 인간의 특성을 고려해 보았을 때 누군가의 희생을 정당하다고 할 수는 없을 것 같습니다.',
       3: '이러한 AI 채용이 계속 지속적으로 사용되는 것에 대해서 문제가 없다라고 하는 것에는 반대하는 입장입니다. 그러나 부분적으로 AI가 차별을 했다고 생각하지 않는다에 대해서는 또 찬성을 하기도 하는데요. 그 이유는 먼저 차별에 대한 사전적 정의를 생각해 보았을 때 생산성이 같음에도 불구하고 특정 집단에 속한다는 것으로 다르게 대우하는 것이 차별이라고 생각합니다. 사례 3번에 나타난 인공지능의 판단 근거를 생각해 볼 때 주어진 데이터가 남성의 생산성이 더 높을 수밖에 없었던 기업의 상황이었기 때문에 이는 AI가 차별을 했음은 아니라고 볼 수 있습니다. 왜냐하면 그 데이터에서 생산성이 다르게 나타났기 때문인데요. 그러나 이러한 데이터를 인공지능에게 부여한, 또 학습시킨 기술자의 입장에서는 문제점이 있었다고 생각합니다. 이는 현재 아마존 기업이라는 사회의 일부만을 학습시켰기에 이러한 기술자의 행위는 차별을 야기했다고 볼 수 있는데요. 때문에 이는 자연스럽고 문제가 없다고 주장하는 것에 대해서는 반대하는 입장입니다.',
@@ -1339,15 +1351,12 @@ async function startProbingA() {
       updatedAt: serverTimestamp()
     };
 
-    const docRef = await addDoc(collection(db, 'probingQuestions_new'), docData);
-    probingDocIdA = docRef.id;
+      const docRef = await addDoc(collection(db, 'probingQuestions_new'), docData);
+      probingDocIdA = docRef.id;
+    }
 
     // 저장 상태 초기화
     resetSaveStatus('a');
-
-    // 화면 전환
-    document.getElementById('student-a-start-screen').style.display = 'none';
-    document.getElementById('student-a-work-screen').style.display = 'block';
 
     // 과제 정보 표시 및 Handsontable 초기화
     initProbingQuestionScreens();
@@ -1356,47 +1365,45 @@ async function startProbingA() {
     setTimeout(() => {
       loadProbingDataFromFirestore();
     }, 100);
-
-    Swal.fire({
-      icon: 'success',
-      title: '시작되었습니다',
-      text: '탐침 질문 작성을 시작하세요!',
-      timer: 2000,
-      showConfirmButton: false
-    });
   } catch (error) {
-    console.error('문서 생성 오류:', error);
-    Swal.fire({
-      icon: 'error',
-      title: '오류',
-      text: '작업을 시작하는 중 오류가 발생했습니다.'
-    });
+    console.error('초기화 오류:', error);
   }
 }
 
-// 학생 B 시작하기 버튼 클릭
-async function startProbingB() {
+// 학생 B 초기화 (페이지 로드 시 자동 실행)
+async function initProbingB() {
   if (!currentUser) {
-    Swal.fire({
-      icon: 'error',
-      title: '로그인 필요',
-      text: '로그인 후 이용해주세요.'
-    });
     return;
   }
 
   try {
-    // Firestore 문서 생성
-    const now = new Date();
-    const startTime = {
-      date: now.toISOString().split('T')[0],
-      time: now.toTimeString().split(' ')[0].substring(0, 5)
-    };
+    // 기존 문서 찾기 또는 새로 생성
+    const q = query(
+      collection(db, 'probingQuestions_new'),
+      where('uid', '==', currentUser.uid),
+      where('scenario', '==', '인공지능과윤리'),
+      where('studentType', '==', 'B')
+    );
+    
+    const querySnapshot = await getDocs(q);
+    let docRef;
+    
+    if (!querySnapshot.empty) {
+      // 기존 문서가 있으면 사용
+      probingDocIdB = querySnapshot.docs[0].id;
+      docRef = doc(db, 'probingQuestions_new', probingDocIdB);
+    } else {
+      // 새 문서 생성
+      const now = new Date();
+      const startTime = {
+        date: now.toISOString().split('T')[0],
+        time: now.toTimeString().split(' ')[0].substring(0, 5)
+      };
 
-    // 질문 정보 수집
-    const questions = {};
-    // 학생 B의 질문별 답변 초기 데이터
-    const studentBAnswers = {
+      // 질문 정보 수집
+      const questions = {};
+      // 학생 B의 질문별 답변 초기 데이터
+      const studentBAnswers = {
       1: '네, 먼저 새로운 기술이 도입되었을때 그 앞선 경우와 마찬가지로 여러 원칙 도입하는 것이 분명히 필요한데 이에 대해서 예를 들자면 인간을 해치지 않고 이로운 방향으로만 작용해야 된다는 원칙, 그리고 공정성을 가져야 되고 편향성을 가지지 않아야 된다는 이런 원칙, 그리고 인공지능 개발 회사 또한 인공지능이 문제가 일으켰을 때 그에 대한 책임을 나눠야는 한다는 원칙이 현재는 필요하고 기술의 발전과 함께 사회적 합의를 통해서 원칙을 만들어가는 것이 필요하다고 생각합니다. 그리고 마지막으로 기술이 지금도 계속 발전되고 있기 때문에 기술 발전과 함께 지속적인 모니터링을 통해서 해당 원칙들이 지켜지고 있는지를 잘 확인해야 된다고 생각합니다. 그래서 이러한 원칙이 먼저 자율주행차 설계에서는 인간을 해치지 않는다는 기본 원칙 아래에서 판단하되 이런 부분에서는 분명히 논란이 일어날 수 있기 때문에 사회적인 합의를 통해서 프로그래밍을 정하고 이것이 잘, 진행되고 있는지 앞으로도 지속적으로 모니터링을 해야 된다고 생각하고요. 사례 3에서는 공정성이 잘 지켜지도록 하고 앞으로도 계속 지속적인 모니터링을 통해서 잘 유지되고 있는지 확인하는 것이 필요하다고 생각합니다.',
       2: '저는 옳지 않다고 생각하는데, 자율주행차가 다수를 위해서 한 명을 희생시킨다는 것은 소수의 권리를 침해하는 행동이고 모두가 그 한 명의 위치에 섰을 때 당연히 자신이 희생되는 걸 원치 않을 것이기 때문에 그렇습니다. 개인의 생명에 가치를 매기고 이것을 타인의 목숨을 지키기 위한 어떤 수단으로서 이용하는 행위는 분명히 윤리적이지 못한 행위이기 때문에 어떤 경우에도 개인의 희생을 강요하면 안 된다고 생각하기 때문에 옳지 않습니다. 그렇기 때문에 자율주행차에게 있어서 가장 피해를 최소화하는 방법으로 알고리즘을 짜되 누군가의 희생을 강요하는 방식이면 안 되고 다른 방법을 찾아야 한다고 생각합니다.',
       3: '저는 이에 대해서 반대하는데 좋은 성과를 이룬 것은 그 직원이 능력이 있기 때문인 거지 이것이 개인적인 특징이나 특정 집단과 연관지는 것은 옳지 않다고 생각합니다. 그렇기 때문에 사례 3과 같은 경우에서는 직원의 능력과 역량을 위주로 판단을 해서 우수한 직원을 뽑는 것이 맞고 그런 식으로 프로그래밍이 되어야지 단지 어떻게 생각하면 우연한 공통점을 찾아서 이를 맹신하고 점수를 더 주는 것은 공정성에 어긋나는 것이고 한다고 생각합니다.',
@@ -1433,15 +1440,12 @@ async function startProbingB() {
       createdAt: serverTimestamp()
     };
 
-    const docRef = await addDoc(collection(db, 'probingQuestions_new'), docData);
-    probingDocIdB = docRef.id;
+      const docRef = await addDoc(collection(db, 'probingQuestions_new'), docData);
+      probingDocIdB = docRef.id;
+    }
 
     // 저장 상태 초기화
     resetSaveStatus('b');
-
-    // 화면 전환
-    document.getElementById('student-b-start-screen').style.display = 'none';
-    document.getElementById('student-b-work-screen').style.display = 'block';
 
     // 과제 정보 표시 및 Handsontable 초기화
     initProbingQuestionScreensB();
@@ -1450,21 +1454,8 @@ async function startProbingB() {
     setTimeout(() => {
       loadProbingDataFromFirestoreB();
     }, 100);
-
-    Swal.fire({
-      icon: 'success',
-      title: '시작되었습니다',
-      text: '탐침 질문 작성을 시작하세요!',
-      timer: 2000,
-      showConfirmButton: false
-    });
   } catch (error) {
-    console.error('문서 생성 오류:', error);
-    Swal.fire({
-      icon: 'error',
-      title: '오류',
-      text: '작업을 시작하는 중 오류가 발생했습니다.'
-    });
+    console.error('초기화 오류:', error);
   }
 }
 
@@ -1831,16 +1822,40 @@ async function saveProbingQuestion(questionNum, studentType) {
 
     const probingDataRaw = probingTable.getData().filter(row => row[0] || row[1]);
     // 탐침 질문을 객체 배열로 변환 (Firestore는 중첩 배열을 지원하지 않음)
-    const probingData = probingDataRaw.map(row => ({
+    const newProbingData = probingDataRaw.map(row => ({
       situation: row[0] || '',
       question: row[1] || ''
     }));
     
-    // 학생 답변은 읽기 전용이므로 저장하지 않음 (이미 Firestore에 저장되어 있음)
-
+    // 빈 데이터가 있으면 저장하지 않음
+    if (newProbingData.length === 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: '입력 필요',
+        text: '저장할 탐침 질문을 입력해주세요.'
+      });
+      return;
+    }
+    
+    // 기존 데이터 불러오기
     const docRef = doc(db, 'probingQuestions_new', probingDocId);
+    const docSnap = await getDoc(docRef);
+    
+    let existingProbingQuestions = [];
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      const questionData = data.questions?.[questionNum];
+      if (questionData && questionData.probingQuestions) {
+        existingProbingQuestions = questionData.probingQuestions;
+      }
+    }
+    
+    // 기존 데이터에 새로운 데이터 추가 (누적)
+    const updatedProbingQuestions = [...existingProbingQuestions, ...newProbingData];
+    
+    // 학생 답변은 읽기 전용이므로 저장하지 않음 (이미 Firestore에 저장되어 있음)
     await updateDoc(docRef, {
-      [`questions.${questionNum}.probingQuestions`]: probingData,
+      [`questions.${questionNum}.probingQuestions`]: updatedProbingQuestions,
       updatedAt: serverTimestamp()
     });
 
@@ -1855,6 +1870,9 @@ async function saveProbingQuestion(questionNum, studentType) {
     
     // 상태 메시지 업데이트
     updateSaveStatus(questionNum, studentType);
+
+    // 저장 후 입력창 초기화 (빈 행으로 리셋)
+    probingTable.loadData([['', '']]);
 
     Swal.fire({
       icon: 'success',
@@ -1901,117 +1919,84 @@ function resetSaveStatus(studentType) {
   }
 }
 
-// 제출하기
-async function submitProbingA() {
-  if (!probingDocIdA) {
+// 제출 내용 확인 (질문별)
+async function viewSubmittedProbingQuestions(questionNum, studentType) {
+  if (!currentUser) {
     Swal.fire({
       icon: 'error',
-      title: '오류',
-      text: '작업이 시작되지 않았습니다.'
+      title: '로그인 필요',
+      text: '로그인 후 이용해주세요.'
     });
     return;
   }
 
-  const result = await Swal.fire({
-    title: '제출하시겠습니까?',
-    text: '제출 후에는 수정할 수 없습니다.',
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonText: '최종 제출하기',
-    cancelButtonText: '취소'
-  });
-
-  if (result.isConfirmed) {
-    try {
-      const now = new Date();
-      const endTime = {
-        date: now.toISOString().split('T')[0],
-        time: now.toTimeString().split(' ')[0].substring(0, 5)
-      };
-
-      const docRef = doc(db, 'probingQuestions_new', probingDocIdA);
-      await updateDoc(docRef, {
-        endTime: endTime,
-        updatedAt: serverTimestamp()
-      });
-
+  try {
+    const probingDocId = studentType === 'a' ? probingDocIdA : probingDocIdB;
+    if (!probingDocId) {
       Swal.fire({
-        icon: 'success',
-        title: '제출 완료',
-        text: '탐침 질문이 제출되었습니다.',
-        confirmButtonText: '확인'
-      }).then(() => {
-        // 화면 초기화
-        document.getElementById('student-a-start-screen').style.display = 'block';
-        document.getElementById('student-a-work-screen').style.display = 'none';
-        probingDocIdA = null;
+        icon: 'info',
+        title: '저장된 데이터 없음',
+        text: '아직 저장된 탐침 질문이 없습니다.'
       });
-    } catch (error) {
-      console.error('제출 오류:', error);
-      Swal.fire({
-        icon: 'error',
-        title: '오류',
-        text: '제출 중 오류가 발생했습니다.'
-      });
+      return;
     }
-  }
-}
 
-// 제출하기 (학생 B)
-async function submitProbingB() {
-  if (!probingDocIdB) {
+    const docRef = doc(db, 'probingQuestions_new', probingDocId);
+    const docSnap = await getDoc(docRef);
+    
+    if (!docSnap.exists()) {
+      Swal.fire({
+        icon: 'info',
+        title: '저장된 데이터 없음',
+        text: '아직 저장된 탐침 질문이 없습니다.'
+      });
+      return;
+    }
+
+    const data = docSnap.data();
+    const questionData = data.questions?.[questionNum];
+    
+    if (!questionData || !questionData.probingQuestions || questionData.probingQuestions.length === 0) {
+      Swal.fire({
+        icon: 'info',
+        title: '저장된 데이터 없음',
+        text: '이 질문에 저장된 탐침 질문이 없습니다.'
+      });
+      return;
+    }
+
+    // HTML 생성
+    let html = `<div style="text-align: left; max-height: 60vh; overflow-y: auto;">`;
+    html += `<h3 style="margin-bottom: 1rem; color: #2563eb;">질문 ${questionNum} - 학생 ${studentType.toUpperCase()}</h3>`;
+    html += `<table style="width: 100%; border-collapse: collapse;">`;
+    html += `<thead><tr style="background: #f3f4f6;"><th style="padding: 0.75rem; border: 1px solid #e5e7eb; text-align: left;">상황 분석</th><th style="padding: 0.75rem; border: 1px solid #e5e7eb; text-align: left;">탐침 질문</th></tr></thead>`;
+    html += `<tbody>`;
+    
+    questionData.probingQuestions.forEach((item, index) => {
+      const situation = typeof item === 'object' ? (item.situation || '') : (item[0] || '');
+      const question = typeof item === 'object' ? (item.question || '') : (item[1] || '');
+      html += `<tr><td style="padding: 0.75rem; border: 1px solid #e5e7eb; vertical-align: top;">${situation}</td><td style="padding: 0.75rem; border: 1px solid #e5e7eb; vertical-align: top;">${question}</td></tr>`;
+    });
+    
+    html += `</tbody></table></div>`;
+
+    Swal.fire({
+      title: '제출 내용 확인',
+      html: html,
+      width: '800px',
+      confirmButtonText: '확인'
+    });
+  } catch (error) {
+    console.error('확인 오류:', error);
     Swal.fire({
       icon: 'error',
       title: '오류',
-      text: '작업이 시작되지 않았습니다.'
+      text: '데이터를 불러오는 중 오류가 발생했습니다.'
     });
-    return;
-  }
-
-  const result = await Swal.fire({
-    title: '제출하시겠습니까?',
-    text: '제출 후에는 수정할 수 없습니다.',
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonText: '최종 제출하기',
-    cancelButtonText: '취소'
-  });
-
-  if (result.isConfirmed) {
-    try {
-      const now = new Date();
-      const endTime = {
-        date: now.toISOString().split('T')[0],
-        time: now.toTimeString().split(' ')[0].substring(0, 5)
-      };
-
-      const docRef = doc(db, 'probingQuestions_new', probingDocIdB);
-      await updateDoc(docRef, {
-        endTime: endTime,
-        updatedAt: serverTimestamp()
-      });
-
-      Swal.fire({
-        icon: 'success',
-        title: '제출 완료',
-        text: '탐침 질문이 제출되었습니다.',
-        confirmButtonText: '확인'
-      }).then(() => {
-        // 화면 초기화
-        document.getElementById('student-b-start-screen').style.display = 'block';
-        document.getElementById('student-b-work-screen').style.display = 'none';
-        probingDocIdB = null;
-      });
-    } catch (error) {
-      console.error('제출 오류:', error);
-      Swal.fire({
-        icon: 'error',
-        title: '오류',
-        text: '제출 중 오류가 발생했습니다.'
-      });
-    }
   }
 }
+
+// 제출하기 (학생 A/B) - 제거됨 (과제별 저장으로 대체)
 
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', () => {
@@ -2039,12 +2024,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 학생 A 시작하기 버튼
-  const startBtnA = document.getElementById('start-probing-a-btn');
-  if (startBtnA) {
-    startBtnA.addEventListener('click', startProbingA);
-  }
-
   // 저장 버튼들 (동적으로 생성되므로 이벤트 위임 사용)
   document.addEventListener('click', (e) => {
     if (e.target.classList.contains('save-probing-btn')) {
@@ -2052,25 +2031,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const studentType = e.target.getAttribute('data-student');
       saveProbingQuestion(questionNum, studentType);
     }
+    // 제출 내용 확인 버튼
+    if (e.target.classList.contains('view-submitted-btn')) {
+      const questionNum = e.target.getAttribute('data-question');
+      const studentType = e.target.getAttribute('data-student');
+      viewSubmittedProbingQuestions(questionNum, studentType);
+    }
   });
 
-  // 제출하기 버튼
-  const submitBtnA = document.getElementById('submit-probing-a-btn');
-  if (submitBtnA) {
-    submitBtnA.addEventListener('click', submitProbingA);
-  }
-
-  // 학생 B 시작하기 버튼
-  const startBtnB = document.getElementById('start-probing-b-btn');
-  if (startBtnB) {
-    startBtnB.addEventListener('click', startProbingB);
-  }
-
-  // 제출하기 버튼 (학생 B)
-  const submitBtnB = document.getElementById('submit-probing-b-btn');
-  if (submitBtnB) {
-    submitBtnB.addEventListener('click', submitProbingB);
-  }
+  // 인증 상태 확인 후 자동 초기화
+  onAuthStateChanged(auth, (user) => {
+    currentUser = user;
+    if (user) {
+      initProbingA();
+      initProbingB();
+    }
+  });
 
   // 이미지 클릭 시 팝업으로 크게 보기
   document.addEventListener('click', (e) => {
@@ -2129,90 +2105,85 @@ async function showMyProbingQuestions() {
       return;
     }
 
-    // 데이터 정리 및 필터링 (클라이언트 측에서)
-    const submissions = [];
+    // 데이터 정리 (학생별, 질문별로 정리)
+    const organizedData = {
+      A: {},
+      B: {}
+    };
+
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      // endTime이 존재하고, scenario가 '인공지능과윤리'인 경우만 포함
-      if (data.endTime && data.scenario === '인공지능과윤리') {
-        submissions.push({
+      if (data.scenario !== '인공지능과윤리') return;
+      
+      const studentType = data.studentType;
+      const questions = data.questions || {};
+      
+      // 각 질문별로 데이터 정리
+      for (let i = 1; i <= 5; i++) {
+        const questionData = questions[i];
+        if (!questionData || !questionData.probingQuestions || questionData.probingQuestions.length === 0) {
+          continue;
+        }
+        
+        if (!organizedData[studentType][i]) {
+          organizedData[studentType][i] = [];
+        }
+        
+        organizedData[studentType][i].push({
           id: doc.id,
-          studentType: data.studentType,
-          endTime: data.endTime,
-          questions: data.questions || {},
-          createdAt: data.createdAt
+          probingQuestions: questionData.probingQuestions,
+          updatedAt: data.updatedAt
         });
       }
     });
 
-    if (submissions.length === 0) {
+    // 저장된 데이터가 있는지 확인
+    const hasData = Object.keys(organizedData.A).length > 0 || Object.keys(organizedData.B).length > 0;
+    
+    if (!hasData) {
       Swal.fire({
         icon: 'info',
-        title: '제출된 데이터 없음',
-        text: '아직 제출한 탐침 질문이 없습니다.'
+        title: '저장된 데이터 없음',
+        text: '아직 저장된 탐침 질문이 없습니다.'
       });
       return;
     }
 
-    // 학생 타입별, 시간별로 정렬
-    submissions.sort((a, b) => {
-      if (a.studentType !== b.studentType) {
-        return a.studentType.localeCompare(b.studentType);
-      }
-      // 시간 역순 (최신순)
-      const timeA = `${a.endTime.date} ${a.endTime.time}`;
-      const timeB = `${b.endTime.date} ${b.endTime.time}`;
-      return timeB.localeCompare(timeA);
-    });
-
     // 팝업 HTML 생성
     let html = '<div style="text-align: left; max-height: 70vh; overflow-y: auto;">';
     
-    let currentStudentType = null;
-    submissions.forEach((submission, index) => {
-      // 학생 타입별 섹션
-      if (currentStudentType !== submission.studentType) {
-        if (currentStudentType !== null) {
-          html += '</div>'; // 이전 섹션 닫기
-        }
-        currentStudentType = submission.studentType;
-        html += `<h3 style="margin-top: 1.5rem; margin-bottom: 0.75rem; color: #2563eb;">학생 ${submission.studentType}의 케이스</h3>`;
-        html += '<div style="display: flex; flex-direction: column; gap: 0.5rem;">';
-      }
-
-      // 제출 시간 버튼
-      const timeStr = `${submission.endTime.date} ${submission.endTime.time}`;
-      html += `
-        <button class="submission-time-btn" 
-                data-submission-id="${submission.id}" 
-                data-student-type="${submission.studentType}"
-                style="padding: 0.75rem 1rem; text-align: left; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 6px; cursor: pointer; transition: background 0.2s;">
-          <strong>제출 시간:</strong> ${timeStr}
-        </button>
-        <div id="submission-${submission.id}" style="display: none; margin-left: 1rem; margin-bottom: 1rem; padding: 1rem; background: #f9fafb; border-radius: 6px; border: 1px solid #e5e7eb;">
-      `;
-
-      // 질문별 탐침 질문 표시
+    // 학생별로 표시
+    ['A', 'B'].forEach(studentType => {
+      const studentData = organizedData[studentType];
+      if (Object.keys(studentData).length === 0) return;
+      
+      html += `<h3 style="margin-top: 1.5rem; margin-bottom: 1rem; color: #2563eb; border-bottom: 2px solid #2563eb; padding-bottom: 0.5rem;">학생 ${studentType}의 케이스</h3>`;
+      
+      // 질문별로 표시
       for (let i = 1; i <= 5; i++) {
-        const questionData = submission.questions[i];
-        if (!questionData || !questionData.probingQuestions || questionData.probingQuestions.length === 0) {
-          continue;
-        }
-
-        html += `<div style="margin-bottom: 1rem;">`;
-        html += `<h4 style="margin-bottom: 0.5rem; color: #1f2937;">질문 ${i}</h4>`;
+        if (!studentData[i] || studentData[i].length === 0) continue;
+        
+        html += `<div style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 6px; border: 1px solid #e5e7eb;">`;
+        html += `<h4 style="margin-bottom: 0.75rem; color: #1f2937;">질문 ${i}</h4>`;
+        
+        // 가장 최근 저장된 데이터 사용
+        const latestData = studentData[i].sort((a, b) => {
+          if (!a.updatedAt || !b.updatedAt) return 0;
+          return b.updatedAt.toMillis() - a.updatedAt.toMillis();
+        })[0];
+        
         html += `<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">`;
-        html += `<thead><tr style="background: #e5e7eb;"><th style="padding: 0.5rem; border: 1px solid #d1d5db; text-align: left; width: 30%;">상황</th><th style="padding: 0.5rem; border: 1px solid #d1d5db; text-align: left;">탐침 질문</th></tr></thead>`;
+        html += `<thead><tr style="background: #e5e7eb;"><th style="padding: 0.5rem; border: 1px solid #d1d5db; text-align: left; width: 30%;">상황 분석</th><th style="padding: 0.5rem; border: 1px solid #d1d5db; text-align: left;">탐침 질문</th></tr></thead>`;
         html += `<tbody>`;
 
-        questionData.probingQuestions.forEach(item => {
+        latestData.probingQuestions.forEach(item => {
           const situation = typeof item === 'object' ? (item.situation || '') : (Array.isArray(item) ? item[0] : '');
           const question = typeof item === 'object' ? (item.question || '') : (Array.isArray(item) ? item[1] : '');
           
           if (situation || question) {
             html += `<tr>`;
-            html += `<td style="padding: 0.5rem; border: 1px solid #d1d5db; font-weight: bold;">${situation}</td>`;
-            html += `<td style="padding: 0.5rem; border: 1px solid #d1d5db; white-space: pre-wrap;">${question.replace(/\n/g, '<br>')}</td>`;
+            html += `<td style="padding: 0.5rem; border: 1px solid #d1d5db; vertical-align: top;">${situation || '-'}</td>`;
+            html += `<td style="padding: 0.5rem; border: 1px solid #d1d5db; white-space: pre-wrap;">${question.replace(/\n/g, '<br>') || '-'}</td>`;
             html += `</tr>`;
           }
         });
@@ -2220,54 +2191,18 @@ async function showMyProbingQuestions() {
         html += `</tbody></table>`;
         html += `</div>`;
       }
-
-      html += `</div>`; // submission 내용 닫기
     });
-
-    if (currentStudentType !== null) {
-      html += '</div>'; // 마지막 섹션 닫기
-    }
-
+    
     html += '</div>';
 
     // SweetAlert2로 팝업 표시
-    const { value: result } = await Swal.fire({
+    Swal.fire({
       title: '내가 만든 탐침 질문',
       html: html,
       width: '900px',
       showConfirmButton: true,
-      confirmButtonText: '닫기',
-      didOpen: () => {
-        // 버튼 클릭 이벤트 추가
-        document.querySelectorAll('.submission-time-btn').forEach(btn => {
-          btn.addEventListener('click', function() {
-            const submissionId = this.getAttribute('data-submission-id');
-            const contentDiv = document.getElementById(`submission-${submissionId}`);
-            
-            if (contentDiv.style.display === 'none') {
-              contentDiv.style.display = 'block';
-              this.style.background = '#dbeafe';
-            } else {
-              contentDiv.style.display = 'none';
-              this.style.background = '#f3f4f6';
-            }
-          });
-
-          // 호버 효과
-          btn.addEventListener('mouseenter', function() {
-            if (this.style.background !== 'rgb(219, 234, 254)') {
-              this.style.background = '#e5e7eb';
-            }
-          });
-          btn.addEventListener('mouseleave', function() {
-            if (this.style.background !== 'rgb(219, 234, 254)') {
-              this.style.background = '#f3f4f6';
-            }
-          });
-        });
-      }
+      confirmButtonText: '닫기'
     });
-
   } catch (error) {
     console.error('데이터 불러오기 오류:', error);
     Swal.fire({

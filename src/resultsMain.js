@@ -153,7 +153,8 @@ async function loadAllData() {
     const uniqueUserIds = new Set();
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      if (data.uid && data.endTime) {
+      // endTime 조건 제거: 모든 저장된 데이터의 사용자 포함
+      if (data.uid) {
         uniqueUserIds.add(data.uid);
       }
     });
@@ -168,9 +169,15 @@ async function loadAllData() {
     querySnapshot.forEach((doc) => {
       const data = doc.data();
       const createdAt = data.createdAt?.toDate?.() || new Date();
+      const updatedAt = data.updatedAt?.toDate?.() || createdAt;
       
-      // endTime이 있는 데이터만 표시 (제출 완료된 데이터)
-      if (!data.endTime) {
+      // endTime 조건 제거: 모든 저장된 탐침 질문 표시
+      // 단, 탐침 질문이 있는 데이터만 포함
+      const hasProbingQuestions = data.questions && Object.values(data.questions).some(
+        q => q && q.probingQuestions && q.probingQuestions.length > 0
+      );
+      
+      if (!hasProbingQuestions) {
         return;
       }
       
@@ -181,6 +188,7 @@ async function loadAllData() {
         id: doc.id,
         ...data,
         createdAt: createdAt,
+        updatedAt: updatedAt,
         displayName: anonymousId, // 익명 ID로 대체
         affiliation: '' // 소속 정보 제거
       });
@@ -197,6 +205,9 @@ async function loadAllData() {
     
     // 필터 이벤트 리스너 설정
     setupFilterListeners();
+    
+    // 과제/질문 필터 레이블 초기화
+    updateQuestionFilterLabels();
     
     // 결과 렌더링
     renderResults();
@@ -278,10 +289,12 @@ function processData() {
         }
         
         // 탐침 질문 추가 (시간 정보 포함)
+        // updatedAt이 있으면 사용, 없으면 createdAt 사용
+        const timeForQuestion = data.updatedAt || createdAt;
         userEntry.probingQuestions.push({
           situation: situation,
           question: question,
-          createdAt: createdAt,
+          createdAt: timeForQuestion,
           order: index // 같은 시간에 여러 개가 있을 경우 순서 보존
         });
       });
@@ -304,8 +317,8 @@ function processData() {
 // 시나리오 탭 초기화
 function initScenarioTabs() {
   const scenarioTabs = document.getElementById('scenarioTabs');
-  // 고정된 시나리오 순서: 대피시뮬레이션, 건강불평등
-  const fixedScenarios = ['대피시뮬레이션', '건강불평등'];
+  // 고정된 시나리오 순서: 대피시뮬레이션, 건강불평등, 인공지능과윤리
+  const fixedScenarios = ['대피시뮬레이션', '건강불평등', '인공지능과윤리'];
   
   // 데이터에 실제로 존재하는 시나리오만 필터링
   const availableScenarios = fixedScenarios.filter(scenario => 
@@ -340,6 +353,7 @@ function setupFilterListeners() {
     if (e.target.classList.contains('tab-btn')) {
       selectedScenario = e.target.getAttribute('data-scenario');
       updateActiveTab('scenarioTabs', e.target);
+      updateQuestionFilterLabels(); // 시나리오 변경 시 필터 레이블 업데이트
       renderResults();
     }
   });
@@ -370,6 +384,30 @@ function updateActiveTab(containerId, activeBtn) {
     btn.classList.remove('active');
   });
   activeBtn.classList.add('active');
+}
+
+// 과제/질문 필터 레이블 업데이트
+function updateQuestionFilterLabels() {
+  const questionFilterLabel = document.getElementById('questionFilterLabel');
+  const questionTabs = document.getElementById('questionTabs');
+  
+  if (!questionFilterLabel || !questionTabs) return;
+  
+  const isAIEthics = selectedScenario === '인공지능과윤리';
+  const labelText = isAIEthics ? '질문' : '과제';
+  const prefix = isAIEthics ? '질문' : '과제';
+  
+  questionFilterLabel.textContent = labelText;
+  
+  // 각 탭 버튼의 텍스트 업데이트
+  questionTabs.querySelectorAll('.tab-btn').forEach((btn, index) => {
+    if (index === 0) {
+      // "전체" 버튼은 그대로
+      return;
+    }
+    const questionNum = btn.getAttribute('data-question');
+    btn.textContent = `${prefix} ${questionNum}`;
+  });
 }
 
 // 결과 렌더링
@@ -523,10 +561,13 @@ function renderQuestionSection(questionNum, questionData, allQuestionData) {
   const studentTypeLabel = studentType ? `학생 ${studentType}` : '학생';
   const scenarioLabel = scenario ? ` - ${scenario}` : '';
   
+  // 시나리오별로 "과제" 또는 "질문" 표기 구분
+  const questionLabel = scenario === '인공지능과윤리' ? '질문' : '과제';
+  
   return `
     <div class="question-section">
       <div class="question-header">
-        <h2 class="question-title">과제 ${questionNum}${scenarioLabel}</h2>
+        <h2 class="question-title">${questionLabel} ${questionNum}${scenarioLabel}</h2>
         <div class="question-meta">${studentTypeLabel}</div>
       </div>
       
