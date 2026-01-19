@@ -133,7 +133,7 @@
               <button class="question-tab-button" data-question="3">과제 3</button>
               <button class="question-tab-button" data-question="4">과제 4</button>
               <button class="question-tab-button" data-question="5">과제 5</button>
-              <button class="question-tab-button" data-question="summary">종합 평가 기준 및 탐침 질문</button>
+              <button class="question-tab-button" data-question="summary">종합 평가</button>
             </div>
 
             <!-- 과제 1 탭 내용 -->
@@ -355,10 +355,28 @@
                   <div id="summary-criteria-table" class="handsontable-container"></div>
                 </div>
 
-                <!-- 탐침 질문 -->
-                <div class="materials-section">
+                <!-- 탐침 질문 (숨김) -->
+                <div class="materials-section" style="display: none;">
                   <h2 class="section-title" style="display: inline-block; width: 100%;">탐침 질문 <button id="view-probing-questions-btn" class="btn btn-primary" style="font-size: 0.875rem; padding: 0.25rem 0.75rem; margin-left: 0.5rem; vertical-align: baseline;">크게 보기</button></h2>
                   <div id="probing-questions-table" class="handsontable-container"></div>
+                </div>
+
+                <!-- 종합 평가 -->
+                <div class="materials-section">
+                  <h2 class="section-title">종합 평가</h2>
+                  <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-top: 1rem;">
+                    <iframe
+                      id="evaluation-form-summary"
+                      src=""
+                      width="100%"
+                      height="1200"
+                      frameborder="0"
+                      marginheight="0"
+                      marginwidth="0"
+                      style="border: none; display: block; min-height: 1200px;">
+                      로드 중…
+                    </iframe>
+                  </div>
                 </div>
               </div>
             </div>
