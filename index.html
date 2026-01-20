@@ -145,6 +145,17 @@
             <h2>건강 불평등</h2>
             <p></p>
           </a>
+          <a href="01_mock_eval_06_traffic_accident.html" class="nav-item" id="nav-mock-eval-06">
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            <h2>교통사고 배상금 계산</h2>
+            <p></p>
+          </a>
           <a href="01_mock_eval_03_escape_plan.html" class="nav-item" id="nav-mock-eval-03">
             <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -285,6 +296,7 @@
       mockEval03: document.getElementById('nav-mock-eval-03'),
       mockEval04: document.getElementById('nav-mock-eval-04'),
       mockEval05: document.getElementById('nav-mock-eval-05'),
+      mockEval06: document.getElementById('nav-mock-eval-06'),
       probing01: document.getElementById('nav-probing-01'),
       probing02: document.getElementById('nav-probing-02'),
       probing03: document.getElementById('nav-probing-03'),
@@ -428,6 +440,9 @@
         }
         if (navItems.mockEval05) {
           navItems.mockEval05.style.display = (settings.mockEval05 !== false) ? 'flex' : 'none';
+        }
+        if (navItems.mockEval06) {
+          navItems.mockEval06.style.display = (settings.mockEval06 !== false) ? 'flex' : 'none';
         }
         if (navItems.probing01) {
           navItems.probing01.style.display = (settings.probing01 !== false) ? 'flex' : 'none';
