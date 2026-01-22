@@ -11,6 +11,13 @@
   <link rel="stylesheet" href="node_modules/handsontable/dist/handsontable.full.min.css">
   <link rel="stylesheet" href="node_modules/sweetalert2/dist/sweetalert2.min.css">
   <link rel="stylesheet" href="src/bottle_crack.css">
+  <style>
+    #video-check-btn:hover {
+      background: #1d4ed8 !important;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  </style>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <script>
@@ -110,7 +117,12 @@
         <div class="materials-right">
           <div class="question-tabs-container">
             <!-- 제목 -->
-            <h2 class="section-title">예시 답안, 평가 기준, 탐침 질문 확인 & 모의평가</h2>
+            <h2 class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+              <span>예시 답안, 평가 기준, 탐침 질문 확인 & 모의평가</span>
+              <button id="video-check-btn" style="font-size: 0.875rem; padding: 0.375rem 0.75rem; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: 500; cursor: pointer; transition: all 0.2s;">
+                영상 확인
+              </button>
+            </h2>
             
             <!-- 질문별 탭 -->
             <div class="question-tabs">
@@ -139,11 +151,14 @@
 
                 <!-- 모의평가 -->
                 <div class="materials-section">
-                  <h2 class="section-title">모의평가</h2>
+                  <h2 class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>모의평가</span>
+                    <a href="https://docs.google.com/forms/d/1CkjfllVprwuBnRqduAa-925FDt3dMyuqXO4V2Y3vGUg/viewanalytics" target="_blank" rel="noopener noreferrer" style="font-size: 0.875rem; color: #2563eb; text-decoration: none; font-weight: 500;">전체 평가 통계</a>
+                  </h2>
                   <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-top: 1rem;">
                     <iframe 
                       id="evaluation-form-1"
-                      src="" 
+                      src="https://forms.gle/Ee4pxU5sHCBaStzk7" 
                       width="100%" 
                       height="1200" 
                       frameborder="0" 
@@ -179,11 +194,14 @@
 
                 <!-- 모의평가 -->
                 <div class="materials-section">
-                  <h2 class="section-title">모의평가</h2>
+                  <h2 class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>모의평가</span>
+                    <a href="https://docs.google.com/forms/d/1aa4XtekDcA6dB65gV084l8FjFDchIPmJKnCcXUYxo44/viewanalytics" target="_blank" rel="noopener noreferrer" style="font-size: 0.875rem; color: #2563eb; text-decoration: none; font-weight: 500;">전체 평가 통계</a>
+                  </h2>
                   <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-top: 1rem;">
                     <iframe 
                       id="evaluation-form-2"
-                      src="" 
+                      src="https://forms.gle/4EWvMQoiJYMxRrNq7" 
                       width="100%" 
                       height="1200" 
                       frameborder="0" 
@@ -219,11 +237,14 @@
 
                 <!-- 모의평가 -->
                 <div class="materials-section">
-                  <h2 class="section-title">모의평가</h2>
+                  <h2 class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>모의평가</span>
+                    <a href="https://docs.google.com/forms/d/1O9VohmMCr_PLfD9lN4HLKdIeuasSABGz0FuIEMcLXCE/viewanalytics" target="_blank" rel="noopener noreferrer" style="font-size: 0.875rem; color: #2563eb; text-decoration: none; font-weight: 500;">전체 평가 통계</a>
+                  </h2>
                   <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-top: 1rem;">
                     <iframe 
                       id="evaluation-form-3"
-                      src="" 
+                      src="https://forms.gle/V5YHK1oMjE1yFPXT6" 
                       width="100%" 
                       height="1200" 
                       frameborder="0" 
@@ -254,11 +275,14 @@
 
                 <!-- 종합 평가 -->
                 <div class="materials-section">
-                  <h2 class="section-title">최종 평가</h2>
+                  <h2 class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>최종 평가</span>
+                    <a href="https://docs.google.com/forms/d/1vw3oqNfvkYe90ZjzcyJIM4yEC1Xw7pRQvYQ21C1MZOQ/viewanalytics" target="_blank" rel="noopener noreferrer" style="font-size: 0.875rem; color: #2563eb; text-decoration: none; font-weight: 500;">전체 평가 통계</a>
+                  </h2>
                   <div style="width: 100%; max-width: 100%; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-top: 1rem;">
                     <iframe
                       id="evaluation-form-summary"
-                      src=""
+                      src="https://forms.gle/SnrgYhZdbHVQGTWW6"
                       width="100%"
                       height="1200"
                       frameborder="0"

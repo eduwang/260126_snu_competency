@@ -405,6 +405,62 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
+// 영상 확인 버튼 초기화
+function initVideoCheckBtn() {
+  const videoCheckBtn = document.getElementById('video-check-btn');
+  if (videoCheckBtn) {
+    videoCheckBtn.addEventListener('click', () => {
+      Swal.fire({
+        title: '면접 영상',
+        html: `
+          <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+            <a href="https://drive.google.com/file/d/1v31K2WqCmKSzuVJ-fdT1SeB2i9Uz9S_G/view?usp=drive_link" id="video-link-a" target="_blank" rel="noopener noreferrer" style="padding: 0.75rem 1.5rem; background: #2563eb; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 1rem; text-align: center; transition: all 0.2s; display: block;">
+              면접 영상(학생 A)
+            </a>
+            <a href="https://drive.google.com/file/d/1UOexm6-Y6Db5mxIZzQuwsr3UdZWSEPqQ/view?usp=drive_link" id="video-link-b" target="_blank" rel="noopener noreferrer" style="padding: 0.75rem 1.5rem; background: #2563eb; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 1rem; text-align: center; transition: all 0.2s; display: block;">
+              면접 영상(학생 B)
+            </a>
+          </div>
+        `,
+        showConfirmButton: true,
+        confirmButtonText: '닫기',
+        width: '400px',
+        customClass: {
+          popup: 'video-popup',
+          htmlContainer: 'video-popup-container'
+        },
+        didOpen: () => {
+          // 링크가 설정되어 있으면 hover 효과 추가
+          const linkA = document.getElementById('video-link-a');
+          const linkB = document.getElementById('video-link-b');
+          
+          if (linkA && linkA.href) {
+            linkA.addEventListener('mouseenter', () => {
+              linkA.style.background = '#1d4ed8';
+              linkA.style.transform = 'translateY(-2px)';
+            });
+            linkA.addEventListener('mouseleave', () => {
+              linkA.style.background = '#2563eb';
+              linkA.style.transform = 'translateY(0)';
+            });
+          }
+          
+          if (linkB && linkB.href) {
+            linkB.addEventListener('mouseenter', () => {
+              linkB.style.background = '#1d4ed8';
+              linkB.style.transform = 'translateY(-2px)';
+            });
+            linkB.addEventListener('mouseleave', () => {
+              linkB.style.background = '#2563eb';
+              linkB.style.transform = 'translateY(0)';
+            });
+          }
+        }
+      });
+    });
+  }
+}
+
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', () => {
   initMainTabs();
@@ -415,4 +471,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initImagePopups();
   initBackToMainBtn();
   initLogoutBtn();
+  initVideoCheckBtn();
 });
