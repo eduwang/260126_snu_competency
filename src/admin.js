@@ -1,5 +1,5 @@
 import { auth, db, isAdmin } from './firebaseConfig.js';
-import { signOut, onAuthStateChanged, createUserWithEmailAndPassword } from 'firebase/auth';
+import { signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { 
   collection, 
   getDocs, 
@@ -19,6 +19,7 @@ let allUsers = [];
 let allData = [];
 let selectedDataId = null;
 let selectedUserId = null;
+let isBulkAdding = false; // 일괄 추가 중 플래그
 
 // 인증 상태 확인
 onAuthStateChanged(auth, async (user) => {
@@ -67,14 +68,17 @@ onAuthStateChanged(auth, async (user) => {
   } else {
     document.getElementById('userInfo').textContent = '🔐 로그인 후 이용해 주세요.';
     document.getElementById('logoutBtn').style.display = 'none';
-    Swal.fire({
-      icon: 'warning',
-      title: '로그인이 필요합니다',
-      text: '메인 페이지로 이동합니다.',
-      confirmButtonText: '확인'
-    }).then(() => {
-      window.location.href = '/index.html';
-    });
+    // 일괄 추가 중이면 리다이렉트하지 않음
+    if (!isBulkAdding) {
+      Swal.fire({
+        icon: 'warning',
+        title: '로그인이 필요합니다',
+        text: '메인 페이지로 이동합니다.',
+        confirmButtonText: '확인'
+      }).then(() => {
+        window.location.href = '/index.html';
+      });
+    }
   }
 });
 
@@ -479,6 +483,326 @@ function generateRandomPassword() {
   }
   return password;
 }
+
+// 일괄 사용자 추가 버튼
+document.getElementById('addUsersBulkBtn').addEventListener('click', async () => {
+  // 현재 관리자 정보 저장
+  const adminEmail = currentUser?.email;
+  
+  // 관리자 비밀번호 입력 받기
+  const adminPasswordResult = await Swal.fire({
+    title: '관리자 비밀번호 확인',
+    html: `
+      <p style="margin-bottom: 1rem; color: #6b7280; font-size: 0.875rem;">
+        일괄 추가 후 관리자 계정으로 재로그인하기 위해 비밀번호가 필요합니다.
+      </p>
+      <input id="swal-admin-password" class="swal2-input" placeholder="관리자 비밀번호" type="password" required>
+    `,
+    showCancelButton: true,
+    confirmButtonText: '다음',
+    cancelButtonText: '취소',
+    preConfirm: () => {
+      const password = document.getElementById('swal-admin-password').value.trim();
+      if (!password) {
+        Swal.showValidationMessage('비밀번호를 입력해주세요.');
+        return false;
+      }
+      return password;
+    }
+  });
+
+  if (!adminPasswordResult.isConfirmed) {
+    return;
+  }
+
+  const adminPassword = adminPasswordResult.value;
+
+  // 일괄 추가 시작 플래그 설정
+  isBulkAdding = true;
+
+  try {
+
+  // Excel 데이터 입력 받기
+  const result = await Swal.fire({
+    title: '사용자 일괄 추가',
+    html: `
+      <p style="margin-bottom: 1rem; color: #6b7280; font-size: 0.875rem;">
+        Excel에서 복사한 데이터를 붙여넣으세요.<br>
+        형식: 이름[탭]소속[탭]이메일 (한 줄에 한 명)
+      </p>
+      <textarea id="swal-bulk-data" class="swal2-textarea" placeholder="황일우&#9;경제학부&#9;ilwoo.hwang@snu.ac.kr&#10;YOO JOAN PAEK&#9;사회복지학과&#9;joanyoo@snu.ac.kr&#10;김도형&#9;수리과학부&#9;dohyeongkim@snu.ac.kr" style="min-height: 200px; font-family: monospace; font-size: 0.875rem;" required></textarea>
+    `,
+    showCancelButton: true,
+    confirmButtonText: '추가',
+    cancelButtonText: '취소',
+    width: '600px',
+    preConfirm: () => {
+      const data = document.getElementById('swal-bulk-data').value.trim();
+      if (!data) {
+        Swal.showValidationMessage('데이터를 입력해주세요.');
+        return false;
+      }
+      return data;
+    }
+  });
+
+  if (!result.isConfirmed) {
+    isBulkAdding = false;
+    return;
+  }
+
+  // 데이터 파싱
+  const lines = result.value.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+  const users = [];
+  const errors = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const parts = line.split('\t').map(part => part.trim());
+    
+    if (parts.length < 3) {
+      errors.push({
+        line: i + 1,
+        data: line,
+        error: '형식이 올바르지 않습니다. (이름[탭]소속[탭]이메일 형식이어야 합니다)'
+      });
+      continue;
+    }
+
+    const [name, affiliation, email] = parts;
+    
+    if (!name || !affiliation || !email) {
+      errors.push({
+        line: i + 1,
+        data: line,
+        error: '이름, 소속, 이메일을 모두 입력해주세요.'
+      });
+      continue;
+    }
+
+    // 이메일 형식 검증
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      errors.push({
+        line: i + 1,
+        data: line,
+        error: '올바른 이메일 형식이 아닙니다.'
+      });
+      continue;
+    }
+
+    users.push({ name, affiliation, email });
+  }
+
+  if (users.length === 0) {
+    let errorMessage = '추가할 수 있는 사용자가 없습니다.\n\n';
+    if (errors.length > 0) {
+      errorMessage += '오류:\n';
+      errors.slice(0, 5).forEach(err => {
+        errorMessage += `- ${err.line}번째 줄: ${err.error}\n`;
+      });
+      if (errors.length > 5) {
+        errorMessage += `... 외 ${errors.length - 5}개 오류`;
+      }
+    }
+    
+    await Swal.fire({
+      icon: 'error',
+      title: '추가 실패',
+      text: errorMessage,
+      width: '500px'
+    });
+    isBulkAdding = false;
+    return;
+  }
+
+  // 진행 상황 표시
+  Swal.fire({
+    title: '사용자 추가 중...',
+    html: `0 / ${users.length}명 처리 중`,
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    showConfirmButton: false,
+    didOpen: () => {
+      Swal.showLoading();
+    }
+  });
+
+  const successUsers = [];
+  const failedUsers = [];
+
+  // 각 사용자 생성
+  for (let i = 0; i < users.length; i++) {
+    const user = users[i];
+    
+    try {
+      // 진행 상황 업데이트
+      Swal.update({
+        html: `${i + 1} / ${users.length}명 처리 중<br><small>${user.name} (${user.email})</small>`
+      });
+
+      // 기본 비밀번호 설정
+      const password = '123456';
+
+      // Firebase Authentication에 사용자 생성
+      const userCredential = await createUserWithEmailAndPassword(auth, user.email, password);
+      const uid = userCredential.user.uid;
+
+      // Firestore에 사용자 정보 저장
+      await setDoc(doc(db, 'users_new', uid), {
+        name: user.name,
+        affiliation: user.affiliation,
+        email: user.email,
+        passwordChanged: false,
+        uid: uid,
+        createdAt: serverTimestamp()
+      });
+
+      // 로그아웃
+      await signOut(auth);
+
+      // 관리자로 재로그인
+      try {
+        await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
+        successUsers.push(user);
+      } catch (loginError) {
+        console.error('관리자 재로그인 실패:', loginError);
+        // 재로그인 실패 시 중단
+        Swal.close();
+        let errorMessage = '관리자 계정으로 재로그인할 수 없습니다.';
+        if (loginError.code === 'auth/wrong-password' || loginError.code === 'auth/invalid-credential') {
+          errorMessage = '관리자 비밀번호가 올바르지 않습니다.';
+        } else if (loginError.code === 'auth/user-not-found') {
+          errorMessage = '관리자 계정을 찾을 수 없습니다.';
+        } else if (loginError.message) {
+          errorMessage = '재로그인 실패: ' + loginError.message;
+        }
+        
+        await Swal.fire({
+          icon: 'error',
+          title: '관리자 재로그인 실패',
+          html: `
+            <p style="margin-bottom: 1rem;">${errorMessage}</p>
+            <p style="margin-bottom: 1rem; color: #6b7280; font-size: 0.875rem;">
+              현재까지 ${successUsers.length}명의 사용자가 추가되었습니다.
+            </p>
+            <p style="color: #ef4444; font-size: 0.875rem; font-weight: 600;">
+              페이지를 새로고침하고 다시 시도해주세요.
+            </p>
+          `,
+          confirmButtonText: '확인'
+        });
+        window.location.reload();
+        return;
+      }
+    } catch (error) {
+      console.error(`사용자 추가 오류 (${user.email}):`, error);
+      
+      let errorMessage = '알 수 없는 오류';
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = '이미 사용 중인 이메일';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = '올바른 이메일 형식이 아님';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      failedUsers.push({
+        ...user,
+        error: errorMessage
+      });
+
+      // 실패해도 관리자로 재로그인 시도
+      try {
+        // 현재 로그인 상태 확인
+        if (auth.currentUser) {
+          await signOut(auth);
+        }
+        await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
+      } catch (loginError) {
+        console.error('관리자 재로그인 실패:', loginError);
+        // 재로그인 실패 시 중단
+        Swal.close();
+        let errorMessage = '관리자 계정으로 재로그인할 수 없습니다.';
+        if (loginError.code === 'auth/wrong-password' || loginError.code === 'auth/invalid-credential') {
+          errorMessage = '관리자 비밀번호가 올바르지 않습니다.';
+        } else if (loginError.code === 'auth/user-not-found') {
+          errorMessage = '관리자 계정을 찾을 수 없습니다.';
+        } else if (loginError.message) {
+          errorMessage = '재로그인 실패: ' + loginError.message;
+        }
+        
+        await Swal.fire({
+          icon: 'error',
+          title: '관리자 재로그인 실패',
+          html: `
+            <p style="margin-bottom: 1rem;">${errorMessage}</p>
+            <p style="margin-bottom: 1rem; color: #6b7280; font-size: 0.875rem;">
+              현재까지 ${successUsers.length}명의 사용자가 추가되었습니다.
+            </p>
+            <p style="color: #ef4444; font-size: 0.875rem; font-weight: 600;">
+              페이지를 새로고침하고 다시 시도해주세요.
+            </p>
+          `,
+          confirmButtonText: '확인'
+        });
+        isBulkAdding = false;
+        window.location.reload();
+        return;
+      }
+    }
+  }
+
+  // 일괄 추가 완료 플래그 해제
+  isBulkAdding = false;
+
+  // 결과 표시
+  let resultHtml = `
+    <div style="text-align: left; margin-bottom: 1.5rem;">
+      <p style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">처리 결과</p>
+      <p style="margin-bottom: 0.5rem;">✅ 성공: <strong style="color: #059669;">${successUsers.length}명</strong></p>
+      <p style="margin-bottom: 1rem;">❌ 실패: <strong style="color: #dc2626;">${failedUsers.length}명</strong></p>
+  `;
+
+  if (failedUsers.length > 0) {
+    resultHtml += `
+      <div style="background: #fef2f2; padding: 1rem; border-radius: 8px; margin-top: 1rem; max-height: 200px; overflow-y: auto;">
+        <p style="font-weight: 600; margin-bottom: 0.5rem; color: #dc2626;">실패한 사용자:</p>
+        <ul style="margin: 0; padding-left: 1.5rem; font-size: 0.875rem;">
+    `;
+    failedUsers.forEach(user => {
+      resultHtml += `<li style="margin-bottom: 0.25rem;">${user.name} (${user.email}): ${user.error}</li>`;
+    });
+    resultHtml += `</ul></div>`;
+  }
+
+  resultHtml += `</div>`;
+
+  await Swal.fire({
+    icon: successUsers.length > 0 ? 'success' : 'error',
+    title: successUsers.length > 0 ? '일괄 추가 완료' : '일괄 추가 실패',
+    html: resultHtml,
+    confirmButtonText: '확인',
+    width: '600px'
+  });
+
+  // 사용자 목록 새로고침
+  loadUsers();
+  } catch (error) {
+    // 예상치 못한 에러 발생 시 플래그 해제
+    isBulkAdding = false;
+    console.error('일괄 추가 중 예상치 못한 오류:', error);
+    Swal.fire({
+      icon: 'error',
+      title: '오류 발생',
+      text: '일괄 추가 중 예상치 못한 오류가 발생했습니다.',
+      confirmButtonText: '확인'
+    });
+  } finally {
+    // 항상 플래그 해제
+    isBulkAdding = false;
+  }
+});
 
 // ==================== 데이터 관리 ====================
 

@@ -33,7 +33,10 @@
     <div id="users-tab" class="tab-content active">
       <div class="tab-header">
         <h2>사용자 관리</h2>
-        <button id="addUserBtn" class="btn btn-primary">+ 사용자 추가</button>
+        <div style="display: flex; gap: 0.5rem;">
+          <button id="addUserBtn" class="btn btn-primary">+ 사용자 추가</button>
+          <button id="addUsersBulkBtn" class="btn btn-primary" style="background: #059669;">+ 일괄 추가</button>
+        </div>
       </div>
       <div id="usersList" class="users-list">
         <p class="empty-message">사용자 목록을 불러오는 중...</p>
