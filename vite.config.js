@@ -20,6 +20,7 @@ export default defineConfig({
         '01_mock_eval_03_escape_plan': resolve(__dirname, '01_mock_eval_03_escape_plan.html'),
         '01_mock_eval_04_health_inequality': resolve(__dirname, '01_mock_eval_04_health_inequality.html'),
         '01_mock_eval_05_AI_ethics': resolve(__dirname, '01_mock_eval_05_AI_ethics.html'),
+        '01_mock_eval_06_traffic_accident': resolve(__dirname, '01_mock_eval_06_traffic_accident.html'),
         '02_probing_question_01_escape_plan': resolve(__dirname, '02_probing_question_01_escape_plan.html'),
         '02_probing_question_02_health_inequality': resolve(__dirname, '02_probing_question_02_health_inequality.html'),
         '02_probing_question_03_AI_ethics': resolve(__dirname, '02_probing_question_03_AI_ethics.html'),
