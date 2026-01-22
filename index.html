@@ -109,6 +109,9 @@
         </div>
         <div class="user-section">
           <span id="userInfo" class="user-info">🔐 로그인 후 이용해 주세요.</span>
+          <button id="changePasswordBtn" class="login-btn" style="display: none; margin-left: 0.5rem;">
+            🔑 비밀번호 변경
+          </button>
           <button id="loginBtn" class="login-btn">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
@@ -142,7 +145,7 @@
               <line x1="16" y1="17" x2="8" y2="17"></line>
               <polyline points="10 9 9 9 8 9"></polyline>
             </svg>
-            <h2>건강 불평등</h2>
+            <h2>건강 불평등 연구</h2>
             <p></p>
           </a>
           <a href="01_mock_eval_06_traffic_accident.html" class="nav-item" id="nav-mock-eval-06">
@@ -282,7 +285,7 @@
 
   <script type="module">
     import { auth, db, isAdmin } from './src/firebaseConfig.js';
-    import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
+    import { signInWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword } from 'firebase/auth';
     import { doc, getDoc, query, where, getDocs, collection } from 'firebase/firestore';
     import Swal from 'sweetalert2';
 
@@ -290,6 +293,7 @@
     const loginBtn = document.getElementById('loginBtn');
     const logoutBtn = document.getElementById('logoutBtn');
     const userInfo = document.getElementById('userInfo');
+    const changePasswordBtn = document.getElementById('changePasswordBtn');
     const navItems = {
       mockEval01: document.getElementById('nav-mock-eval-01'),
       mockEval02: document.getElementById('nav-mock-eval-02'),
@@ -527,6 +531,9 @@
         userInfo.textContent = '🔐 로그인 후 이용해 주세요.';
         loginBtn.style.display = 'flex';
         logoutBtn.style.display = 'none';
+        if (changePasswordBtn) {
+          changePasswordBtn.style.display = 'none';
+        }
 
         // 모든 네비게이션 항목 비활성화 (QR 코드 제외)
         Object.values(navItems).forEach(navItem => {
@@ -570,6 +577,9 @@
       
       loginBtn.style.display = 'none';
       logoutBtn.style.display = 'flex';
+      if (changePasswordBtn) {
+        changePasswordBtn.style.display = 'flex';
+      }
 
       // 모든 네비게이션 항목 활성화
       Object.values(navItems).forEach(navItem => {
@@ -603,6 +613,90 @@
           });
         }, 300);
       }
+    }
+
+    // 비밀번호 변경 버튼 이벤트 리스너
+    if (changePasswordBtn) {
+      changePasswordBtn.addEventListener('click', async () => {
+        const result = await Swal.fire({
+          title: '비밀번호 변경',
+          html: `
+            <input id="currentPassword" type="password" class="swal2-input" placeholder="현재 비밀번호">
+            <input id="newPassword" type="password" class="swal2-input" placeholder="새 비밀번호">
+            <input id="confirmPassword" type="password" class="swal2-input" placeholder="새 비밀번호 확인">
+          `,
+          focusConfirm: false,
+          showCancelButton: true,
+          confirmButtonText: '변경',
+          cancelButtonText: '취소',
+          preConfirm: async () => {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (!currentPassword || !newPassword || !confirmPassword) {
+              Swal.showValidationMessage('모든 필드를 입력해주세요.');
+              return false;
+            }
+
+            if (newPassword !== confirmPassword) {
+              Swal.showValidationMessage('새 비밀번호가 일치하지 않습니다.');
+              return false;
+            }
+
+            if (newPassword.length < 6) {
+              Swal.showValidationMessage('비밀번호는 최소 6자 이상이어야 합니다.');
+              return false;
+            }
+
+            try {
+              const user = auth.currentUser;
+              if (!user || !user.email) {
+                throw new Error('사용자 정보를 찾을 수 없습니다.');
+              }
+
+              // 현재 비밀번호 확인을 위해 재인증
+              const credential = await signInWithEmailAndPassword(auth, user.email, currentPassword);
+              
+              // 비밀번호 변경
+              await updatePassword(credential.user, newPassword);
+
+              // Firestore에 비밀번호 변경 여부 업데이트
+              const { doc, updateDoc } = await import('firebase/firestore');
+              const userQuery = query(collection(db, 'users_new'), where('uid', '==', user.uid));
+              const userSnapshot = await getDocs(userQuery);
+              if (!userSnapshot.empty) {
+                const userDocRef = doc(db, 'users_new', userSnapshot.docs[0].id);
+                await updateDoc(userDocRef, {
+                  passwordChanged: true
+                });
+              }
+
+              return true;
+            } catch (error) {
+              if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                Swal.showValidationMessage('현재 비밀번호가 올바르지 않습니다.');
+              } else {
+                Swal.showValidationMessage(error.message || '비밀번호 변경 중 오류가 발생했습니다.');
+              }
+              return false;
+            }
+          },
+          didOpen: () => {
+            document.getElementById('currentPassword').focus();
+          }
+        });
+
+        if (result.isConfirmed) {
+          Swal.fire({
+            icon: 'success',
+            title: '비밀번호 변경 완료',
+            text: '비밀번호가 성공적으로 변경되었습니다.',
+            timer: 2000,
+            showConfirmButton: false
+          });
+        }
+      });
     }
   </script>
 </body>

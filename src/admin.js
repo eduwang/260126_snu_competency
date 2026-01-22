@@ -192,7 +192,9 @@ function renderUsersList() {
           <div class="user-details">
             소속: ${user.affiliation || '소속 없음'}<br>
             ${user.email ? `이메일: ${user.email}<br>` : ''}
-            ${user.password ? `비밀번호: <span class="user-code" data-password="${user.password}" data-index="${index}" style="font-family: monospace; font-weight: 600; color: #2563eb; cursor: pointer; user-select: none; transition: opacity 0.2s;" title="클릭하여 복사">${user.password}</span><br>` : ''}
+            비밀번호 상태: <span class="status-badge ${user.passwordChanged ? 'status-linked' : 'status-pending'}" style="display: inline-block; margin-left: 0.25rem;">
+              ${user.passwordChanged ? '✓ 변경됨' : '기본 비밀번호'}
+            </span><br>
             생성일: ${createdAt.toLocaleString('ko-KR')}
             ${linkedAt ? `<br>연결일: ${linkedAt.toLocaleString('ko-KR')}` : ''}
           </div>
@@ -211,49 +213,6 @@ function renderUsersList() {
   }).join('');
 
   usersContainer.innerHTML = usersHTML;
-  
-  // 비밀번호 클릭 시 복사 기능 추가
-  usersContainer.querySelectorAll('.user-code').forEach(element => {
-    element.addEventListener('click', async () => {
-      const password = element.getAttribute('data-password');
-      if (!password) return;
-      
-      try {
-        await navigator.clipboard.writeText(password);
-        // 복사 성공 피드백
-        const originalText = element.textContent;
-        element.textContent = '복사됨!';
-        element.style.opacity = '0.7';
-        
-        setTimeout(() => {
-          element.textContent = originalText;
-          element.style.opacity = '1';
-        }, 1000);
-      } catch (err) {
-        // 클립보드 API가 지원되지 않는 경우 대체 방법
-        const textArea = document.createElement('textarea');
-        textArea.value = password;
-        textArea.style.position = 'fixed';
-        textArea.style.opacity = '0';
-        document.body.appendChild(textArea);
-        textArea.select();
-        try {
-          document.execCommand('copy');
-          const originalText = element.textContent;
-          element.textContent = '복사됨!';
-          element.style.opacity = '0.7';
-          
-          setTimeout(() => {
-            element.textContent = originalText;
-            element.style.opacity = '1';
-          }, 1000);
-        } catch (err) {
-          console.error('복사 실패:', err);
-        }
-        document.body.removeChild(textArea);
-      }
-    });
-  });
 }
 
 // 사용자 수정 함수 (전역으로 등록)
@@ -385,20 +344,20 @@ document.getElementById('addUserBtn').addEventListener('click', async () => {
       // 현재 관리자 정보 저장 (로그아웃 후 재로그인을 위해)
       const adminEmail = currentUser?.email;
       
-      // 5자리 랜덤 비밀번호 생성
-      const password = generateRandomPassword();
+      // 기본 비밀번호 설정
+      const password = '123456';
       const { name, affiliation, email } = result.value;
       
       // Firebase Authentication에 사용자 생성 (자동으로 새 사용자로 로그인됨)
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const uid = userCredential.user.uid;
       
-      // Firestore에 사용자 정보 저장 (비밀번호도 함께 저장)
+      // Firestore에 사용자 정보 저장
       await setDoc(doc(db, 'users_new', uid), {
         name: name,
         affiliation: affiliation,
         email: email,
-        password: password, // 비밀번호 저장 (사용자 목록에서 보여주기 위해)
+        passwordChanged: false, // 비밀번호 변경 여부
         uid: uid,
         createdAt: serverTimestamp()
       });
