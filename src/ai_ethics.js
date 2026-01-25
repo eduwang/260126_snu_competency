@@ -1253,7 +1253,7 @@ function getQuestionInfo(questionNum) {
     questionText = questionContent ? questionContent.textContent.trim() : '';
   }
 
-  // 예시 답안 가져오기 (여러 개의 <p> 태그가 있을 수 있으므로 모두 합침)
+  // 예시 답안 가져오기 (여러 개의 <p> 태그가 있을 수 있으므로 모두 합침, <strong>·줄바꿈 유지)
   const questionContentDiv = document.getElementById(`question-${questionNum}-content`);
   let answerText = '';
   if (questionContentDiv) {
@@ -1261,7 +1261,7 @@ function getQuestionInfo(questionNum) {
     if (answerTextDiv) {
       const paragraphs = answerTextDiv.querySelectorAll('p');
       if (paragraphs.length > 0) {
-        answerText = Array.from(paragraphs).map(p => p.textContent.trim()).join('\n\n');
+        answerText = Array.from(paragraphs).map(p => p.innerHTML.trim()).filter(html => html).join('<br><br>');
       }
     }
   }
@@ -1472,9 +1472,9 @@ function initProbingQuestionScreensB() {
       questionTextEl.textContent = questionInfo.text;
     }
     
-    // 예시 답안 표시 (줄바꿈 처리)
+    // 예시 답안 표시 (HTML 유지: <strong>, 줄바꿈 등)
     if (answerEl) {
-      answerEl.textContent = questionInfo.answer;
+      answerEl.innerHTML = questionInfo.answer;
     }
 
     // 평가 기준 테이블 표시
@@ -1641,9 +1641,9 @@ function initProbingQuestionScreens() {
       questionTextEl.textContent = questionInfo.text;
     }
     
-    // 예시 답안 표시 (줄바꿈 처리)
+    // 예시 답안 표시 (HTML 유지: <strong>, 줄바꿈 등)
     if (answerEl) {
-      answerEl.textContent = questionInfo.answer;
+      answerEl.innerHTML = questionInfo.answer;
     }
 
     // 평가 기준 테이블 표시
