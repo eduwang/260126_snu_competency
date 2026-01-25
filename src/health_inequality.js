@@ -1574,6 +1574,10 @@ async function initProbingB() {
         if (i === 3) {
           content += `<img src="probingQuestion/health_inequality_stdB_03.jpg" alt="학생 B 답변 이미지" style="max-width: 100%; height: auto; margin-top: 1rem; border-radius: 6px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">`;
         }
+        // 과제 5의 경우 이미지 추가 (답변 아래)
+        if (i === 5) {
+          content += `<img src="probingQuestion/health_inequality_stdB_05.jpg" alt="학생 B 답변 이미지" style="max-width: 100%; height: auto; margin-top: 1rem; border-radius: 6px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">`;
+        }
         
         studentAnswerContainer.innerHTML = content;
       }
@@ -1753,13 +1757,16 @@ async function loadProbingDataFromFirestoreB() {
           // HTML로 변환 (줄바꿈 처리)
           const answerText = questionData.studentAnswer.replace(/\n/g, '<br>');
           
-          // 과제 2, 3의 경우 이미지 추가 (답변 아래)
+          // 과제 2, 3, 5의 경우 이미지 추가 (답변 아래)
           let content = `<p style="margin: 0; text-indent: 1em; line-height: 1.8;">${answerText}</p>`;
           if (i === 2) {
             content += `<img src="probingQuestion/health_inequality_stdB_02.png" alt="학생 B 답변 이미지" style="max-width: 100%; height: auto; margin-top: 1rem; border-radius: 6px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">`;
           }
           if (i === 3) {
             content += `<img src="probingQuestion/health_inequality_stdB_03.jpg" alt="학생 B 답변 이미지" style="max-width: 100%; height: auto; margin-top: 1rem; border-radius: 6px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">`;
+          }
+          if (i === 5) {
+            content += `<img src="probingQuestion/health_inequality_stdB_05.jpg" alt="학생 B 답변 이미지" style="max-width: 100%; height: auto; margin-top: 1rem; border-radius: 6px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">`;
           }
           
           studentAnswerContainer.innerHTML = content;
